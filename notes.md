@@ -10,6 +10,8 @@
 - [x] Take all the data using landmarks as indexes (like take grasp +- 10ms, being sure not to be too near lift)
 - [x] Take 1 spike train with his behavioral landmarks
 - [x] Divide it in bins of a chosen measure and count N of spikes inside each bin
+- [x] Read the paper and see what they've done
 
 - [ ] Normalize it
-- [ ] Read the paper and see what they've done
+
+> How should I use different landmarks for the same spiketrain?

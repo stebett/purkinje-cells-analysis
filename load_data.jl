@@ -28,7 +28,7 @@ function order(data)
       data
 end
 
-function extract(attr::String)
+function extract(attr::String, data::OrderedDict=data)
       X = Array{Array{Float64,1}, 1}()
       for (key1, rat) in data
             for (key2, site) in rat
@@ -45,3 +45,9 @@ function extract(attr::String)
       end
       X
 end
+
+data = order(data)
+times = extract("t")
+lifts = extract("lift")
+cover = extract("cover")
+grasps = extract("grasp")
