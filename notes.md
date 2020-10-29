@@ -20,4 +20,7 @@
 
 ## Similarity of time course of firing rate 1
 
-- [ ] spike density around the landmark obtained by convolution of spike times with a 10ms-wide Gaussian
+- [x] spike density around the landmark obtained by convolution of spike times with a 10ms-wide Gaussian
+- [x] take a slice of a spiketrain around a landmark and convolute it
+- [ ] normalize
+> Maybe I should discretize with a sliding filter

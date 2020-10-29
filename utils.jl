@@ -140,6 +140,26 @@ function discretize(spiketrains::T, timelen, bin=50) where {T <: Array{Array{Flo
     d
 end
 
+function sliding_discretize(spiketrains::T, timelen, bin=50)::T where {T <: Array{Float64,1}}
+    d = zeros(timelen) 
+
+    for (k, b) in enumerate(1:timelen)
+        d[k] = length(spiketrains[b .< spiketrains .- spiketrains[1] .< b + bin]) / bin
+    end
+    d
+end
+
+function sliding_discretize(spiketrains::T, timelen, bin=50) where {T <: Array{Array{Float64,1},1}}
+    d = zeros(size(spiketrains, 1), timelen)
+
+    for (i, s) in enumerate(spiketrains)
+        for (j, b) in enumerate(1:timelen)
+            d[i, j] = length(s[b .< s .- s[1] .< b + bin]) / bin
+        end
+    end
+    d
+end
+
 
 function normalize(spiketrain::T, landmark::T, before=3000, around=(0, 1000))::Array{Float64,2} where {T <: Array{Float64,1}}
 	base_slice = slice(spiketrain, landmark .-  before, around) ## TODO See if you can generalize this
