@@ -1,7 +1,9 @@
+using DrWatson
+@quickactivate "ens"
 using DSP
 using Distributions
 
-include("utils.jl")
+include(srcdir("utils.jl"))
 
 
 

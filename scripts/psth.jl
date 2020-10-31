@@ -1,8 +1,11 @@
+using DrWatson
+@quickactivate "ens"
+
 using Statistics
 using Plots; gr()
 
-include("utils.jl")
-
+include(srcdir("utils.jl"))
+include(datadir("load-data.jl"))
 
 function psth(spikerates, threshold)
     idx = falses(size(spikerates, 2))

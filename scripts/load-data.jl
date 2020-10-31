@@ -1,3 +1,6 @@
+using DrWatson
+@quickactivate "ens"
+
 import JSON
 using DataStructures
 
@@ -11,8 +14,8 @@ struct Data
       function Data()
             dict = OrderedDict()
 
-            io = open("data/data.json", "r")
-            dict=JSON.parse(io)
+            io = open(datadir("data.json"), "r")
+            dict = JSON.parse(io)
             close(io)
 
             dict = order(dict)
@@ -72,3 +75,5 @@ function retrive(d::Data, idx::Int)
             end
       end
 end
+
+data=Data()
