@@ -4,7 +4,7 @@ using DrWatson
 using Statistics
 using Plots; gr()
 
-include(srcdir("utils.jl"))
+include(srcdir("spike-tools.jl"))
 include(datadir("load-data.jl"))
 
 function psth(spikerates, threshold)
@@ -28,3 +28,5 @@ function psth(spikerates, threshold)
     yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
 end
 
+spikerates = normalize(data.t, data.l)
+psth(spikerates, 2.5)

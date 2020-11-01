@@ -1,23 +1,29 @@
 using DrWatson
 @quickactivate "ens"
+
 using DSP
+using Plots; gr()
 using Distributions
 
-include(srcdir("utils.jl"))
+include(srcdir("spike-tools.jl"))
+include(scriptsdir("load-data.jl"))
 
 
-
-function covariants(spiketrains, landmarks, idx)
-    z = [pdf(Normal(0, 10), x) for x in -500:500]
-    nor = sliding_normalize(spiketrains[idx], landmarks[idx], around=(500,500))
-    convs = conv(nor, z)
-    cor(convs)
+function convolute(spiketrains, landmarks, around=(-500, 500))
+    z = [pdf(Normal(0, 10), i) for i in around[1]:around[2]]
+    n = normalize(spiketrains, landmarks, around=around, over=around)
+    c = conv(n, z)
+    replace!(c, Inf=>0.)
+    replace!(c, NaN=>0.)
+    c
 end
 
-idx = find_active_neurons(data.t, [l for l in data.l])
+function correlate(convolutions)
+    C = cor(convolutions)
+    replace!(C, Inf=>0.)
+    replace!(C, NaN=>0.)
+    replace!(C, 1.0=>0.)
+    C
+end
 
-cc = covariants(data.t, [data.l for l in data.l], idx)
-
-
-plot(cc[:, 39])
-plot!(cc[:, 1])
+# convolutions = convolute(data.t, data.l)

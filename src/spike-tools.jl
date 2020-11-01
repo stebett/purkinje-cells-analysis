@@ -1,6 +1,8 @@
 using DrWatson
 @quickactivate "ens"
 
+using Statistics
+
 # TODO: add inbounds
 
 """
@@ -87,13 +89,13 @@ function discretize(slices:: Array{Array{Float64, 1}, 1}, timelen, bin=50, step=
 end
 
 
-function discretize(slices::Array{Array{Array{Float64,1}, 1}, 1}, timelen, bin=50, step_=1)
-    d = zeros(timelen ÷ step_, size(slices, 1))
+function discretize(slices::Array{Array{Array{Float64,1}, 1}, 1}, timelen, bin=50, step=1)
+    d = zeros(timelen ÷ step, size(slices, 1))
 
     for (i, sli) in enumerate(slices)
-        tmp = zeros(timelen ÷ step_, length(sli))
+        tmp = zeros(timelen ÷ step, length(sli))
         for (k, s) in enumerate(sli)
-            for (j, b) in enumerate(1:step_:timelen)
+            for (j, b) in enumerate(1:step:timelen)
                 tmp[j, k] = length(s[b .< s .< b + bin]) / bin
             end
         end
@@ -104,13 +106,13 @@ end
 
 
 function normalize(slices, landmarks; around=(-200, 200), over=(-5000, -3000), bin=50, step=1)::Array{Float64,2}
-	base_slice = slice(slices, landmarks, over)
-	base_bin = discretize(base_slice, abs(over[1] - over[2]), 50, step)
+	base_slice = slice(slices, landmarks, (over[1], over[2] + bin))
+	base_bin = discretize(base_slice, abs(over[1] - over[2]), bin, step)
 	base_mean = mean(base_bin, dims=1)
 	base_std = std(base_bin, dims=1)
 
-	target_slice = slice(slices, landmarks, around)
-	target_bin = discretize(target_slice, abs(around[1] - around[2]), 50, step)
+	target_slice = slice(slices, landmarks, (around[1], around[2] + bin))
+	target_bin = discretize(target_slice, abs(around[1] - around[2]), bin, step)
 
     target_norm = (target_bin .- base_mean) ./ base_std
     replace!(target_norm, Inf=>0.)
