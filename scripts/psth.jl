@@ -28,5 +28,5 @@ function psth(spikerates, threshold)
     yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
 end
 
-spikerates = normalize(data.t, data.l)
+spikerates = normalize(data.t, data.lift)
 psth(spikerates, 2.5)

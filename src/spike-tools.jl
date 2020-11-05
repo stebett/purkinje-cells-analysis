@@ -118,3 +118,7 @@ function normalize(slices, landmarks; around=(-200, 200), over=(-5000, -3000), b
     replace!(target_norm, Inf=>0.)
     replace!(target_norm, NaN=>0.)
 end
+
+function skipnan(v::AbstractArray)
+    v[.!isnan.(v)]
+end
