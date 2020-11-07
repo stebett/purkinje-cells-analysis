@@ -19,11 +19,8 @@
 - [x] spike density around the landmark obtained by convolution of spike times with a 10ms-wide Gaussian
 - [x] take a slice of a spiketrain around a landmark and convolute it
 - [x] normalize
-- [ ] pick 3 cases, then go on
+- [x] pick 3 cases, then go on
 
-## Similarity of time course of firing rate 2
+## Effect of speed
 
-- [ ] read and write todo!
-
-
-- [ ] Switch to bson?
+> Is it possible to predict speed from firing rate?

@@ -5,7 +5,7 @@ using Statistics
 using Plots; gr()
 
 include(srcdir("spike-tools.jl"))
-include(datadir("load-data.jl"))
+include(datadir("old-load-data.jl"))
 
 function psth(spikerates, threshold)
     idx = falses(size(spikerates, 2))
@@ -28,5 +28,5 @@ function psth(spikerates, threshold)
     yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
 end
 
-spikerates = normalize(data.t, data.lift)
+spikerates = old_normalize(data.t, data.lift)
 psth(spikerates, 2.5)

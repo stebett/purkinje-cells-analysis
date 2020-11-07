@@ -13,8 +13,16 @@ include(srcdir("data-tools.jl"))
 include(scriptsdir("load-data.jl"))
 
 
-function correlate(n)
-    C = cor(n)
+function convolute(n::Array{Float64, 2}, around)
+    z = [pdf(Normal(0, 10), i) for i in around[1]:around[2]]
+    c = conv(n, z)
+    replace!(c, Inf=>0.)
+    replace!(c, NaN=>0.)
+    c
+end
+
+function correlate(convolutions)
+    C = cor(convolutions)
     replace!(C, Inf=>0.)
     replace!(C, NaN=>0.)
     replace!(C, 1.0=>0.)
@@ -49,44 +57,50 @@ function distant_correlation(correlations)
 end
 
 around = (-500, 500)
+n = normalize(data.t, data.lift, around=around, over=around)
+# convolutions = convolute(n, around)
+# correlations = correlate(convolutions)
 
+# lift_neigh = neighbor_correlation(correlations)
+# lift_dist = distant_correlation(correlations)
 
+lift_neigh = 0.15 ± 0.27
+lift_dist = 0.03393 ± 0.0004
 
-n = normalize(data.t, data.cover, around, around)
-correlations = correlate(n)
+# n = normalize(data.t, data.cover, around=around, over=around)
+# convolutions = convolute(n, around)
+# correlations = correlate(convolutions)
 
-cover_neigh = neighbor_correlation(correlations)
-cover_dist = distant_correlation(correlations)
+# cover_neigh = neighbor_correlation(correlations)
+# cover_dist = distant_correlation(correlations)
 
+cover_neigh = 0.15 ± 0.26
+cover_dist = 0.03178 ± 0.00049
 
+# n = normalize(data.t, data.grasp, around=around, over=around)
+# convolutions = convolute(n, around)
+# correlations = correlate(convolutions)
 
-n = normalize(data.t, data.grasp, around, around)
-correlations = correlate(n)
+# grasp_neigh = neighbor_correlation(correlations)
+# grasp_dist = distant_correlation(correlations)
 
-grasp_neigh = neighbor_correlation(correlations)
-grasp_dist = distant_correlation(correlations)
-
-n = normalize(data.t, data.lift, around, around)
-correlations = correlate(n)
-
-lift_neigh = neighbor_correlation(correlations)
-lift_dist = distant_correlation(correlations)
-
+grasp_neigh = 0.17 ± 0.26
+grasp_dist = 0.03526 ± 0.00066
 
 l = @layout [ [ a; b; c] d ] 
-findall(.80 .< correlations .< .8001)
-p1 = plot(-500:499, n[:, [396, 528]], lab=["neuron 1" "neuron 2"], legend=:topleft)
+# findall(.85 .< correlations .< .8501)
+p1 = plot(-500:499, n[:, [558, 178]], lab=["neuron 1" "neuron 2"], legend=:topleft)
 p1 = title!("Pair of highly correlated neurons")
 p3 = xaxis!("", (-500, 500), [0])
 
-findall(.50 .< correlations .< .5001)
-p2 = plot(-500:499, n[:, [571, 54]], lab=["neuron 1" "neuron 2"], legend=false)
+# findall(.50 .< correlations .< .5001)
+p2 = plot(-500:499, n[:, [183, 37]], lab=["neuron 1" "neuron 2"], legend=false)
 p2 = title!("Pair of mildly correlated neurons")
 p3 = xaxis!("Time (ms)", (-500, 500), [0])
 p2 = yaxis!("Normalized firing rate")
 
-findall(.05 .< correlations .< .05001)
-p3 = plot(-500:499, n[:, [563, 591]], lab=["neuron 1" "neuron 2"], legend=false)
+# findall(.05 .< correlations .< .05001)
+p3 = plot(-500:499, n[:, [556, 484]], lab=["neuron 1" "neuron 2"], legend=false)
 p3 = title!("Pair of uncorrelated neurons")
 p3 = xaxis!("", (-500, 500), [-500, 0, 500])
 
