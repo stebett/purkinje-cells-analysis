@@ -92,12 +92,6 @@ git-tree-sha1 = "75479b7df4167267d75294d14b58244695beb2ac"
 uuid = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
 version = "0.14.2"
 
-[[CodeTracking]]
-deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "ce725fcc331618c422e5561a5183baab6a00482c"
-uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "1.0.4"
-
 [[CodecLz4]]
 deps = ["Lz4_jll", "TranscodingStreams"]
 git-tree-sha1 = "59fe0cb37784288d6b9f1baebddbf75457395d40"
@@ -156,11 +150,6 @@ git-tree-sha1 = "d05a3a25b762720d40246d5bedf518c9c2614ef5"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.5.5"
 
-[[Crayons]]
-git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
-uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.0.4"
-
 [[CustomUnitRanges]]
 git-tree-sha1 = "0d42a23be3acfb3c58569b28ed3ab8bd67af5ced"
 uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
@@ -203,12 +192,6 @@ version = "0.4.13"
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
-
-[[Debugger]]
-deps = ["CodeTracking", "Crayons", "Highlights", "InteractiveUtils", "JuliaInterpreter", "Markdown", "REPL"]
-git-tree-sha1 = "c37eca3eff2657c700f32e05500215feac886dcf"
-uuid = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
-version = "0.6.6"
 
 [[DelimitedFiles]]
 deps = ["Mmap"]
@@ -345,12 +328,6 @@ git-tree-sha1 = "03d381f65183cb2d0af8b3425fde97263ce9a995"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
 version = "1.0.0"
 
-[[Highlights]]
-deps = ["DocStringExtensions", "InteractiveUtils", "REPL"]
-git-tree-sha1 = "f823a2d04fb233d52812c8024a6d46d9581904a4"
-uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
-version = "0.4.5"
-
 [[ImageAxes]]
 deps = ["AxisArrays", "ImageCore", "Reexport", "SimpleTraits"]
 git-tree-sha1 = "5534929efb43df695d560f0e29fcdb4caf2f75e7"
@@ -440,12 +417,6 @@ deps = ["Dates", "Mmap", "Parsers", "Unicode"]
 git-tree-sha1 = "81690084b6198a2e1da36fcfda16eeca9f9f24e4"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.1"
-
-[[JuliaInterpreter]]
-deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "8f1c59bbca30b0d293f4b2436af49ef4c9c4d601"
-uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.8.2"
 
 [[KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
