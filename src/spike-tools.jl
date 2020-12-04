@@ -6,30 +6,12 @@ using ImageFiltering
 
 # TODO: add inbounds
 
-function skipnan(v::AbstractArray)
-    v[.!isnan.(v)]
-end
 
-function nanmean(v::Array{Array{Float64, N}, 1}) where N
-    m = zeros(size(v[1]))
-    for i in 1:size(v[1], 2)
-        tmp = Array{Float64, 1}[]
-        for matrix in v
-            if any(isnan.(matrix[:, i]))
-                continue
-            end
-            push!(tmp, matrix[:, i])
-        end
-        if length(tmp) == 0
-            m[:, i] .= NaN
-            continue
-        end
-        m[:, i] .= mean(tmp)
-    end
-    m
-end
+"""
+	standardize_landmarks(landmarks)
 
-
+Takes an array of arrayis containing the landmarks times and returns where the rows are the landmarks times for corresponding recording site, with -1 instead of `missing`
+"""
 function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}
     maxLen = maximum(map(length, landmarks))
     std_landmarks = zeros(maxLen, size(landmarks, 1))
@@ -39,7 +21,14 @@ function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Floa
     end
     std_landmarks
 end
+	
+"""
+	slice(spiketrain, landmark, around)
 
+Takes spike times and landmark times as input and returns sparse array or matrix.
+The legal combinations of types for `spiketrain` and `landmark` are: `Array{Number, 1}, Number`, `Array{Array{Number, 2}}, `Array{Number, 2}`
+
+"""
 function slice(spiketrain::T, landmark::Number, around::Tuple)::Array{Number, 1} where {T <: Array{Float64,1}}
     s = zeros(abs(around[1])+abs(around[2]))
 
@@ -66,6 +55,15 @@ function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{Num
 end
 
 
+"""
+	convolve(slice [, σ])::Union{Array{Float64, 1}, Array{Float64, 2}}
+
+Apply a gaussian kernel with std=σ on a sliced data.
+
+# Arguments
+- `slice::Union{Array{Number, 1}, Array{Number, 2}}`: the slice of spike times
+- `σ::Int=10`:the std of the gaussian kernel
+"""
 function convolve(slice::Array{Number, 1}, σ=10)::Array{Float64, 1}
     kernel = Kernel.gaussian((σ,))
     imfilter(slice, kernel, "circular")
@@ -107,4 +105,43 @@ function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Arr
         push!(tmp, normalize(spiketrains, std_landmarks[i, :], around, over, σ))
     end
     nanmean(tmp)
+end
+
+function skipnan(v::AbstractArray)
+    v[.!isnan.(v)]
+end
+
+function dropnancols(v::Array{Float64, 2})
+	nancols = isnan.(v[1, :])
+
+	new_idx = zeros(Int, sum(.!nancols))
+	k = 0
+	for i = 1:length(nancols)
+		if nancols[i] == false
+			new_idx[i-k] = i
+		else
+			k += 1
+		end
+	end
+	v[:, .!nancols], new_idx
+end
+
+
+function nanmean(v::Array{Array{Float64, N}, 1}) where N
+    m = zeros(size(v[1]))
+    for i in 1:size(v[1], 2)
+        tmp = Array{Float64, 1}[]
+        for matrix in v
+            if any(isnan.(matrix[:, i]))
+                continue
+            end
+            push!(tmp, matrix[:, i])
+        end
+        if length(tmp) == 0
+            m[:, i] .= NaN
+            continue
+        end
+        m[:, i] .= mean(tmp)
+    end
+    m
 end
