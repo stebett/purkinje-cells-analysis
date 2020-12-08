@@ -1,0 +1,56 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/ginko/ens/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
+Data	src/old-data-tools.jl	/^    function Data()$/;"	f	struct:Data
+Data	src/old-data-tools.jl	/^struct Data$/;"	s
+build_df	src/old-data-tools.jl	/^function build_df(d::OrderedDict)$/;"	f
+c	src/old-data-tools.jl	/^    c::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
+convolute	scripts/old-corr-coef.jl	/^function convolute(n::Array{Float64, 2}, around)$/;"	f
+convolve	src/spike-tools.jl	/^function convolve(slice::Array{Number, 1}, σ=10)::Array{Float64, 1}$/;"	f
+convolve	src/spike-tools.jl	/^function convolve(slices::Array{Number, 2}, σ=10)::Array{Float64, 2}$/;"	f
+correlate	scripts/corr-coef.jl	/^function correlate(n)$/;"	f
+correlate	scripts/old-corr-coef.jl	/^function correlate(convolutions)$/;"	f
+dict	src/old-data-tools.jl	/^    dict::OrderedDict$/;"	g	struct:Data
+discretize	src/old-spike-tools.jl	/^function discretize(slices::Array{Array{Array{Float64,1}, 1}, 1}, timelen, bin=50, step=1)$/;"	f
+discretize	src/old-spike-tools.jl	/^function discretize(slices::Array{Array{Float64, 1}, 1}, timelen, bin=50, step=1)$/;"	f
+discretize	src/old-spike-tools.jl	/^function discretize(slices::Array{Float64, 1}, timelen, bin=50, step=1)$/;"	f
+distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations)$/;"	f
+distant_correlation	scripts/old-corr-coef.jl	/^function distant_correlation(correlations)$/;"	f
+extract	src/old-data-tools.jl	/^function extract(attr::String, data::OrderedDict=data)$/;"	f
+g	src/old-data-tools.jl	/^    g::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
+get_neighbors	src/data-tools.jl	/^function get_neighbors(df::DataFrame, idx)$/;"	f
+get_neighbors	src/old-data-tools.jl	/^function get_neighbors(d::Data, idx)$/;"	f
+index!	src/old-data-tools.jl	/^function index!(d::Data)$/;"	f
+isnear	src/old-data-tools.jl	/^function isnear(d::Data, idx₁::Int, idx₂::Int)$/;"	f
+l	src/old-data-tools.jl	/^    l::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
+nanmean	src/spike-tools.jl	/^function nanmean(v::Array{Array{Float64, N}, 1}) where N$/;"	f
+neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations)$/;"	f
+neighbor_correlation	scripts/old-corr-coef.jl	/^function neighbor_correlation(correlations)$/;"	f
+normalize	src/spike-tools.jl	/^function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Array{Float64,1},1}/;"	f
+normalize	src/spike-tools.jl	/^function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around:/;"	f
+normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,1}}$/;"	f
+normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}$/;"	f
+old_normalize	src/old-spike-tools.jl	/^function old_normalize(slices, landmarks; around=(-200, 200), over=(-5000, -3000), bin=50, step=/;"	f
+order	src/old-data-tools.jl	/^function order(data)$/;"	f
+psth	scripts/psth.jl	/^function psth(spikerates, threshold)$/;"	f
+retrieve	src/old-data-tools.jl	/^function retrieve(d::Data, idx::Int)$/;"	f
+skipnan	src/old-spike-tools.jl	/^function skipnan(v::AbstractArray)$/;"	f
+skipnan	src/spike-tools.jl	/^function skipnan(v::AbstractArray)$/;"	f
+slice	src/old-spike-tools.jl	/^function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{T, 1} where {T <: A/;"	f
+slice	src/old-spike-tools.jl	/^function slice(spiketrains::T, landmark::Number, around::Tuple)::T where {T <: Array{Float64,1}}$/;"	f
+slice	src/old-spike-tools.jl	/^function slice(spiketrains::T, landmarks::T, around::Tuple)::Array{T, 1} where {T <: Array{Array/;"	f
+slice	src/spike-tools.jl	/^function slice(spiketrain::T, landmark::Number, around::Tuple)::Array{Number, 1} where {T <: Arr/;"	f
+slice	src/spike-tools.jl	/^function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{Number, 2} where {T/;"	f
+standardize_landmarks	src/spike-tools.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
+t	src/old-data-tools.jl	/^    t::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
+test_discretize	test/tests-psth.jl	/^function test_discretize()$/;"	f
+test_normalize	test/tests-psth.jl	/^function test_normalize()$/;"	f
+test_slice	test/tests-psth.jl	/^function test_slice()$/;"	f

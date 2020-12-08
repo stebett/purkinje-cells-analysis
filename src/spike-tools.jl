@@ -32,14 +32,12 @@ The legal combinations of types for `spiketrain` and `landmark` are: `Array{Numb
 function slice(spiketrain::T, landmark::Number, around::Tuple)::Array{Number, 1} where {T <: Array{Float64,1}}
     s = zeros(abs(around[1])+abs(around[2]))
 
-    if landmark == -1.
+    if landmark == -1. || landmark == NaN
         return fill!(s, NaN)
     end
 
     idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
-    if length(idxs) > 0
-        idxs .-= idxs[1] - 1
-    end
+	idxs = idxs .- landmark .- around[1] .+ 1
     s[floor.(Int, idxs)] .= 1
     s
 end
@@ -79,32 +77,46 @@ function convolve(slices::Array{Number, 2}, σ=10)::Array{Float64, 2}
 end
 
 function normalize(target::T, baseline::T)::T where {T <: Array{Float64,1}}
-	base_mean = mean(baseline)
-	base_std = std(baseline)
+	base_mean = mean(skipnan(baseline))
+	base_std = std(skipnan(baseline))
 
     (target .- base_mean) ./ base_std
 end
 
 function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}
-	base_mean = mean(baseline, dims=1)
-	base_std = std(baseline, dims=1)
+	base_mean = mean(skipnan(baseline), dims=1)
+	base_std = std(skipnan(baseline), dims=1)
 
     (target .- base_mean) ./ base_std
 end
 
-function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Tuple, over::Tuple, σ=10)::Array{Float64, 2}
+function normalize(spiketrains::Array{T, 1}, landmarks::T, around::Tuple, over::Tuple, σ=10) where {T <: Union{Float64, Array{Float64, 1}}}
     target = slice(spiketrains, landmarks, around) |> convolve # TODO use σ
     baseline =  slice(spiketrains, landmarks, over) |> convolve
     normalize(target, baseline)
 end
 
-function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Array{Float64,1},1}, around::Tuple, over::Tuple, σ=10)::Array{Float64, 2}
+function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Array{Float64,1},1}, around::Tuple, over::Tuple, average=true, σ=10)::Array{Float64, 2}
     std_landmarks = standardize_landmarks(landmarks)
     tmp = Array{Float64, 2}[]
     for i = 1:size(std_landmarks, 1)
         push!(tmp, normalize(spiketrains, std_landmarks[i, :], around, over, σ))
     end
     nanmean(tmp)
+end
+
+function normalize(spiketrains::Array{Array{Float64,1}, 1}, std_landmarks::Array{Float64, 2}, around::Tuple, over::Tuple, average=false, σ=10)
+	tmp = zeros(sum(abs.(around)), sum(std_landmarks .> 0.))
+	idx = 1
+	for i = 1:size(std_landmarks, 1)
+		for j = 1:size(std_landmarks, 2)
+			if std_landmarks[i, j] > 0.
+				tmp[:, idx] = normalize(spiketrains[j], std_landmarks[i, j], around, over, σ)
+				idx += 1
+			end
+		end
+    end
+	tmp
 end
 
 function skipnan(v::AbstractArray)

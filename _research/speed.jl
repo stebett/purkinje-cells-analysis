@@ -5,20 +5,27 @@ include(scriptsdir("load-data.jl"))
 include(srcdir("spike-tools.jl"))
 
 using Statistics
+using MultivariateStats
 
+stdcover = standardize_landmarks(data.cover)
+stdlift = standardize_landmarks(data.lift)
+speeds = stdcover - stdlift
+speeds = replace(speeds, NaN => 0.)
+speeds[speeds .> 1000.] .= 0.
+y = speeds[speeds .> 0]
+stdlift[speeds .<= 0.] .= -1
+stdcover[speeds .<= 0.] .= -1
 
-speeds = Float64[]
+X = normalize(data.t, stdcover, (-500, 500), (-5000, 5000), false)
+X, new_idx = dropnancols(X)
+y = speeds[speeds .> 0]
+y = y[new_idx]
 
-for (lift, cover) in zip([l[1] for l=data.lift], [c[1] for c=data.cover])
-    if (length(lift) != length(cover)) || (-1. in lift) || (-1. in cover)
-        continue
-    end
-    push!(speeds, (cover .- lift))
-end
+a = ridge(X', y, 1, bias=false)
 
-n = normalize(data.t, [l[1] for l=data.lift], (-500, 500), (-500, 500))
-mean_rate = [mean(skipnan(n[:, i])) for i=1:size(n,2)]
+# do prediction
+yp = X' * a
 
-cor(n, speeds)
-
-# Decoding neuronal spikes
+# measure the error
+rmse = sqrt(mean((y - yp).^2))
+@show rmse

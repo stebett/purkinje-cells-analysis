@@ -74,7 +74,7 @@ lift_dist = distant_correlation(correlations)
 
 
 l = @layout [ [ a; b; c] d ] 
-findall(.80 .< correlations .< .8001)
+findall(.90 .< correlations .< .91)
 p1 = plot(-500:499, n[:, [396, 528]], lab=["neuron 1" "neuron 2"], legend=:topleft)
 p1 = title!("Pair of highly correlated neurons")
 p3 = xaxis!("", (-500, 500), [0])

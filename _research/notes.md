@@ -24,3 +24,6 @@
 ## Effect of speed
 
 > Is it possible to predict speed from firing rate?
+
+- [ ] Fit a LN model so we can predict spikes and observe the dynamics
+- [ ] Measure correlations and vary them and measure how dynamics/information change
