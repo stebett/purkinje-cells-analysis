@@ -5,7 +5,7 @@ function skipnan(v::AbstractArray)
     v[.!isnan.(v)]
 end
 
-function dropnancols(v::AbstractArray, idx=false)
+function dropnancols(v::AbstractArray; idx=false)
 	nancols = isnan.(v[1, :])
 
 	new_idx = zeros(Int, sum(.!nancols))

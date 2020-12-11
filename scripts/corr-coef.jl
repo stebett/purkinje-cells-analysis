@@ -10,71 +10,65 @@ using Combinatorics
 
 include(srcdir("spike-tools.jl"))
 include(srcdir("data-tools.jl"))
+include(srcdir("utils.jl"))
 include(scriptsdir("load-data.jl"))
 
-# julia> for i = unique(get_neighbors(data, [1:593;], true))
-#        push!(slices, newSlice(data[i, "t"], data[i, "lift"]))
-#        end
 
+distant = get_distant(data, [1:593;], true)
+neurons_idx = hcat(distant, ones(593)) |> DataFrame |> nonunique |> Array{Int, 1}
+neuron_list = abs.(neurons_idx .- 1) .* [1:593;]
+neuron_list = neuron_list[neuron_list .> 0]
 
-function correlate(n)
-    C = cor(n)
-    replace!(C, Inf=>0.)
-    replace!(C, NaN=>0.)
-    replace!(C, 1.0=>0.)
-    C
-end
+neigh_list = unique(get_neighbors(data, [1:593;], true))
+dist_list = unique(distant)
 
-
-function neighbor_correlation(correlations)
+function neighbor_correlation(correlations, neigh_list)
     total_mean = []
-    for x in 1:size(data, 1)
+    for neigh in neigh_list
         tmp = Float64[]
-        for (i, j) in combinations(get_neighbors(data, x), 2)
-            push!(tmp, correlations[i, j])
-        end
+		
+		if length(neigh) > 1
+			for (i, j) in combinations(neigh, 2)
+				push!(tmp, correlations[i, j])
+			end
+		end
         push!(total_mean, mean(tmp))
     end
     mean(skipnan(total_mean)) ± std(skipnan(total_mean))
 end
 
-function distant_correlation(correlations)
+function distant_correlation(correlations, dist_list, neuron_list)
     total_mean = []
-    for x in 1:size(data, 1)
-        tmp = []
-        neurons = [1:1:size(data,1);]
-        deleteat!(neurons, get_neighbors(data, x))
-        for (i, j) in combinations(neurons, 2)
-            push!(tmp, correlations[i, j])
-        end
+	for (i, dist) in enumerate(dist_list)
+        tmp = Float64[]
+		if length(dist) > 0
+			for d in dist
+				push!(tmp, correlations[neuron_list[i], d])
+			end
+		end
         push!(total_mean, mean(tmp))
     end
     mean(skipnan(total_mean)) ± std(skipnan(total_mean))
 end
 
-around = (-500, 500)
+r = (-500, 500)
+n = slice(data.t, data.cover, around=r, convolution=true, normalization=true, over=r, average=true)
+
+cover_neigh = neighbor_correlation(correlations, neigh_list)
+cover_dist = distant_correlation(correlations, dist_list, neuron_list)
 
 
-
-n = normalize(data.t, data.cover, around, around)
+n = slice(data.t, data.grasp, around=r, convolution=true, normalization=true, over=r, average=true)
 correlations = correlate(n)
 
-cover_neigh = neighbor_correlation(correlations)
-cover_dist = distant_correlation(correlations)
+grasp_neigh = neighbor_correlation(correlations, neigh_list)
+grasp_dist = distant_correlation(correlations, dist_list, neuron_list)
 
-
-
-n = normalize(data.t, data.grasp, around, around)
+n = slice(data.t, data.lift, around=r, convolution=true, normalization=true, over=r, average=true)
 correlations = correlate(n)
 
-grasp_neigh = neighbor_correlation(correlations)
-grasp_dist = distant_correlation(correlations)
-
-n = normalize(data.t, data.lift, around, around)
-correlations = correlate(n)
-
-lift_neigh = neighbor_correlation(correlations)
-lift_dist = distant_correlation(correlations)
+lift_neigh = neighbor_correlation(correlations, neigh_list)
+lift_dist = distant_correlation(correlations, dist_list, neuron_list)
 
 
 l = @layout [ [ a; b; c] d ] 
