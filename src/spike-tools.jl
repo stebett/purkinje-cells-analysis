@@ -5,23 +5,69 @@ using Statistics
 using ImageFiltering
 
 # TODO: add inbounds
+include(srcdir("utils.jl"))
 
 
 """
-	standardize_landmarks(landmarks)
 
-Takes an array of arrayis containing the landmarks times and returns where the rows are the landmarks times for corresponding recording site, with -1 instead of `missing`
+# Arguments
+
+| **Neuron**      | | One neuron    | One's neighboring neurons | One's distant neurons | All neurons | All neighboring neurons | All distant neurons |All neurons from the same site (same registration) | All neurons from the same rat |
+| **Trial**       | | One trial     | Averaged trials         | All single trials   | 
+| **Convolution** | | Rectangular   | Gaussian                |
+| **args**        | | Normalization | 
+
+
 """
-function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}
-    maxLen = maximum(map(length, landmarks))
-    std_landmarks = zeros(maxLen, size(landmarks, 1))
 
-    for (i, row) in enumerate(landmarks)
-        std_landmarks[:, i] .= [row..., [-1 for _ in 1:maxLen-length(row)]...]
-    end
-    std_landmarks
+
+"""
+
+	slice(spiketrains, landmarks, [average=false, around=(-50, 50), convolution='rect'])
+
+Select the spikes around a landmark and apply convolution and optionally averaging before returning
+
+# Arguments
+
+- `spiketrains::
+- `landmarks::
+- `average::Bool=false`
+- `around::Tuple=(-50, 50)`
+- `convolution::String="rect"`: the kind of convolution to apply
+
+
+"""
+
+function newSlice(spiketrains, landmarks; around=(-50, 50), convolution=false, σ=10, average=false, normalization=false, over=(-500, 500))
+
+	s = slice(spiketrains, landmarks, around)
+
+	if convolution
+		s = convolve(s, σ)
+	end
+
+	if normalization
+		s = slice(spiketrains, landmarks, over) |> x->convolve(x, σ) |> x->normalize(s, x)
+	end
+
+	if average
+		idx = map(length, landmarks) |> x->pushfirst!(x, 0) |> cumsum
+		idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
+
+		rows = abs.(around) |> sum
+		cols = (map(length, idx_list) .>= 1) |> sum
+		s_avg = zeros(rows, cols)
+		k = 1
+		for i = idx_list 
+			s_avg[:, k] = mean(s[:, i], dims=2)
+			k += 1
+		end
+		return dropnancols(s_avg)
+	end
+
+	dropnancols(s)
 end
-	
+
 """
 	slice(spiketrain, landmark, around)
 
@@ -29,8 +75,9 @@ Takes spike times and landmark times as input and returns sparse array or matrix
 The legal combinations of types for `spiketrain` and `landmark` are: `Array{Number, 1}, Number`, `Array{Array{Number, 2}}, `Array{Number, 2}`
 
 """
-function slice(spiketrain::T, landmark::Number, around::Tuple)::Array{Float64, 1} where {T <: Array{Float64,1}}
-	s = zeros(abs(floor(Int, around[1]))+abs(ceil(Int, around[2])))
+
+function slice(spiketrain::Array{Float64,1}, landmark::Number, around::Tuple)::Array{Float64, 1}
+	s = abs.(around) |> sum |> zeros
 
 	if isnan(landmark)
         return fill!(s, NaN)
@@ -42,9 +89,21 @@ function slice(spiketrain::T, landmark::Number, around::Tuple)::Array{Float64, 1
     s
 end
 
+function slice(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::Tuple)::Array{Float64, 2}
+	rows = abs.(around) |> sum
+	cols = size(landmarks, 1)
+	s = zeros(rows, cols)
 
-function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{Float64, 2} where {T <: Array{Float64,1}}
-    s = zeros(abs(around[1])+abs(around[2]), size(spiketrains, 1))
+    for (i, l) in enumerate(landmarks)
+        s[:, i] .= slice(spiketrain, l, around)
+    end
+    s
+end
+
+function slice(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Tuple)::Array{Float64, 2}
+	rows = abs.(around) |> sum
+	cols = size(spiketrains, 1)
+	s = zeros(rows, cols)
 
     for (i, (spiketrain, l)) in enumerate(zip(spiketrains, landmarks))
         s[:, i] .= slice(spiketrain, l, around)
@@ -52,8 +111,10 @@ function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{Flo
     s
 end
 
-function slice(spiketrains::T, landmarks::T, around::Tuple)::Array{Float64, 2} where {T <: Array{Array{Float64,1}}}
-	s = zeros(abs(around[1]) + abs(around[2]), sum(map(length, landmarks)))
+function slice(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::Tuple)::Array{Float64, 2}
+	rows = abs.(around) |> sum
+	cols = map(length, landmarks) |> sum
+	s = zeros(rows, cols)
 
 	i = 1
     for (spiketrain, lands) in zip(spiketrains, landmarks)
@@ -100,87 +161,4 @@ function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}
 	base_std = std(baseline, dims=1)
 
     (target .- base_mean) ./ base_std
-end
-
-function normalize(spiketrains::Array{T, 1}, landmarks::T, around::Tuple, over::Tuple, σ=10) where {T <: Union{Float64, Array{Float64, 1}}}
-    target = slice(spiketrains, landmarks, around) |> convolve # TODO use σ
-    baseline =  slice(spiketrains, landmarks, over) |> convolve
-    normalize(target, baseline)
-end
-
-function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Array{Float64,1},1}, around::Tuple, over::Tuple, average=true, σ=10)::Array{Float64, 2}
-    std_landmarks = standardize_landmarks(landmarks)
-    tmp = Array{Float64, 2}[]
-    for i = 1:size(std_landmarks, 1)
-        push!(tmp, normalize(spiketrains, std_landmarks[i, :], around, over, σ))
-    end
-    nanmean(tmp)
-end
-
-function normalize(spiketrains::Array{Array{Float64,1}, 1}, std_landmarks::Array{Float64, 2}, around::Tuple, over::Tuple, average=false, σ=10)
-	tmp = zeros(sum(abs.(around)), sum(std_landmarks .> 0.))
-	idx = 1
-	for i = 1:size(std_landmarks, 1)
-		for j = 1:size(std_landmarks, 2)
-			if std_landmarks[i, j] > 0.
-				tmp[:, idx] = normalize(spiketrains[j], std_landmarks[i, j], around, over, σ)
-				idx += 1
-			end
-		end
-    end
-	tmp
-end
-
-function skipnan(v::AbstractArray)
-    v[.!isnan.(v)]
-end
-
-function skipnancols(v::Array{Float64, 2})
-	nancols = isnan.(v[1, :])
-
-	new_idx = zeros(Int, sum(.!nancols))
-	k = 0
-	for i = 1:length(nancols)
-		if nancols[i] == false
-			new_idx[i-k] = i
-		else
-			k += 1
-		end
-	end
-	reshape(v[:, .!nancols], (size(v, 1), size(v, 2) - sum(nancols)))
-end
-
-function dropnancols(v::Array{Float64, 2})
-	nancols = isnan.(v[1, :])
-
-	new_idx = zeros(Int, sum(.!nancols))
-	k = 0
-	for i = 1:length(nancols)
-		if nancols[i] == false
-			new_idx[i-k] = i
-		else
-			k += 1
-		end
-	end
-	v[:, .!nancols], new_idx
-end
-
-
-function nanmean(v::Array{Array{Float64, N}, 1}) where N
-    m = zeros(size(v[1]))
-    for i in 1:size(v[1], 2)
-        tmp = Array{Float64, 1}[]
-        for matrix in v
-            if any(isnan.(matrix[:, i]))
-                continue
-            end
-            push!(tmp, matrix[:, i])
-        end
-        if length(tmp) == 0
-            m[:, i] .= NaN
-            continue
-        end
-        m[:, i] .= mean(tmp)
-    end
-    m
 end
