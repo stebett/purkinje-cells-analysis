@@ -12,6 +12,10 @@ include(srcdir("spike-tools.jl"))
 include(srcdir("data-tools.jl"))
 include(scriptsdir("load-data.jl"))
 
+# julia> for i = unique(get_neighbors(data, [1:593;], true))
+#        push!(slices, newSlice(data[i, "t"], data[i, "lift"]))
+#        end
+
 
 function correlate(n)
     C = cor(n)

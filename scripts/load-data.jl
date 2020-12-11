@@ -2,12 +2,11 @@ using DrWatson
 @quickactivate "ens"
 
 using Pkg
-Pkg.precompile()
 
 using Arrow
 using DataFrames
 
-data = Arrow.Table(datadir("data.arrow")) |> DataFrame;
+data = Arrow.Table(datadir("fixed-landmarks.arrow")) |> DataFrame;
 data.rat = convert(Array{String, 1}, data.rat);
 data.site = convert(Array{String, 1}, data.site);
 data.tetrode = convert(Array{String, 1}, data.tetrode);
