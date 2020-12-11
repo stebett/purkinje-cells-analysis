@@ -37,7 +37,7 @@ Select the spikes around a landmark and apply convolution and optionally averagi
 
 """
 
-function slice(spiketrains, landmarks; around=(-50, 50), convolution=false, σ=10, average=false, normalization=false, over=(-500, 500))
+function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false, normalization=false, over=[-500, 500])
 
 	s = slice_(spiketrains, landmarks, around)
 
@@ -53,7 +53,7 @@ function slice(spiketrains, landmarks; around=(-50, 50), convolution=false, σ=1
 		idx = map(length, landmarks) |> x->pushfirst!(x, 0) |> cumsum
 		idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
 
-		rows = abs.(around) |> sum
+		rows = diff(around)[1]
 		cols = (map(length, idx_list) .>= 1) |> sum
 		s_avg = zeros(rows, cols)
 		k = 1
@@ -67,8 +67,8 @@ function slice(spiketrains, landmarks; around=(-50, 50), convolution=false, σ=1
 end
 
 
-function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::Tuple)::Array{Float64, 1}
-	s = abs.(around) |> sum |> zeros
+function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
+	s = zeros(diff(around)[1])
 
 	if isnan(landmark)
         return fill!(s, NaN)
@@ -80,8 +80,8 @@ function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::Tuple)::
     s
 end
 
-function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::Tuple)::Array{Float64, 2}
-	rows = abs.(around) |> sum
+function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Float64, 2}
+	rows = diff(around)[1]
 	cols = size(landmarks, 1)
 	s = zeros(rows, cols)
 
@@ -91,8 +91,8 @@ function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, aroun
     s
 end
 
-function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Tuple)::Array{Float64, 2}
-	rows = abs.(around) |> sum
+function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Float64, 2}
+	rows = diff(around)[1]
 	cols = size(spiketrains, 1)
 	s = zeros(rows, cols)
 
@@ -102,8 +102,8 @@ function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float6
     s
 end
 
-function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::Tuple)::Array{Float64, 2}
-	rows = abs.(around) |> sum
+function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::AbstractVector)::Array{Float64, 2}
+	rows = diff(around)[1]
 	cols = map(length, landmarks) |> sum
 	s = zeros(rows, cols)
 
@@ -128,7 +128,7 @@ Apply a gaussian kernel with std=σ on a sliced data.
 """
 function convolve(s::Array{Float64, 1}, σ=10)::Array{Float64, 1}
     kernel = Kernel.gaussian((σ,))
-    imfilter(s, kernel, "circular")
+	imfilter(s, kernel, NoPad())
 end
 
 

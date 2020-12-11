@@ -9,48 +9,38 @@
 !_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
-Data	src/old-data-tools.jl	/^    function Data()$/;"	f	struct:Data
-Data	src/old-data-tools.jl	/^struct Data$/;"	s
-build_df	src/old-data-tools.jl	/^function build_df(d::OrderedDict)$/;"	f
-c	src/old-data-tools.jl	/^    c::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
+Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
 convolute	scripts/old-corr-coef.jl	/^function convolute(n::Array{Float64, 2}, around)$/;"	f
-convolve	src/spike-tools.jl	/^function convolve(slice::Array{Number, 1}, σ=10)::Array{Float64, 1}$/;"	f
-convolve	src/spike-tools.jl	/^function convolve(slices::Array{Number, 2}, σ=10)::Array{Float64, 2}$/;"	f
-correlate	scripts/corr-coef.jl	/^function correlate(n)$/;"	f
+convolve	src/spike-tools.jl	/^function convolve(s::Array{Float64, 1}, σ=10)::Array{Float64, 1}$/;"	f
+convolve	src/spike-tools.jl	/^function convolve(s::Array{Float64, 2}, σ=10)::Array{Float64, 2}$/;"	f
 correlate	scripts/old-corr-coef.jl	/^function correlate(convolutions)$/;"	f
-dict	src/old-data-tools.jl	/^    dict::OrderedDict$/;"	g	struct:Data
-discretize	src/old-spike-tools.jl	/^function discretize(slices::Array{Array{Array{Float64,1}, 1}, 1}, timelen, bin=50, step=1)$/;"	f
-discretize	src/old-spike-tools.jl	/^function discretize(slices::Array{Array{Float64, 1}, 1}, timelen, bin=50, step=1)$/;"	f
-discretize	src/old-spike-tools.jl	/^function discretize(slices::Array{Float64, 1}, timelen, bin=50, step=1)$/;"	f
-distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations)$/;"	f
+distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
 distant_correlation	scripts/old-corr-coef.jl	/^function distant_correlation(correlations)$/;"	f
-extract	src/old-data-tools.jl	/^function extract(attr::String, data::OrderedDict=data)$/;"	f
-g	src/old-data-tools.jl	/^    g::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
-get_neighbors	src/data-tools.jl	/^function get_neighbors(df::DataFrame, idx)$/;"	f
-get_neighbors	src/old-data-tools.jl	/^function get_neighbors(d::Data, idx)$/;"	f
-index!	src/old-data-tools.jl	/^function index!(d::Data)$/;"	f
-isnear	src/old-data-tools.jl	/^function isnear(d::Data, idx₁::Int, idx₂::Int)$/;"	f
-l	src/old-data-tools.jl	/^    l::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
-nanmean	src/spike-tools.jl	/^function nanmean(v::Array{Array{Float64, N}, 1}) where N$/;"	f
-neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations)$/;"	f
+dropnancols	src/utils.jl	/^function dropnancols(v::AbstractArray; idx=false)$/;"	f
+filterData	src/data-tools.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
+filterLandmarks	src/data-tools.jl	/^function filterLandmarks(df, index)$/;"	f
+find_broken_landmarks	src/data-tools.jl	/^function find_broken_landmarks(data)$/;"	f
+get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
+get_distant	src/data-tools.jl	/^function get_distant(df::DataFrame, idx, grouped=false)$/;"	f
+get_neighbors	src/data-tools.jl	/^function get_neighbors(df::DataFrame, idx, grouped=false)$/;"	f
+get_trial	_research/single-trials.jl	/^@inline function get_trial(df, n, i, after)$/;"	f
+get_trial	_research/single-trials.jl	/^function get_trial(df, n)$/;"	f
+get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
+interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
+jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
+neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 neighbor_correlation	scripts/old-corr-coef.jl	/^function neighbor_correlation(correlations)$/;"	f
-normalize	src/spike-tools.jl	/^function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Array{Float64,1},1}/;"	f
-normalize	src/spike-tools.jl	/^function normalize(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around:/;"	f
 normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,1}}$/;"	f
 normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}$/;"	f
-old_normalize	src/old-spike-tools.jl	/^function old_normalize(slices, landmarks; around=(-200, 200), over=(-5000, -3000), bin=50, step=/;"	f
-order	src/old-data-tools.jl	/^function order(data)$/;"	f
 psth	scripts/psth.jl	/^function psth(spikerates, threshold)$/;"	f
-retrieve	src/old-data-tools.jl	/^function retrieve(d::Data, idx::Int)$/;"	f
-skipnan	src/old-spike-tools.jl	/^function skipnan(v::AbstractArray)$/;"	f
-skipnan	src/spike-tools.jl	/^function skipnan(v::AbstractArray)$/;"	f
-slice	src/old-spike-tools.jl	/^function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{T, 1} where {T <: A/;"	f
-slice	src/old-spike-tools.jl	/^function slice(spiketrains::T, landmark::Number, around::Tuple)::T where {T <: Array{Float64,1}}$/;"	f
-slice	src/old-spike-tools.jl	/^function slice(spiketrains::T, landmarks::T, around::Tuple)::Array{T, 1} where {T <: Array{Array/;"	f
-slice	src/spike-tools.jl	/^function slice(spiketrain::T, landmark::Number, around::Tuple)::Array{Number, 1} where {T <: Arr/;"	f
-slice	src/spike-tools.jl	/^function slice(spiketrains::Array{T, 1}, landmarks::T, around::Tuple)::Array{Number, 2} where {T/;"	f
-standardize_landmarks	src/spike-tools.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
-t	src/old-data-tools.jl	/^    t::Array{Array{Float64, 1}, 1}$/;"	g	struct:Data
+pₙ	_research/information.jl	/^function pₙ(x)$/;"	f
+skipnan	src/utils.jl	/^function skipnan(v::AbstractArray)$/;"	f
+slice	src/spike-tools.jl	/^function slice(spiketrains, landmarks; around=(-50, 50), convolution=false, σ=10, average=false/;"	f
+slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::Tuple)::Array{Float64, 1/;"	f
+slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::Tuple)::Array/;"	f
+slice_	src/spike-tools.jl	/^function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Tu/;"	f
+slice_	src/spike-tools.jl	/^function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around/;"	f
+standardize_landmarks	src/data-tools.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
 test_discretize	test/tests-psth.jl	/^function test_discretize()$/;"	f
 test_normalize	test/tests-psth.jl	/^function test_normalize()$/;"	f
 test_slice	test/tests-psth.jl	/^function test_slice()$/;"	f

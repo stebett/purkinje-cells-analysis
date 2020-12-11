@@ -1,6 +1,8 @@
 using DrWatson
 @quickactivate "ens"
 
+using DataFrames
+
 
 
 """
@@ -81,7 +83,7 @@ function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Floa
     std_landmarks
 end
 	
-function get_neighbors(df::DataFrame, idx, grouped=false)
+function get_neighbors(df::DataFrame, idx=[1:593;]; grouped=false)
 	if typeof(idx) ≡ Int
 		index = [idx]
 	end
