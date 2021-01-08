@@ -3,6 +3,7 @@ using DrWatson
 
 using Statistics
 using ImageFiltering
+using OffsetArrays
 
 # TODO: add inbounds
 # TODO: some data (ex. idx=21) have landmarks that are taken at times larger than the spike times, how should I fix that?
@@ -41,8 +42,10 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 
 	s = slice_(spiketrains, landmarks, around)
 
-	if convolution
-		s = convolve(s, σ)
+	if convolution || normalization
+		pad = [around[1] - 2σ, around[2] + 2σ]
+		s .= convolve(slice_(spiketrains, landmarks, pad), σ)
+
 	end
 
 	if normalization
@@ -128,12 +131,12 @@ Apply a gaussian kernel with std=σ on a sliced data.
 """
 function convolve(s::Array{Float64, 1}, σ=10)::Array{Float64, 1}
     kernel = Kernel.gaussian((σ,))
-	imfilter(s, kernel, NoPad())
+	OffsetArrays.no_offset_view(imfilter(s, kernel, Inner()))
 end
 
 
 function convolve(s::Array{Float64, 2}, σ=10)::Array{Float64, 2}
-    c = zeros(size(s))
+	c = zeros(size(s, 1) - 4σ, size(s, 2))
     for i = 1:size(s, 2)
         c[:, i] .= convolve(s[:, i], σ)
     end

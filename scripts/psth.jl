@@ -5,28 +5,18 @@ using Statistics
 using Plots; gr()
 
 include(srcdir("spike-tools.jl"))
-include(datadir("old-load-data.jl"))
+include(srcdir("data-tools.jl"))
+include(scriptsdir("load-data.jl"))
 
-function psth(spikerates, threshold)
-    idx = falses(size(spikerates, 2))
+low, high = -0.7, 1.6
 
-    c = size(spikerates, 1) ÷ 2
-    high = spikerates[c-200:c+200, :] .> threshold
-    low = spikerates[c-200:c+200, :] .< -threshold
+n = slice(data.t, data.lift, convolution=true, normalization=true, average=true, around=[-500, 500], over=[-5000, 5000])
 
-    for i in 1:size(spikerates, 2)
-        if any(high[:, i]) | any(low[:, i])
-            idx[i] = true
-        end
-    end
+idx = active_neurons(n, low, high)
 
-    active = spikerates[:, idx]
-    x = -size(active, 1) ÷ 2:size(active, 1) ÷ 2 - 1
-    y = 1:sum(idx)
-    heatmap(x, y, active', clim=(-0.7, 1.6), size=(800, 600), colorbar_title="Normalized firing rate")
-    xaxis!("Time (ms)", (x[1], x[end]+1), [x[1], 0, x[end]+1], showaxis = false)
-    yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
-end
-
-spikerates = old_normalize(data.t, data.lift)
-psth(spikerates, 2.5)
+active = n[:, idx]
+x = -size(active, 1) ÷ 2:size(active, 1) ÷ 2 - 1
+y = 1:sum(idx)
+heatmap(x, y, active', clim=(low, high), size=(800, 600), colorbar_title="Normalized firing rate")
+xaxis!("Time (ms)", (x[1], x[end]+1), [x[1], 0, x[end]+1], showaxis = false)
+yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
