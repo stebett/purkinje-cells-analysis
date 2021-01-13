@@ -3,8 +3,9 @@ using DrWatson
 
 include(srcdir("spike-tools.jl"))
 include(srcdir("data-tools.jl"))
-include(scriptsdir("load-data.jl"))
 include(srcdir("utils.jl"))
+
+include(scriptsdir("load-data.jl"))
 
 using MultivariateStats
 using Plots

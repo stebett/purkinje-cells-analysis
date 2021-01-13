@@ -1,0 +1,31 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage[paper=a4paper,margin=1in]{geometry}
+\usepackage{apacite}
+\usepackage{xr}
+% \externaldocument{appendix}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\onehalfspacing
+
+\begin{document}
+
+\include{cover}
+\tableofcontents
+
+\pagestyle{plain}
+\include{introduction}
+\include{materials}
+\include{results}
+\include{conclusions}
+% \appendix
+% \include{appendix}
+% \bibliographystyle{apacite}
+% \bibliography{references}
+
+\end{document}
