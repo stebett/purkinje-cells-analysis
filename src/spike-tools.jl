@@ -69,6 +69,52 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 	s
 end
 
+function cut(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
+    idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
+	return idxs .- landmark .- around[1]
+end
+
+function cut(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Array{Float64, 1}, 1}
+
+	s = Array{Float64, 1}[]
+
+    for l in landmarks
+		push!(s, cut(spiketrain, l, around))
+    end
+    s
+end
+
+function cut(spiketrains::Array{Array{Float64,1}, 1}, landmark::Number, around::AbstractVector)::Array{Array{Float64, 1}, 1}
+	s = Array{Float64, 1}[]
+
+    for st in spiketrains
+		push!(s, cut(st, landmark, around))
+    end
+    s
+end
+
+function cut(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Array{Float64, 1}, 1}
+	s = Array{Float64, 1}[]
+
+    for (spiketrain, l) in zip(spiketrains, landmarks)
+		push!(s, cut(spiketrain, l, around))
+    end
+    s
+end
+
+function cut(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::AbstractVector)::Array{Array{Float64, 1}, 1}
+
+	s = Array{Float64, 1}[]
+
+	i = 1
+    for (spiketrain, lands) in zip(spiketrains, landmarks)
+		for l in lands 
+			push!(s, cut(spiketrain, l, around))
+		end
+    end
+    s
+end
+
 
 function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
 	s = zeros(diff(around)[1])
