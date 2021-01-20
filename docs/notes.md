@@ -33,5 +33,8 @@
 
 # TODO
 
-- [ ] Method to modify dataset so that we have single trials with info about rat and site 
-- [ ] Gaussian-process factor analysis
+- [x] Method to modify dataset so that we have single trials with info about rat and site 
+- [x] Gaussian-process factor analysis
+- [ ] Predict speed from neurons
+- [ ] Unitary analysis
+- [ ] lfads

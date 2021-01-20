@@ -30,17 +30,19 @@ function padder(n, trials)
 	lpad(string(n), max_length , '0')
 end
 
-rm("data/numpy", recursive=true)
-mkdir("data/numpy")
+
+dirname = "couples"
+rm("data/" * dirname, recursive=true)
+mkdir("data/" * dirname)
 
 neigh = unique(get_neighbors(data, grouped=true))
-trials = extract_trials(neigh, 5)
+trials = extract_trials(neigh, 2)
 for (i, tr) in enumerate(trials)
 	for (j, t) in enumerate(tr)
 		lm="lift"
 		trial = padder(i, trials)
 		n = padder(j, trials)
-		npzwrite(datadir("numpy", savename(lm, @dict(trial, n), "npy", sort=false)), t)
+		npzwrite(datadir(dirname, savename(lm, @dict(trial, n), "npy", sort=false)), t)
 	end
 end
 
