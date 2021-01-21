@@ -19,7 +19,7 @@ neurons_idx = hcat(distant, ones(593)) |> DataFrame |> nonunique |> Array{Int, 1
 neuron_list = abs.(neurons_idx .- 1) .* [1:593;]
 neuron_list = neuron_list[neuron_list .> 0]
 
-neigh_list = unique(get_neighbors(data, [1:593;], true))
+neigh_list = unique(get_neighbors(data, [1:593;], grouped=true))
 dist_list = unique(distant)
 
 function neighbor_correlation(correlations, neigh_list)
@@ -51,9 +51,18 @@ function distant_correlation(correlations, dist_list, neuron_list)
     mean(skipnan(total_mean)) ± std(skipnan(total_mean))
 end
 
-r = (-500, 500)
+function correlate(convolutions)
+    C = cor(convolutions)
+    replace!(C, Inf=>0.)
+    replace!(C, NaN=>0.)
+    replace!(C, 1.0=>0.)
+    C
+end
+
+r = [-500, 500]
 n = slice(data.t, data.cover, around=r, convolution=true, normalization=true, over=r, average=true)
 
+correlations = correlate(n)
 cover_neigh = neighbor_correlation(correlations, neigh_list)
 cover_dist = distant_correlation(correlations, dist_list, neuron_list)
 
@@ -72,19 +81,16 @@ lift_dist = distant_correlation(correlations, dist_list, neuron_list)
 
 
 l = @layout [ [ a; b; c] d ] 
-findall(.90 .< correlations .< .91)
-p1 = plot(-500:499, n[:, [396, 528]], lab=["neuron 1" "neuron 2"], legend=:topleft)
+p1 = plot(-500:499, n[:, [587, 588]], lab=["neuron 1" "neuron 2"], legend=:topleft, lw=1.5)
 p1 = title!("Pair of highly correlated neurons")
 p3 = xaxis!("", (-500, 500), [0])
 
-findall(.50 .< correlations .< .5001)
-p2 = plot(-500:499, n[:, [571, 54]], lab=["neuron 1" "neuron 2"], legend=false)
+p2 = plot(-500:499, n[:, [590, 591]], lab=["neuron 1" "neuron 2"], legend=false, lw=1.5)
 p2 = title!("Pair of mildly correlated neurons")
 p3 = xaxis!("Time (ms)", (-500, 500), [0])
 p2 = yaxis!("Normalized firing rate")
 
-findall(.05 .< correlations .< .05001)
-p3 = plot(-500:499, n[:, [563, 591]], lab=["neuron 1" "neuron 2"], legend=false)
+p3 = plot(-500:499, n[:, [2, 3]], lab=["neuron 1" "neuron 2"], legend=false, lw=1.5)
 p3 = title!("Pair of uncorrelated neurons")
 p3 = xaxis!("", (-500, 500), [-500, 0, 500])
 
@@ -93,4 +99,5 @@ p4 = groupedbar(xs, [[lift_neigh.val, cover_neigh.val, grasp_neigh.val] [lift_di
 p4 = yaxis!("Correlation coefficient")
 p4 = title!("Average time course of firing rate")
 
-plot(p1, p2, p3, p4, layout=l, size=(800,800))
+plot(p1, p2, p3, p4, layout=l, size=(800,700))
+savefig(plotsdir("corr-coef.pdf"))

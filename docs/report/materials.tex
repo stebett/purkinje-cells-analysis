@@ -22,12 +22,28 @@ The most basic operation I needed to apply on the code is convolution, either re
 \myparagraph{Validation} 
 After I built the preprocessing steps, I validated them on the previous analyses already performed, the first being Peri-Stimulus Time Histogram (PSTH). PSTH shows graphically the neurons that are more active when the subject is stimulated, or in the case of this experiment, when it spontanously moves his arm. It is useful to assest the actual correlation between the action and the neural activity, which is usually normalized, so that one can properly distinguish abnormal activity without being confused by neurons that are naturally more active than others.
 
-todo precise process of psth
-[inster picture of psth here]
+The spiketrains used to produce the PSTH come from the recordings of all neurons 5 seconds before and after the \emph{lift} landmark. They have been averaged by trials, and convolved with a $\sigma=10$ gaussian kernel, and normalized using the firing rates between 5 and 3 seconds before the landmark. To give an example of the framework built to deal on the data, this is the code used to generate the data:
+\begin{lstlisting}[frame=single]
+spiketrains = slice(data.t, data.lift, around=[-5000, 5000], 
+		    convolution=true, normalization=true, 
+		    average=true, over=[-5000, -2000])
+\end{lstlisting}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{../../plots/psth.pdf}
+	\caption{Normalized peri-event histogram}
+	\label{fig:psth}
+\end{figure}
+
 
 After PSTH, I performed one more analysis, to be also validate that convolution was working properly. It consisted in calculating the correlation coefficient of the convoluted signals of neighbor vs distant neurons around landmarks, and you can see the results in picture 3.
 
-[insert picture of corr coeff here]
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{../../plots/corr-coef.pdf}
+	\caption{Firing time course around lift for pairs of neighbouring cells and correlation of average time course firing rate of neighbour vs distant nerons}
+	\label{fig:corr-coeff}
+\end{figure}
 
 \myparagraph{Dynamics} 
 The analyses that I performed are mostly focused on characterizing the dynamics shown by neural signals while the animal is performing a task. 
@@ -41,9 +57,14 @@ There are many possible approaches to tackle the study of dynamics, and I decide
 \myparagraph{PCA} 
 To visualise and interpret neural dynamics, dimensionality reduction is needed, so the first approach that has been tried here is Principal Component Analysis (PCA).
 
-To perform PCA, the data has been first convoluted with a gaussian kernel with $\sigma=todo$, and then it has been fitted and transformed from PCA, obtaining this:
+To perform PCA, the data has been first convoluted with a gaussian kernel with $\sigma=10$, and then it has been fitted and transformed from PCA, obtaining this:
 
-[pca pictures]
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{../../plots/PCA-100.pdf}
+	\caption{Trajectory of the 2 principal components of most active spike trains 50ms before and after lift}
+	\label{fig:pca-100}
+\end{figure}
 
 \myparagraph{Gaussian-Process Factor Analysis} 
 

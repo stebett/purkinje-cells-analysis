@@ -22,10 +22,15 @@ function sort_active(n)
 	ordered_n = n[:, p]
 end
 
-ordered_n = sort_active(n)
 
-x = -size(ordered_n, 1) ÷ 2:size(ordered_n, 1) ÷ 2 - 1
-y = 1:size(ordered_n, 2)
-heatmap(x, y, active', clim=(low, high), size=(800, 600), colorbar_title="Normalized firing rate")
-xaxis!("Time (ms)", (x[1], x[end]+1), [x[1], 0, x[end]+1], showaxis = false)
-yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
+function plot_psth(n, low, high)
+	ordered_n = sort_active(n)
+	x = -size(ordered_n, 1) ÷ 2:size(ordered_n, 1) ÷ 2 - 1
+	y = 1:size(ordered_n, 2)
+	heatmap(x, y, active', clim=(low, high), size=(800, 600), colorbar_title="Normalized firing rate")
+	xaxis!("Time (ms)", (x[1], x[end]+1), [x[1], 0, x[end]+1], showaxis = true)
+	yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
+end
+
+fig = plot_psth(n, low, high)
+savefig(fig, plotsdir("psth.pdf"))

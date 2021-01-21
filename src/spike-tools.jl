@@ -38,12 +38,9 @@ Select the spikes around a landmark and apply convolution and optionally averagi
 
 """
 
-function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false, normalization=false, over=[-500, 500], bin=1)
+function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false, normalization=false, over=[-500, 500])
 
 	s = slice_(spiketrains, landmarks, around)
-
-	if bin > 1
-		s
 
 
 	if convolution || normalization
