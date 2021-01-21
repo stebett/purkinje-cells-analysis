@@ -17,17 +17,17 @@ function sort_active(n, thr=0.5)
 	n[:, high_rates[:]]
 end
 
-n = slice(data.t, data.lift, around=[-1000, 1000], convolution=true, normalization=true, average=false)
+n = slice(data.t, data.lift, around=[-50, 5000], convolution=true, normalization=true, average=false)
 n = dropnancols(n)
-N = sort_active(n)
+N = sort_active(n, 1.5)
 
-gr()
+plotlyjs()
 M = fit(PCA, N, maxoutdim=2)
+# M = fit(PPCA, N, maxoutdim=2)
 scatter(M.proj[:, 1], M.proj[:, 2], zcolor=[1:size(M.proj, 1);], colorbar_title="Time bin", xaxis="First component", yaxis="Second component", colorbar=true, legend=false, title="Principal components for spike times around lift", size=(800,600), ms=8)
 
 savefig(plotsdir("PCA-100.pdf"))
 
-plotlyjs()
 M = fit(PCA, N, maxoutdim=3)
 
 scatter(M.proj[:, 1], M.proj[:, 2], M.proj[:, 3], zcolor=[1:size(M.proj, 1);], colorbar_title="Time bin", xaxis="First component", yaxis="Second component", zaxis="Third component", colorbar=true, legend=false, title="Principal components for spike times around lift", size =(800, 800))

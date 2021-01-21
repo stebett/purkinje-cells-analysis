@@ -8,12 +8,12 @@ include(srcdir("data-tools.jl"))
 include(scriptsdir("load-data.jl"))
 
 # Remember to write and plot on the report the bad data
-function extract_trials(neigh, min_length)
+function extract_trials(neigh, min_length, around=[-1000, 1000])
 	trials = Array{Array{Float64, 1}, 1}[]
 	for n in neigh
 		if length(n) >= min_length
 			for l in data[n[1], "lift"][1]
-				cuts = cut(data[n, "t"], l, [-1000, 1000])
+				cuts = cut(data[n, "t"], l, around)
 
 				filter!(x -> length(x) != 0, cuts)
 				if length(cuts) >= 3
@@ -36,7 +36,7 @@ rm("data/" * dirname, recursive=true)
 mkdir("data/" * dirname)
 
 neigh = unique(get_neighbors(data, grouped=true))
-trials = extract_trials(neigh, 2)
+trials = extract_trials(neigh, 4, [-50, 50])
 for (i, tr) in enumerate(trials)
 	for (j, t) in enumerate(tr)
 		lm="lift"
