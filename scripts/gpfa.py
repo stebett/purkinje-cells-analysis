@@ -4,20 +4,98 @@ import numpy as np
 import glob
 import quantities as pq
 import matplotlib.pyplot as plt
+import os
 
 from elephant.gpfa import GPFA
 
 spiketrains = []
 
-filelist = glob.glob('data/numpy/*.npy')
+filelist = glob.glob('data/couples/*.npy')
 dictionary = {}
 for x in filelist:
-    key = x[:24] 
+    key = x[:26] 
     group = dictionary.get(key,[])
     group.append(neo.SpikeTrain(np.load(x), t_stop=2000., units="ms"))
     dictionary[key] = group
 
 spiketrains = list(dictionary.values())
+
+
+X = spiketrains[:32]
+y = spiketrains[32:]
+
+bin_size = 1 * pq.ms
+latent_dimensionality = 2
+gpfa_2dim = GPFA(bin_size=bin_size, x_dim=latent_dimensionality)
+
+gpfa_2dim.fit(X)
+trajectories = gpfa_2dim.transform(y)
+
+
+for i in os.listdir("data/trajectories"):
+    os.remove("data/trajectories/"+i)
+
+for i, t in enumerate(trajectories):
+    for x in range(1, 3):
+        np.save(f"data/trajectories/traj_{i+1}_{x}", t[x-1])
+
+
+
+
+
+
+
+
+
+
+
+
+f, ax2 = plt.subplots(1, 1, figsize=(10, 10))
+
+linewidth_single_trial = 0.5
+color_single_trial = 'C0'
+alpha_single_trial = 0.5
+
+linewidth_trial_average = 2
+color_trial_average = 'C1'
+
+ax2.set_title('Latent dynamics extracted by GPFA')
+ax2.set_xlabel('Dim 1')
+ax2.set_ylabel('Dim 2')
+ax2.set_aspect(1)
+# single trial trajectories
+for single_trial_trajectory in trajectories:
+    ax2.plot(single_trial_trajectory[0], single_trial_trajectory[1], '-', lw=linewidth_single_trial, c=color_single_trial, alpha=alpha_single_trial)
+# trial averaged trajectory
+# average_trajectory = np.mean(trajectories, axis=0)
+# ax2.plot(average_trajectory[0], average_trajectory[1], '-', lw=linewidth_trial_average, c=color_trial_average, label='Trial averaged trajectory')
+# ax2.legend()
+
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 X = spiketrains[:14]
 y = spiketrains[14:]

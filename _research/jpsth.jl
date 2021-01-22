@@ -10,8 +10,8 @@ gr()
 
 function jpsth(idx1, idx2)
 	N = 5000
-	n2 = slice(data.t[idx1], data.lift[idx1][1], (-N÷2, N÷2))
-	n3 = slice(data.t[idx2], data.lift[idx2][1], (-N÷2, N÷2))
+	n2 = slice(data.t[idx1], data.lift[idx1][1], around=[-N÷2, N÷2])
+	n3 = slice(data.t[idx2], data.lift[idx2][1], around=[-N÷2, N÷2])
 
 	n2r = [sum(n2[i:i+10]) for i = 1:10:length(n2)-10]
 	n3r = [sum(n3[i:i+10]) for i = 1:10:length(n3)-10]

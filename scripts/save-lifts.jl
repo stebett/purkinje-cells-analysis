@@ -16,8 +16,8 @@ function extract_trials(neigh, min_length, around=[-1000, 1000])
 				cuts = cut(data[n, "t"], l, around)
 
 				filter!(x -> length(x) != 0, cuts)
-				if length(cuts) >= 3
-					push!(trials, cuts[1:3])
+				if length(cuts) >= min_length
+					push!(trials, cuts[1:min_length])
 				end
 			end
 		end
@@ -32,11 +32,11 @@ end
 
 
 dirname = "couples"
-rm("data/" * dirname, recursive=true)
-mkdir("data/" * dirname)
+rm(datadir(dirname), recursive=true)
+mkdir(datadir(dirname))
 
 neigh = unique(get_neighbors(data, grouped=true))
-trials = extract_trials(neigh, 4, [-50, 50])
+trials = extract_trials(neigh, 3, [-30, 30])
 for (i, tr) in enumerate(trials)
 	for (j, t) in enumerate(tr)
 		lm="lift"

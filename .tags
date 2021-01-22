@@ -10,13 +10,22 @@
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
+active_neurons	src/data-tools.jl	/^function active_neurons(n, low=-0.5, high=1.)$/;"	f
 convolute	scripts/old-corr-coef.jl	/^function convolute(n::Array{Float64, 2}, around)$/;"	f
 convolve	src/spike-tools.jl	/^function convolve(s::Array{Float64, 1}, σ=10)::Array{Float64, 1}$/;"	f
 convolve	src/spike-tools.jl	/^function convolve(s::Array{Float64, 2}, σ=10)::Array{Float64, 2}$/;"	f
+correlate	scripts/corr-coef.jl	/^function correlate(convolutions)$/;"	f
 correlate	scripts/old-corr-coef.jl	/^function correlate(convolutions)$/;"	f
+cut	src/spike-tools.jl	/^function cut(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Floa/;"	f
+cut	src/spike-tools.jl	/^function cut(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector):/;"	f
+cut	src/spike-tools.jl	/^function cut(spiketrains::Array{Array{Float64,1}, 1}, landmark::Number, around::AbstractVector):/;"	f
+cut	src/spike-tools.jl	/^function cut(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Abstr/;"	f
+cut	src/spike-tools.jl	/^function cut(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::A/;"	f
 distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
 distant_correlation	scripts/old-corr-coef.jl	/^function distant_correlation(correlations)$/;"	f
+dropinfcols	src/utils.jl	/^function dropinfcols(v::AbstractArray; idx=false)$/;"	f
 dropnancols	src/utils.jl	/^function dropnancols(v::AbstractArray; idx=false)$/;"	f
+extract_trials	scripts/save-lifts.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
 filterData	src/data-tools.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
 filterLandmarks	src/data-tools.jl	/^function filterLandmarks(df, index)$/;"	f
 find_broken_landmarks	src/data-tools.jl	/^function find_broken_landmarks(data)$/;"	f
@@ -32,15 +41,19 @@ neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correl
 neighbor_correlation	scripts/old-corr-coef.jl	/^function neighbor_correlation(correlations)$/;"	f
 normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,1}}$/;"	f
 normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}$/;"	f
-psth	scripts/psth.jl	/^function psth(spikerates, threshold)$/;"	f
+padder	scripts/save-lifts.jl	/^function padder(n, trials)$/;"	f
+plot_psth	scripts/psth.jl	/^function plot_psth(n, low, high)$/;"	f
 pₙ	_research/information.jl	/^function pₙ(x)$/;"	f
 scatter_dynamics	scripts/pca.jl	/^function scatter_dynamics(around)$/;"	f
+single_trials	src/data-tools.jl	/^function single_trials(df, landmark::String)$/;"	f
 skipnan	src/utils.jl	/^function skipnan(v::AbstractArray)$/;"	f
 slice	src/spike-tools.jl	/^function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{F/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVecto/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Ab/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around/;"	f
+sort_active	scripts/psth.jl	/^function sort_active(n)$/;"	f
+sort_active	scripts/specific-pca.jl	/^function sort_active(n, thr=0.5)$/;"	f
 standardize_landmarks	src/data-tools.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
 test_discretize	test/tests-psth.jl	/^function test_discretize()$/;"	f
 test_normalize	test/tests-psth.jl	/^function test_normalize()$/;"	f

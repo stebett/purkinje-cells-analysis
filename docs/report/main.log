@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2021.1.8)  21 JAN 2021 01:54
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2021.1.8)  22 JAN 2021 01:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -208,7 +208,11 @@ Package: xr 2020-05-10 v5.06 eXternal References (DPC)
 File: l3backend-pdftex.def 2020-09-24 L3 backend support: PDF output (pdfTeX)
 \l__kernel_color_stack_int=\count275
 \l__pdf_internal_box=\box50
-) (./main.aux (./cover.aux) (./introduction.aux) (./materials.aux) (./results.aux) (./conclusions.aux))
+) (./main.aux (./cover.aux) (./introduction.aux) (./materials.aux) (./results.aux
+
+LaTeX Warning: Label `fig:pca-500-before-lift' multiply defined.
+
+) (./conclusions.aux))
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
 LaTeX Font Info:    ... okay on input line 17.
 LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
@@ -317,15 +321,15 @@ No file cover.tex.
 
 ]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 25.
+(Font)              <12> on input line 29.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 25.
+(Font)              <8> on input line 29.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 25.
+(Font)              <6> on input line 29.
 <../../plots/psth.pdf, id=44, 803.0pt x 602.25pt>
 File: ../../plots/psth.pdf Graphic file (type pdf)
 <use ../../plots/psth.pdf>
-Package pdftex.def Info: ../../plots/psth.pdf  used on input line 33.
+Package pdftex.def Info: ../../plots/psth.pdf  used on input line 37.
 (pdftex.def)             Requested size: 401.49902pt x 301.12425pt.
 
 
@@ -334,51 +338,108 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <../../plots/corr-coef.pdf, id=45, 803.0pt x 702.625pt>
 File: ../../plots/corr-coef.pdf Graphic file (type pdf)
 <use ../../plots/corr-coef.pdf>
-Package pdftex.def Info: ../../plots/corr-coef.pdf  used on input line 43.
+Package pdftex.def Info: ../../plots/corr-coef.pdf  used on input line 47.
 (pdftex.def)             Requested size: 401.49902pt x 351.31163pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[4]
-<../../plots/PCA-100.pdf, id=60, 803.0pt x 602.25pt>
-File: ../../plots/PCA-100.pdf Graphic file (type pdf)
-<use ../../plots/PCA-100.pdf>
-Package pdftex.def Info: ../../plots/PCA-100.pdf  used on input line 64.
-(pdftex.def)             Requested size: 401.49902pt x 301.12425pt.
+[4] [5 <../../plots/psth.pdf>]) [6 <../../plots/corr-coef.pdf>] (./results.tex
+Underfull \hbox (badness 10000) in paragraph at lines 7--8
+
+ []
+
+<../../plots/pca-500-lift.pdf, id=77, 527.08919pt x 376.52669pt>
+File: ../../plots/pca-500-lift.pdf Graphic file (type pdf)
+<use ../../plots/pca-500-lift.pdf>
+Package pdftex.def Info: ../../plots/pca-500-lift.pdf  used on input line 12.
+(pdftex.def)             Requested size: 421.67192pt x 301.22174pt.
+./results.tex:20: Double subscript.
+l.20 ...re x] shows the pattern plot between $t_l_
+                                                  i_f_t-1.5s$ and $t_l_i_f_t...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+./results.tex:20: Double subscript.
+l.20 ... x] shows the pattern plot between $t_l_i_
+                                                  f_t-1.5s$ and $t_l_i_f_t-1...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+./results.tex:20: Double subscript.
+l.20 ...] shows the pattern plot between $t_l_i_f_
+                                                  t-1.5s$ and $t_l_i_f_t-1.0s$
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+./results.tex:20: Double subscript.
+l.20 ...rn plot between $t_l_i_f_t-1.5s$ and $t_l_
+                                                  i_f_t-1.0s$
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+./results.tex:20: Double subscript.
+l.20 ... plot between $t_l_i_f_t-1.5s$ and $t_l_i_
+                                                  f_t-1.0s$
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+./results.tex:20: Double subscript.
+l.20 ...lot between $t_l_i_f_t-1.5s$ and $t_l_i_f_
+                                                  t-1.0s$
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+<../../plots/pca-500-before-lift.pdf, id=78, 527.08919pt x 376.52669pt>
+File: ../../plots/pca-500-before-lift.pdf Graphic file (type pdf)
+<use ../../plots/pca-500-before-lift.pdf>
+Package pdftex.def Info: ../../plots/pca-500-before-lift.pdf  used on input line 23.
+(pdftex.def)             Requested size: 421.67192pt x 301.22174pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[7
+
+
+
+ <../../plots/pca-500-lift.pdf>]
+<../../plots/pca-speed.pdf, id=105, 527.08919pt x 376.52669pt>
+File: ../../plots/pca-speed.pdf Graphic file (type pdf)
+<use ../../plots/pca-speed.pdf>
+Package pdftex.def Info: ../../plots/pca-speed.pdf  used on input line 34.
+(pdftex.def)             Requested size: 421.67192pt x 301.22174pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--70
+)
+Underfull \hbox (badness 10000) in paragraph at lines 39--25
 
  []
 
-) [5 <../../plots/psth.pdf>] [6 <../../plots/corr-coef.pdf>] [7 <../../plots/PCA-100.pdf>] (./results.tex) [8
+[8 <../../plots/pca-500-before-lift.pdf>] [9 <../../plots/pca-speed.pdf>] (./conclusions.tex
+Underfull \hbox (badness 10000) in paragraph at lines 3--4
 
+ []
 
-
-] (./conclusions.tex) [9
+) [10
 
 
 
 ] (./main.aux (./cover.aux) (./introduction.aux) (./materials.aux) (./results.aux) (./conclusions.aux))
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 3C75E541EBCAB2DC9730A84815D0BC4F;195.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 8270 strings out of 479383
- 121085 string characters out of 5875831
- 444151 words of memory out of 5000000
- 25201 multiletter control sequences out of 15000+600000
+ 8288 strings out of 479383
+ 121606 string characters out of 5875831
+ 444430 words of memory out of 5000000
+ 25212 multiletter control sequences out of 15000+600000
  410272 words of font info for 42 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 66i,6n,72p,1182b,1054s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on main.pdf (9 pages, 8154012 bytes).
+ 66i,7n,72p,1182b,1054s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
+Output written on main.pdf (10 pages, 8357468 bytes).
 PDF statistics:
- 129 PDF objects out of 1000 (max. 8388607)
- 107 compressed objects within 2 object streams
- 29 named destinations out of 1000 (max. 500000)
- 48 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 188 PDF objects out of 1000 (max. 8388607)
+ 149 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
+ 58 words of extra memory for PDF output out of 10000 (max. 10000000)
 

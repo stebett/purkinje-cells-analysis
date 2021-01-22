@@ -40,3 +40,23 @@ function dropnancols(v::AbstractArray; idx=false)
 	end
 	v[:, .!nancols]
 end
+
+
+function dropoutliercols(v::AbstractArray, value=5; idx=false)
+	nancols = sum(v .> value, dims=1) .!= 0
+	nancols = nancols[:]
+
+	new_idx = zeros(Int, sum(.!nancols))
+	k = 0
+	for i = 1:length(nancols)
+		if nancols[i] == false
+			new_idx[i-k] = i
+		else
+			k += 1
+		end
+	end
+	if idx 
+		return v[:, .!nancols], new_idx
+	end
+	v[:, .!nancols]
+end

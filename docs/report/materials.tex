@@ -1,5 +1,9 @@
 \section{Materials}
 
+paradigm is ok here, need to extend it.
+From validation should be moved to results.
+Should add something on psth, jpsth, correlation of time course, pca, gpfa, unitary event analysis
+
 \myparagraph{Paradigm} 
 The data comes from todo rats, trained on a grasping task that they performed while freely moving, connected to a multi-electrode device, specifically one or more tetrodes (todo which part of the cerebellum), while a high frequency camera recorded the movements, to allow marking landmarks, specifically \emph{lift}, the moment where the rat's limb was raised from the ground, \emph{cover}, when the limb was over the target, and \emph{grasp}, when the rat first touches the target. The camera frame rate was todo, so we have an uncertancy of todo on the exact time location of the landmarks.
 
@@ -54,21 +58,10 @@ Altough Computational Neuroscience research is undoubtely very useful for advanc
 
 There are many possible approaches to tackle the study of dynamics, and I decided to start from the most simple ones and then move towards more complex methods.
 
-\myparagraph{PCA} 
-To visualise and interpret neural dynamics, dimensionality reduction is needed, so the first approach that has been tried here is Principal Component Analysis (PCA).
+\myparagraph{Dimensionality reduction}
+Since the advent of multi-electrode recordings and optical imagining has begun, neuroscience has started looking for proper method to analyse the huge amount of data resulting from state of the art recording methods.
+One key approach has been dimensionality reduction techniques, which are extensively use to explore neural data and analyse neural dynamics through the observation of trajectories.
+The most simple dymensionality reduction technique is Principal Component Analysis (PCA) , which has the advantage of being very interpretable, since it only applies linear transformation to the data to find the projection in a lower dimensional plane which maximize the variance in the data.
 
-To perform PCA, the data has been first convoluted with a gaussian kernel with $\sigma=10$, and then it has been fitted and transformed from PCA, obtaining this:
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.5]{../../plots/PCA-100.pdf}
-	\caption{Trajectory of the 2 principal components of most active spike trains 50ms before and after lift}
-	\label{fig:pca-100}
-\end{figure}
-
-\myparagraph{Gaussian-Process Factor Analysis} 
-
-
-
-
+Unfortunately, PCA also has disadvantages, for example it is very easily confounded by a number of factors - for example very active neurons - so it is good pratice to average trials and normalize the data.
 
