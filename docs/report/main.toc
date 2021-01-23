@@ -2,12 +2,15 @@
 \contentsline {section}{\numberline {2}Materials}{3}{section.2}%
 \contentsline {paragraph}{Paradigm}{3}{section*.2}%
 \contentsline {paragraph}{Environment choice}{3}{section*.3}%
-\contentsline {paragraph}{Basic operations}{4}{section*.4}%
-\contentsline {paragraph}{Validation}{4}{section*.5}%
+\contentsline {paragraph}{Convolution}{4}{section*.4}%
+\contentsline {paragraph}{Peri-Stimulus Time Histogram}{4}{section*.5}%
 \contentsline {paragraph}{Dynamics}{4}{section*.6}%
-\contentsline {paragraph}{Dimensionality reduction}{5}{section*.7}%
-\contentsline {section}{\numberline {3}Results}{7}{section.3}%
-\contentsline {paragraph}{PCA}{7}{section*.8}%
-\contentsline {paragraph}{Gaussian-Process Factor Analysis}{8}{section*.9}%
-\contentsline {section}{\numberline {4}Conclusions and future work}{10}{section.4}%
-\contentsline {paragraph}{LFADS}{10}{section*.10}%
+\contentsline {paragraph}{Dimensionality reduction}{4}{section*.7}%
+\contentsline {paragraph}{PCA}{5}{section*.8}%
+\contentsline {paragraph}{GPFA}{5}{section*.9}%
+\contentsline {section}{\numberline {3}Results}{6}{section.3}%
+\contentsline {paragraph}{Validation}{6}{section*.10}%
+\contentsline {paragraph}{PCA}{7}{section*.11}%
+\contentsline {paragraph}{Gaussian-Process Factor Analysis}{9}{section*.12}%
+\contentsline {section}{\numberline {4}Conclusions and future work}{11}{section.4}%
+\contentsline {section}{References}{12}{section*.13}%

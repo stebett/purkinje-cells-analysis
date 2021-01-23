@@ -13,7 +13,7 @@ spiketrains = []
 filelist = glob.glob('data/couples/*.npy')
 dictionary = {}
 for x in filelist:
-    key = x[:26] 
+    key = x[:28] 
     group = dictionary.get(key,[])
     group.append(neo.SpikeTrain(np.load(x), t_stop=2000., units="ms"))
     dictionary[key] = group
@@ -21,8 +21,8 @@ for x in filelist:
 spiketrains = list(dictionary.values())
 
 
-X = spiketrains[:32]
-y = spiketrains[32:]
+X = spiketrains[:760]
+y = spiketrains[760:]
 
 bin_size = 1 * pq.ms
 latent_dimensionality = 2
