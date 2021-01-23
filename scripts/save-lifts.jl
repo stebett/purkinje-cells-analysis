@@ -76,9 +76,10 @@ function single_trials(df, landmark::String)
 	new_df
 end
 
-df = single_trials(df, "lift")
+df = single_trials(data, "lift")
 groups = groupby(df, [:rat, :site, :trial])
 trials, speeds = extract_trials(groups, 3) 
+speeds = hcat(speeds...)[1, :]
 save_trials(trials)
 
 

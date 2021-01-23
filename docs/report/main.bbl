@@ -1,6 +1,33 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
+Becker%
+\ \BBA {} Person%
+}{%
+Becker%
+\ \BBA {} Person%
+}{%
+{\protect \APACyear {2019}}%
+}]{%
+becker2019cerebellar}
+\APACinsertmetastar {%
+becker2019cerebellar}%
+\begin{APACrefauthors}%
+Becker, M\BPBI I.%
+\BCBT {}\ \BBA {} Person, A\BPBI L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2019}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Cerebellar control of reach kinematics for endpoint
+  precision} {Cerebellar control of reach kinematics for endpoint
+  precision}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Neuron}{103}{2}{335--348}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Byron%
 \ \protect \BOthers {.}}{%
 Byron%
@@ -88,6 +115,69 @@ Churchland, M\BPBI M.%
   population dynamics during reaching}.{\BBCQ}
 \newblock
 \APACjournalVolNumPages{Nature}{487}{7405}{51--56}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Cunningham%
+\ \BBA {} Byron%
+}{%
+Cunningham%
+\ \BBA {} Byron%
+}{%
+{\protect \APACyear {2014}}%
+}]{%
+cunningham2014dimensionality}
+\APACinsertmetastar {%
+cunningham2014dimensionality}%
+\begin{APACrefauthors}%
+Cunningham, J\BPBI P.%
+\BCBT {}\ \BBA {} Byron, M\BPBI Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2014}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Dimensionality reduction for large-scale neural
+  recordings} {Dimensionality reduction for large-scale neural
+  recordings}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Nature neuroscience}{17}{11}{1500--1509}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Denker%
+, Yegenoglu%
+\BCBL {}\ \BBA {} Grün%
+}{%
+Denker%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2018}}%
+}]{%
+elephant18}
+\APACinsertmetastar {%
+elephant18}%
+\begin{APACrefauthors}%
+Denker, M.%
+, Yegenoglu, A.%
+\BCBL {}\ \BBA {} Grün, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {{C}ollaborative {HPC}-enabled workflows on the {HBP}
+  {C}ollaboratory using the {E}lephant framework} {{C}ollaborative
+  {HPC}-enabled workflows on the {HBP} {C}ollaboratory using the {E}lephant
+  framework}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Neuroinformatics 2018} {Neuroinformatics 2018}\
+  (\BPG~P19).
+\newblock
+\begin{APACrefURL}
+  \url{https://abstracts.g-node.org/conference/NI2018/abstracts#/uuid/023bec4e-0c35-4563-81ce-2c6fac282abd}
+  \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.12751/incf.ni2018.0019} \end{APACrefDOI}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%

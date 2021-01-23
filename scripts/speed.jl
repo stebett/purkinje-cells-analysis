@@ -13,7 +13,7 @@ using MultivariateStats
 using Plots; plotlyjs()
 
 st = single_trials(data, "lift")
-st["speed"] = st.cover - s.lift
+st["speed"] = st.cover - st.lift
 
 histogram(st.speed)
 
@@ -68,13 +68,15 @@ function fit_halfes(st)
 	M
 end
 
-scatter(M[1].proj[:, 1], M[1].proj[:, 2], M[1].proj[:, 3], zcolor=[1:size(M[1].proj, 1);],  xaxis="First component", yaxis="Second component",  legend=false, title="Trajectories of slow vs fast trials", size=(800, 800), color=:blues, ms=5)
-scatter!(M[2].proj[:, 1], M[2].proj[:, 2],M[2].proj[:, 3],  zcolor=[1:size(M[2].proj, 1);], xaxis="First component", yaxis="Second component",  legend=false, title="Trajectories of slow vs fast trials", size=(800, 800), color=:reds, ms=5)
+M = fit_halfes(st)
+
+scatter(M[1].proj[:, 1], M[1].proj[:, 2], M[1].proj[:, 3], zcolor=[1:size(M[1].proj, 1);],  xaxis="First component", yaxis="Second component", zaxis="Third component", legend=false, title="Trajectories of slow vs fast trials", size=(800, 800), color=:blues, ms=4)
+scatter!(M[2].proj[:, 1], M[2].proj[:, 2],M[2].proj[:, 3],  zcolor=[1:size(M[2].proj, 1);], xaxis="First component", yaxis="Second component",  legend=false, title="Trajectories of slow vs fast trials", size=(800, 800), color=:reds, ms=4)
 
 scatter!(M[3].proj[:, 1], M[3].proj[:, 2],M[3].proj[:, 3],  zcolor=[1:size(M[3].proj, 1);])
 scatter!(M[4].proj[:, 1], M[4].proj[:, 2],M[4].proj[:, 3],  zcolor=[1:size(M[4].proj, 1);])
 
-filename = "pca-speed.pdf"
+filename = "pca-speed.svg"
 savefig(plotsdir(filename))
 
 

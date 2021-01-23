@@ -20,8 +20,12 @@ function scatter_dynamics(around, title)
 	scatter(M.proj[:, 1], M.proj[:, 2], zcolor=[1:size(M.proj, 1);], colorbar_title="Time bin", xaxis="First component", yaxis="Second component",  colorbar=true, legend=false, title=title, size =(800, 800))
 end
 
+title1 = "Principal components for spike times around lift"
+scatter_dynamics([-250, 250], title1)
+filename = "pca-500-lift.svg"
+savefig(plotsdir(filename))
 
-title1 = "
-
-filename = "pca-500-lift.pdf"
+title2 = "Principal components for spike times 1 second before lift"
+scatter_dynamics([-1500, -1000], title2)
+filename = "pca-500-before-lift.svg"
 savefig(plotsdir(filename))
