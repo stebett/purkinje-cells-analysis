@@ -1,9 +1,17 @@
 \section{Conclusions and future work}
 
-Rotational dynamics are consistently found in neuronal population activity during reaching \cite{churchland2012neural}. It may be possible that cerebellum dynamics has a causal relationship with the dynamics found in the motor cortex, but specific experimental paradigms have to be designed to investigate that.
+Rotational dynamics are consistently found in neuronal population activity during reaching \cite{churchland2012neural}. In the continuation of this research I will try to prove consistently that circular trajectories are found in cerebellar activity, and to specify the conditions in which this happens. A technique that will be applied is jPCA \cite{churchland2012neural}, a dimensionality reduction method that captures rotational dynamics in the data.
+It may be possible that cerebellar cortex dynamics has a causal relationship with the dynamics found in the motor cortex, but specific experimental paradigms have to be designed to investigate that.
 
-Neural trajectories are hard to interpret, but can be useful as hypothesis generation tools.
-In fact, a possible way to proceed in this work could be to come up with likely dynamical structures (e.g. attractors), then implement them through Recurrent Neural Networks (RNN), to then validate the hypothesis through simulations and comparison with biological data.
+Future work will be done in the direction of analysing the trajectories here extracted to quantify the effects of that speed - and possibly of other movement features - produced on them.
+Furthermore, it is planned to use Latent Factor Analysis via Dynamical Systems (LFADS) \cite{sussillo2016lfads}, a more sophisticated method to produce insights on neural dynamics.
 
-However, this process is arguably more an art than a technique, and requires a deep understanding of dynamical systems. A possible alternative would be to use Latent Factor Analysis via Dynamical Systems (LFADS) \cite{sussillo2016lfads}.
-LFADS uses spike train data to infer the latent dynamics through fitting of RNNs, allowing to avoid the manual step of designing the artificial network.
+LFADS uses spike train data to infer the latent dynamics through fitting of Recurrent Neural Networks (RNNs) to the activity of the neurons, taking as input only the spike trains recorded in each individual trial. It's objective is to model a generic dynamical system:
+\begin{equation}
+	\dot{x}(t) = F(x(t), u(t))
+\end{equation}
+where $x(t)$ is the state of the dynamical system, $F$ is the non-linear function that updates the states, and $u(t)$ the optional input. The function is modelled by an RNN (the 'generator'), which produces the dynamics that describe the neural activity.
+The output of LFADS are the "real" rates of the neurons and the factors constraining the dynamics of the system. It has been shown to outperform GPFA and other state-of-the-art methods on artificial data.
+
+Summing it up, this work should shed light on how changes in neuronal dynamics can convey detailed information on the behavior that produced them.
+

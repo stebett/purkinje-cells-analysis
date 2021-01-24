@@ -1,5 +1,15 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper, notitlepage, 12pt]{article}
 \usepackage{listings}
+\lstset{
+language=C,
+basicstyle=\small\sffamily,
+frame=tb,
+columns=fullflexible,
+showstringspaces=false
+}
+
+\usepackage[font={small,it}]{caption}
+\usepackage{wrapfig}
 \usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -9,16 +19,18 @@
 \usepackage[paper=a4paper,margin=1in]{geometry}
 \usepackage{apacite}
 \usepackage{xr}
+\usepackage{titling}
 
 \newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
 \onehalfspacing
 
+
+\author{Stefano Bettani}
+\date{January 2021}
+\title{Neuronal Dynamics during Reaching}
+
 \begin{document}
-
-\include{cover}
-\tableofcontents
-
-\pagestyle{plain}
+\maketitle
 \include{introduction}
 \include{materials}
 \include{results}
