@@ -40,7 +40,7 @@ for i in 1:50
 end
 p
 
-savefig(plotsdir("gpfa2d-3.pdf"))
+savefig(plotsdir("gpfa2d-dark.pdf"))
 
 
 # 3D
@@ -94,6 +94,37 @@ function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)
 end
 
 
+
+function single_trials(df, landmark::String)
+	new_df = DataFrame(rat=String[], site=String[], tetrode=String[], neuron=String[],
+		trial=Int[], lift=Float64[], cover=Float64[], grasp=Float64[], t=Array{Float64, 1}[])
+
+	trials = cut(df["t"], df[landmark], [-250, 250])
+
+	idx = map(length, df[landmark]) |> x->pushfirst!(x, 0) |> cumsum
+	idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
+
+	for (old_idx, trial_idxs) = enumerate(idx_list)
+		for (lm_idx, trial_idx) = enumerate(trial_idxs)
+			push!(new_df, [values(df[old_idx, ["rat", "site", "tetrode", "neuron"]])..
+						   ., lm_idx, df[old_idx, "lift"][lm_idx], df[old_idx, "cover"][lm_idx], df[old_idx, "grasp"][lm
+																													  _idx], trials[trial_idx]])
+		end
+	end
+	new_df
+end
+
+function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)
+	trials = Array{Array{Float64, 1}, 1}[]
+	speeds = Array{Float64, 1}[]
+	for g in groups
+		if size(g, 1) >= min_length
+			push!(trials, g.t[1:min_length])
+			push!(speeds, g.cover[1:min_length] .- g.lift[1:min_length])
+		end
+	end
+	trials, speeds
+end
 df = single_trials(data, "lift")
 groups = groupby(df, [:rat, :site, :trial])
 trials, speeds = extract_trials(groups, 3) 

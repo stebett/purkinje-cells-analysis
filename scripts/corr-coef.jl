@@ -7,6 +7,8 @@ using StatsPlots
 using Measurements
 using Distributions
 using Combinatorics
+using Plots.PlotMeasures
+
 
 include(srcdir("spike-tools.jl"))
 include(srcdir("data-tools.jl"))
@@ -99,5 +101,6 @@ p4 = groupedbar(xs, [[lift_neigh.val, cover_neigh.val, grasp_neigh.val] [lift_di
 p4 = yaxis!("Correlation coefficient")
 p4 = title!("Average time course of firing rate")
 
-plot(p1, p2, p3, p4, layout=l, size=(800,700))
-savefig(plotsdir("corr-coef.pdf"))
+theme(:dark)
+plot(p1, p2, p3, p4, layout=l, size=(800,700), right_margin=10mm)
+savefig(plotsdir("corr-coef-dark.pdf"))
