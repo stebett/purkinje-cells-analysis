@@ -2,7 +2,7 @@ using DrWatson
 @quickactivate "ens"
 
 using Statistics
-using Plots; gr()
+using Plots;
 
 include(srcdir("spike-tools.jl"))
 include(srcdir("data-tools.jl"))
@@ -32,7 +32,6 @@ function plot_psth(n, low, high)
 	yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
 end
 
-plotlyjs()
 
 gr()
 theme(:dark)

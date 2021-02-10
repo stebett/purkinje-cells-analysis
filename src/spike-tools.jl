@@ -69,6 +69,27 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 	s
 end
 
+function bigSlice(data, binsize=1, around=4, average=true) 
+
+	s = bigSlice(data.t, data.lift, data.cover, data.grasp, binsize, around)
+
+	if average
+		idx = map(length, data.lift) |> x->pushfirst!(x, 0) |> cumsum
+		idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
+
+		rows = diff(around)[1]
+		cols = (map(length, idx_list) .>= 1) |> sum
+		s_avg = zeros(rows, cols)
+		k = 1
+		for i = idx_list 
+			s_avg[:, k] = mean(s[:, i], dims=2)
+			k += 1
+		end
+		return s_avg
+	end
+	s
+end
+
 function cut(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
     idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
 	return idxs .- landmark .- around[1]
@@ -115,6 +136,41 @@ function cut(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float6
     s
 end
 
+function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{T, 1} where {T <: Float64}
+	binsize1 = (cover - lift) / nbins
+	binsize2 = (grasp - cover) / nbins
+	s = spiketrain[lift - around*binsize1 .< spiketrain .< grasp + binsize2*around]
+	sbin = zeros(2nbins + 2around)
+
+	if length(s) == 0
+		return sbin
+	end
+	s .= s .- s[1]
+
+
+	for i in 1:nbins+around
+		sbin[i] = sum(binsize1*(i-1) .<= s .< binsize1*i) ./ binsize1
+	end
+	for i in 1:nbins+around
+		sbin[i+nbins+around] = sum(binsize2*(i-1) .< s.-(nbins+around)*binsize1 .< binsize2*i) ./ binsize2
+	end
+	sbin
+end
+
+function bigSlice(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{Float64, 2} where {T <: Array{Array{Float64, 1}, 1}}
+	rows = 2nbins+2around
+	cols = map(length, lift) |> sum
+	s = zeros(rows, cols)
+
+	i = 1
+	for j in 1:length(spiketrains)
+		for k in 1:length(lift[j])
+			s[:, i] .= bigSlice(spiketrains[j], lift[j][k], cover[j][k], grasp[j][k], nbins, around)
+			i += 1
+		end
+	end
+	s
+end
 
 function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
 	s = zeros(diff(around)[1])
