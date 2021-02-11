@@ -151,13 +151,16 @@ function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins, a
 
 	binsizes = [fill(aroundBin, nbins*around)..., fill(reachBin, nbins)..., fill(graspBin, nbins)..., fill(aroundBin, nbins*around)...]
 
-	s = spiketrain[lift - nbins*around*aroundBin .<= spiketrain .<= grasp + nbins*around*aroundBin]
+	t0 = lift - nbins*around*aroundBin
+	t1 = grasp + nbins*around*aroundBin
+
+	s = spiketrain[t0 .<= spiketrain .<= t1]
 	sbin = zeros(2nbins + 2around*nbins)
 
 	if length(s) == 0
 		return sbin
 	end
-	s .= s .- s[1]
+	s .= s .- t0
 
 	t = 0
 	for i in 1:length(sbin)
