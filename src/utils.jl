@@ -24,7 +24,7 @@ function dropinfcols(v::AbstractArray; idx=false)
 end
 
 function dropnancols(v::AbstractArray; idx=false)
-	nancols = isnan.(v[1, :])
+	nancols = sum(isnan.(v), dims=1)[:] .!= 0
 
 	new_idx = zeros(Int, sum(.!nancols))
 	k = 0

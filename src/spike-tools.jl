@@ -49,7 +49,8 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 	end
 
 	if normalization
-		s = slice_(spiketrains, landmarks, over) |> x->convolve(x, σ) |> x->normalize(s, x)
+		pad = [over[1] - 2σ, over[2] + 2σ]
+		s = slice_(spiketrains, landmarks, pad) |> x->convolve(x, σ) |> x->normalize(s, x)
 	end
 
 	if average
@@ -69,15 +70,22 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 	s
 end
 
-function bigSlice(data, binsize=1, around=4, average=true) 
+function bigSlice(data, binsize=1, around=4, average=true, normalization=true) 
+	σ = 10
+	over = [-5000, -3000]
 
 	s = bigSlice(data.t, data.lift, data.cover, data.grasp, binsize, around)
+
+	if normalization
+		pad = [over[1] - 2σ, over[2] + 2σ]
+		s = slice_(data.t, data.lift, pad) |> x->convolve(x, σ) |> x->normalize(s, x)
+	end
 
 	if average
 		idx = map(length, data.lift) |> x->pushfirst!(x, 0) |> cumsum
 		idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
 
-		rows = diff(around)[1]
+		rows = 2binsize + 2around*binsize
 		cols = (map(length, idx_list) .>= 1) |> sum
 		s_avg = zeros(rows, cols)
 		k = 1
@@ -136,29 +144,31 @@ function cut(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float6
     s
 end
 
-function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{T, 1} where {T <: Float64}
-	binsize1 = (cover - lift) / nbins
-	binsize2 = (grasp - cover) / nbins
-	s = spiketrain[lift - around*binsize1 .< spiketrain .< grasp + binsize2*around]
-	sbin = zeros(2nbins + 2around)
+function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins, around)::Array{T, 1} where {T <: Float64}
+	reachBin = (cover - lift) / nbins
+	graspBin = (grasp - cover) / nbins
+	aroundBin = 50. / nbins
+
+	binsizes = [fill(aroundBin, nbins*around)..., fill(reachBin, nbins)..., fill(graspBin, nbins)..., fill(aroundBin, nbins*around)...]
+
+	s = spiketrain[lift - nbins*around*aroundBin .<= spiketrain .<= grasp + nbins*around*aroundBin]
+	sbin = zeros(2nbins + 2around*nbins)
 
 	if length(s) == 0
 		return sbin
 	end
 	s .= s .- s[1]
 
-
-	for i in 1:nbins+around
-		sbin[i] = sum(binsize1*(i-1) .<= s .< binsize1*i) ./ binsize1
-	end
-	for i in 1:nbins+around
-		sbin[i+nbins+around] = sum(binsize2*(i-1) .< s.-(nbins+around)*binsize1 .< binsize2*i) ./ binsize2
+	t = 0
+	for i in 1:length(sbin)
+		sbin[i] = sum(0 .<= s.-t .< binsizes[i]) / binsizes[i]
+		t += binsizes[i]
 	end
 	sbin
 end
 
 function bigSlice(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{Float64, 2} where {T <: Array{Array{Float64, 1}, 1}}
-	rows = 2nbins+2around
+	rows = 2nbins+2around*nbins
 	cols = map(length, lift) |> sum
 	s = zeros(rows, cols)
 
