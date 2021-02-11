@@ -38,9 +38,9 @@ Select the spikes around a landmark and apply convolution and optionally averagi
 
 """
 
-function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false, normalization=false, over=[-500, 500])
+function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false, normalization=false, over=[-500, 500], binsize=1.)
 
-	s = slice_(spiketrains, landmarks, around)
+	s = slice_(spiketrains, landmarks, around, binsize)
 
 
 	if convolution || normalization
@@ -185,50 +185,50 @@ function bigSlice(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2
 	s
 end
 
-function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
-	s = zeros(diff(around)[1])
+function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector, binsize=1.)::Array{Float64, 1}
+	s = zeros(round(Int, diff(around)[1]/binsize))
 
 	if isnan(landmark)
         return fill!(s, NaN)
     end
 
     idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
-	idxs = idxs .- landmark .- around[1] .+ 1
-    s[floor.(Int, idxs)] .= 1
+	idxs = idxs .- landmark .- around[1] 
+    s[ceil.(Int, idxs ./ binsize)] .= 1
     s
 end
 
-function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Float64, 2}
-	rows = diff(around)[1]
+function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector, binsize=1.)::Array{Float64, 2}
+	rows = round(Int, diff(around)[1]/binsize)
 	cols = size(landmarks, 1)
 	s = zeros(rows, cols)
 
     for (i, l) in enumerate(landmarks)
-        s[:, i] .= slice_(spiketrain, l, around)
+        s[:, i] .= slice_(spiketrain, l, around, binsize)
     end
     s
 end
 
-function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Float64, 2}
-	rows = diff(around)[1]
+function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::AbstractVector, binsize=1.)::Array{Float64, 2}
+	rows = round(Int, diff(around)[1]/binsize)
 	cols = size(spiketrains, 1)
 	s = zeros(rows, cols)
 
     for (i, (spiketrain, l)) in enumerate(zip(spiketrains, landmarks))
-        s[:, i] .= slice_(spiketrain, l, around)
+        s[:, i] .= slice_(spiketrain, l, around, binsize)
     end
     s
 end
 
-function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::AbstractVector)::Array{Float64, 2}
-	rows = diff(around)[1]
+function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::AbstractVector, binsize=1.)::Array{Float64, 2}
+	rows = round(Int, diff(around)[1]/binsize)
 	cols = map(length, landmarks) |> sum
 	s = zeros(rows, cols)
 
 	i = 1
     for (spiketrain, lands) in zip(spiketrains, landmarks)
 		for l in lands 
-			s[:, i] .= slice_(spiketrain, l, around)
+			s[:, i] .= slice_(spiketrain, l, around, binsize)
 			i += 1
 		end
     end
