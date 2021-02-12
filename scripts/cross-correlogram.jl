@@ -3,7 +3,6 @@ using DrWatson
 
 using Statistics
 using Plots; gr()
-using CircularArrays
 import StatsBase.crosscor
 
 include(srcdir("spike-tools.jl"))
@@ -21,18 +20,9 @@ function crosscor(s::Array{Float64, 2}, couples::Array{Array{Int64, 1}, 1}, lags
 	mean(dropnancols(m), dims=2)
 end
 
-@inline function crosscor(c1, c2, norm=false, lags=[-40, 40])
-	@infiltrate
-	bins = zeros(diff(lags)[1])
-	spikes = c1 .* [1:length(c1);]
-	@inbounds for s in spikes[spikes .> 0]
-		a = view(CircularArray(c2), floor(Int, s-lags[1]):floor(Int, s+lags[2]))
-		bins .+= a
-	end
-	bins
-end
 
-
+# You need to make a function to select stuff that has decent values on the autocorrelogram
+# And another function to see when the modulation of the activity is significant for a given cell
 # 3B
 around = [-300, 300]
 
@@ -85,3 +75,12 @@ plot!(crosscor(s, dist, [-40:40;]))
 
 	
 
+# @inline function crosscor(c1, c2, norm=false, lags=[-40, 40])
+# 	bins = zeros(diff(lags)[1])
+# 	spikes = c1 .* [1:length(c1);]
+# 	@inbounds for s in spikes[spikes .> 0]
+# 		a = view(CircularArray(c2), floor(Int, s-lags[1]):floor(Int, s+lags[2]))
+# 		bins .+= a
+# 	end
+# 	bins
+# end
