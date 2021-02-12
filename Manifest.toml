@@ -110,6 +110,12 @@ git-tree-sha1 = "2ac27f59196a68070e132b25713f9a5bbc5fa0d2"
 uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
 version = "0.8.3"
 
+[[CircularArrays]]
+deps = ["OffsetArrays"]
+git-tree-sha1 = "786e067a47d43952f483f4eb107c02f59ea6f93e"
+uuid = "7a955b69-7140-5f4e-a0ed-f168c5e2e749"
+version = "1.2.0"
+
 [[Clustering]]
 deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "SparseArrays", "Statistics", "StatsBase"]
 git-tree-sha1 = "75479b7df4167267d75294d14b58244695beb2ac"

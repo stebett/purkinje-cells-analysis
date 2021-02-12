@@ -3,6 +3,7 @@ using DrWatson
 
 using Statistics
 using Plots; gr()
+using CircularArrays
 import StatsBase.crosscor
 
 include(srcdir("spike-tools.jl"))
@@ -12,7 +13,7 @@ include(scriptsdir("load-data.jl"))
 
 
 
-function crosscor(s::Array{Float64, 2}, couples::Array{Array{Int64, 1}, 1}, lags=[-20:20;])
+function crosscor(s::Array{Float64, 2}, couples::Array{Array{Int64, 1}, 1}, lags=[-min(size(x,1)-1, 10*log10(size(x,1))):min(size(x,1), 10*log10(size(x,1)));])
 	m = zeros(length(lags), length(couples))
 	for i in 1:length(couples)
 		m[:, i] = crosscor(s[:, couples[i][1]], s[:, couples[i][2]], lags)
@@ -20,35 +21,53 @@ function crosscor(s::Array{Float64, 2}, couples::Array{Array{Int64, 1}, 1}, lags
 	mean(dropnancols(m), dims=2)
 end
 
-
-# 3C
-
-around = [-50, 50]
-n = slice(data.t, data.lift, around=[-50, 50], normalization=true, average=true)
-idx = active_neurons(n, -0.5, 0.5)
-
-s = slice(data.t[idx], data.lift[idx], around=around, binsize=0.5)
-neigh = get_pairs(data, "n")
-dist = get_pairs(data, "d")
-
-plot(crosscor(s, neigh, [-40:40;]))
-plot!(crosscor(s, dist, [-40:40;]))
-
+@inline function crosscor(c1, c2, norm=false, lags=[-40, 40])
+	@infiltrate
+	bins = zeros(diff(lags)[1])
+	spikes = c1 .* [1:length(c1);]
+	@inbounds for s in spikes[spikes .> 0]
+		a = view(CircularArray(c2), floor(Int, s-lags[1]):floor(Int, s+lags[2]))
+		bins .+= a
+	end
+	bins
+end
 
 
 # 3B
+around = [-300, 300]
 
-s1 = slice(data.t[2], data.lift[2], around=around, binsize=0.5)[:]
-s2 = slice(data.t[2], data.cover[2], around=around, binsize=0.5)[:]
-s3 = slice(data.t[2], data.grasp[2], around=around, binsize=0.5)[:]
+s1 = slice(data.t[157], data.lift[157], around=around, binsize=0.5)[:]
+s2 = slice(data.t[157], data.cover[157], around=around, binsize=0.5)[:]
+s3 = slice(data.t[157], data.grasp[157], around=around, binsize=0.5)[:]
 s = vcat(s1, s2, s3)
 
-t1 = slice(data.t[3], data.lift[3], around=around, binsize=0.5)[:]
-t2 = slice(data.t[3], data.cover[3], around=around, binsize=0.5)[:]
-t3 = slice(data.t[3], data.grasp[3], around=around, binsize=0.5)[:]
+t1 = slice(data.t[158], data.lift[158], around=around, binsize=0.5)[:]
+t2 = slice(data.t[158], data.cover[158], around=around, binsize=0.5)[:]
+t3 = slice(data.t[158], data.grasp[158], around=around, binsize=0.5)[:]
 t = vcat(s1, s2, s3)
 
-C = crosscor(s, t, [-40:40;])
+Cₘ = crosscor(s, t, [-40:40;])
+
+around2 = [-2000, 2000]
+s2 = slice(data.t[157], data.cover[157], around=around2, binsize=0.5)[:]
+t2 = slice(data.t[158], data.cover[158], around=around2, binsize=0.5)[:]
+
+C = crosscor(s2, t2, [-40:40;])
+plot(Cₘ)
+plot!(C)
+
+# 3C
+around = [-50, 50]
+n = slice(data.t, data.lift, around=[-25, 25], normalization=true, average=true)
+idx = active_neurons(n, -0.5, 2.5)
+tmp = data[idx, :];
+
+s = slice(tmp.t, tmp.lift, around=around, binsize=1.)
+neigh = get_pairs(tmp, "n")
+dist = get_pairs(tmp, "d")
+
+plot(crosscor(s, neigh, [-40:40;]))
+plot!(crosscor(s, dist, [-40:40;]))
 
 
 
@@ -64,12 +83,5 @@ C = crosscor(s, t, [-40:40;])
 # c2 = slice(data.t[588], data.lift[588][5], around=[-trainsize÷2, trainsize÷2])
 # spikes = findall(c1 .== 1.)
 
-# @inline function crosscorrelate(c1, c2, nbins=100)
-# 	bins = zeros(nbins)
-# 	@inbounds for s in spikes
-# 		bins .+= view(c2, s:s+nbins-1)
-# 	end
-# 	bins
-# end
 	
 

@@ -17,7 +17,7 @@ function get_pairs(data::DataFrame, kind::String)
 		return couples
 
 	elseif kind == "dist" || kind == "distant" || kind == "d"
-		idx = [1:593;]
+		idx = [1:size(data, 1);]
 		dist = get_distant(data, idx, true)
 		couples = Array{Int64, 1}[]
 		for (i, d) in enumerate(dist)

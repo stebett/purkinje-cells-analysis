@@ -11,50 +11,66 @@
 !_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
 active_neurons	src/data-tools.jl	/^function active_neurons(n, low=-0.5, high=1.)$/;"	f
-convolute	scripts/old-corr-coef.jl	/^function convolute(n::Array{Float64, 2}, around)$/;"	f
+bigSlice	src/spike-tools.jl	/^function bigSlice(data, binsize=1, around=4, average=true, normalization=true) $/;"	f
+bigSlice	src/spike-tools.jl	/^function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins, around)::Array{T,/;"	f
+bigSlice	src/spike-tools.jl	/^function bigSlice(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{Float64/;"	f
 convolve	src/spike-tools.jl	/^function convolve(s::Array{Float64, 1}, σ=10)::Array{Float64, 1}$/;"	f
 convolve	src/spike-tools.jl	/^function convolve(s::Array{Float64, 2}, σ=10)::Array{Float64, 2}$/;"	f
 correlate	scripts/corr-coef.jl	/^function correlate(convolutions)$/;"	f
-correlate	scripts/old-corr-coef.jl	/^function correlate(convolutions)$/;"	f
+crosscor	scripts/cross-correlogram.jl	/^function crosscor(s::Array{Float64, 2}, couples::Array{Array{Int64, 1}, 1}, lags=[-20:20;])$/;"	f
 cut	src/spike-tools.jl	/^function cut(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Floa/;"	f
 cut	src/spike-tools.jl	/^function cut(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector):/;"	f
 cut	src/spike-tools.jl	/^function cut(spiketrains::Array{Array{Float64,1}, 1}, landmark::Number, around::AbstractVector):/;"	f
 cut	src/spike-tools.jl	/^function cut(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Abstr/;"	f
 cut	src/spike-tools.jl	/^function cut(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::A/;"	f
 distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
-distant_correlation	scripts/old-corr-coef.jl	/^function distant_correlation(correlations)$/;"	f
+drop_inactive	scripts/psth-v2.jl	/^function drop_inactive(n, thresh=3)$/;"	f
 dropinfcols	src/utils.jl	/^function dropinfcols(v::AbstractArray; idx=false)$/;"	f
 dropnancols	src/utils.jl	/^function dropnancols(v::AbstractArray; idx=false)$/;"	f
+dropoutliercols	src/utils.jl	/^function dropoutliercols(v::AbstractArray, value=5; idx=false)$/;"	f
+extract_trials	scripts/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
+extract_trials	scripts/save-lifts.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/save-lifts.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
-filterData	src/data-tools.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
-filterLandmarks	src/data-tools.jl	/^function filterLandmarks(df, index)$/;"	f
-find_broken_landmarks	src/data-tools.jl	/^function find_broken_landmarks(data)$/;"	f
+filterData	src/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
+filterLandmarks	src/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
+find_broken_landmarks	src/fix-data.jl	/^function find_broken_landmarks(data)$/;"	f
+fit_fourths	scripts/speed.jl	/^function fit_fourths(st)$/;"	f
+fit_halfes	scripts/speed.jl	/^function fit_halfes(st)$/;"	f
+fit_thirds	scripts/speed.jl	/^function fit_thirds(st)$/;"	f
 get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
 get_distant	src/data-tools.jl	/^function get_distant(df::DataFrame, idx, grouped=false)$/;"	f
 get_neighbors	src/data-tools.jl	/^function get_neighbors(df::DataFrame, idx=[1:593;]; grouped=false)$/;"	f
+get_pairs	src/data-tools.jl	/^function get_pairs(data::DataFrame, kind::String)$/;"	f
 get_trial	_research/single-trials.jl	/^@inline function get_trial(df, n, i, after)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
 interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
 jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
-neighbor_correlation	scripts/old-corr-coef.jl	/^function neighbor_correlation(correlations)$/;"	f
 normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,1}}$/;"	f
 normalize	src/spike-tools.jl	/^function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}$/;"	f
 padder	scripts/save-lifts.jl	/^function padder(n, trials)$/;"	f
+plot_gpfa	scripts/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
+plot_gpfa_slow_vs_fast	scripts/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
+plot_gpfa_speed	scripts/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
+plot_psth	scripts/psth-v2.jl	/^function plot_psth(n, low, high, thresh)$/;"	f
 plot_psth	scripts/psth.jl	/^function plot_psth(n, low, high)$/;"	f
 pₙ	_research/information.jl	/^function pₙ(x)$/;"	f
-scatter_dynamics	scripts/pca.jl	/^function scatter_dynamics(around)$/;"	f
-single_trials	src/data-tools.jl	/^function single_trials(df, landmark::String)$/;"	f
+save_trials	scripts/save-lifts.jl	/^function save_trials(trials)$/;"	f
+scatter_dynamics	scripts/pca.jl	/^function scatter_dynamics(around, title)$/;"	f
+single_trials	scripts/plot-gpfa.jl	/^function single_trials(df, landmark::String)$/;"	f
+single_trials	scripts/save-lifts.jl	/^function single_trials(df, landmark::String)$/;"	f
+single_trials	src/experimental.jl	/^function single_trials(df, landmark::String)$/;"	f
 skipnan	src/utils.jl	/^function skipnan(v::AbstractArray)$/;"	f
 slice	src/spike-tools.jl	/^function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=10, average=false/;"	f
-slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{F/;"	f
+slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector, binsize=/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVecto/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Ab/;"	f
 slice_	src/spike-tools.jl	/^function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around/;"	f
 sort_active	scripts/psth.jl	/^function sort_active(n)$/;"	f
-sort_active	scripts/specific-pca.jl	/^function sort_active(n, thr=0.5)$/;"	f
-standardize_landmarks	src/data-tools.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
+sort_active	scripts/speed-pca.jl	/^function sort_active(n, thr=0.5)$/;"	f
+sort_peaks	scripts/psth-v2.jl	/^function sort_peaks(n)$/;"	f
+standardize_landmarks	src/experimental.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
 test_discretize	test/tests-psth.jl	/^function test_discretize()$/;"	f
 test_normalize	test/tests-psth.jl	/^function test_normalize()$/;"	f
 test_slice	test/tests-psth.jl	/^function test_slice()$/;"	f
