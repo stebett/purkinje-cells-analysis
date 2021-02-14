@@ -1,62 +1,38 @@
 using DrWatson
 @quickactivate "ens"
 
-function skipnan(v::AbstractArray)
-    v[.!isnan.(v)]
+# Find an easier way to do all this, maybe with `filter`
+
+function drop(v::Matrix; dims=1, nan=true, inf=true, outliers=false, threshold=3.5)
+	todrop = falses(size(v, dims % 2 + 1))
+	if nan
+		todrop .|= sum(isnan.(v), dims=dims)[:] .!= 0
+	end
+
+	if inf
+		todrop .|= sum(isinf.(v), dims=dims)[:] .!= 0
+	end
+
+	if outliers
+		todrop .|= sum(v .> threshold, dims=dims)[:] .!= 0
+	end
+
+	v[:, .!todrop]
 end
 
-function dropinfcols(v::AbstractArray; idx=false)
-	nancols = isinf.(v[1, :])
-
-	new_idx = zeros(Int, sum(.!nancols))
-	k = 0
-	for i = 1:length(nancols)
-		if nancols[i] == false
-			new_idx[i-k] = i
-		else
-			k += 1
-		end
+function drop(v::Vector; nan=true, inf=true, outliers=false, threshold=3.5)
+	todrop = falses(size(v))
+	if nan
+		todrop .|= isnan.(v) .!= 0
 	end
-	if idx 
-		return v[:, .!nancols], new_idx
-	end
-	v[:, .!nancols]
-end
 
-function dropnancols(v::AbstractArray; idx=false)
-	nancols = sum(isnan.(v), dims=1)[:] .!= 0
-
-	new_idx = zeros(Int, sum(.!nancols))
-	k = 0
-	for i = 1:length(nancols)
-		if nancols[i] == false
-			new_idx[i-k] = i
-		else
-			k += 1
-		end
+	if inf
+		todrop .|= isinf.(v) .!= 0
 	end
-	if idx 
-		return v[:, .!nancols], new_idx
-	end
-	v[:, .!nancols]
-end
 
-
-function dropoutliercols(v::AbstractArray, value=5; idx=false)
-	nancols = sum(v .> value, dims=1) .!= 0
-	nancols = nancols[:]
-
-	new_idx = zeros(Int, sum(.!nancols))
-	k = 0
-	for i = 1:length(nancols)
-		if nancols[i] == false
-			new_idx[i-k] = i
-		else
-			k += 1
-		end
+	if outliers
+		todrop .|= v .> threshold .!= 0
 	end
-	if idx 
-		return v[:, .!nancols], new_idx
-	end
-	v[:, .!nancols]
+
+	v[.!todrop]
 end
