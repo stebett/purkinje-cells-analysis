@@ -2,44 +2,51 @@ using DrWatson
 @quickactivate "ens"
 
 
-function cutter(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
-    idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
-	return idxs .- landmark .- around[1]
+function cut(s::Vector, l::Number, a::Vector)::Vector
+	@views s[l + a[1] .< s .< l + a[2]] .- l .- a[1]
 end
 
+function cut2(s::Vector, l::Number, a::Vector)::Vector
+	@views s[0. .< s .- l .- a[1] .< l + a[2]] 
+end
 
-function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector, binsize=1.)::Array{Float64, 1}
-	s = zeros(round(Int, diff(around)[1]/binsize))
+function cut(spiketrain::Vector, landmarks::Vector, around::Vector)::Vector{Vector}
+	s = Array{Float64, 1}[]
 
-    idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
-	idxs = idxs .- landmark .- around[1] 
-    s[ceil.(Int, idxs ./ binsize)] .= 1
+	for (i, l) in enumerate(landmarks)
+		push!(s, cut(spiketrain, l, around))
+    end
     s
 end
 
-function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins, around)::Array{T, 1} where {T <: Float64}
-	reachBin = (cover - lift) / nbins
-	graspBin = (grasp - cover) / nbins
-	aroundBin = 50. / nbins
+function cut(spiketrains::Vector{Vector}, landmark::Number, around::Vector)::Vector{Vector}
+	s = Array{Float64, 1}[]
 
-	binsizes = [fill(aroundBin, nbins*around)..., fill(reachBin, nbins)..., fill(graspBin, nbins)..., fill(aroundBin, nbins*around)...]
-
-	t0 = lift - nbins*around*aroundBin
-	t1 = grasp + nbins*around*aroundBin
-
-	s = spiketrain[t0 .<= spiketrain .<= t1]
-	sbin = zeros(2nbins + 2around*nbins)
-
-	if length(s) == 0
-		return sbin
-	end
-	s .= s .- t0
-
-	t = 0
-	for i in 1:length(sbin)
-		sbin[i] = sum(0 .<= s.-t .< binsizes[i]) / binsizes[i]
-		t += binsizes[i]
-	end
-	sbin
+    for st in spiketrains
+		push!(s, cut(st, landmark, around))
+    end
+    s
 end
+
+function cut(spiketrains::Vector{Vector}, landmarks::Vector{Vector}, around::Vector)::Vector{Vector}
+
+	s = Array{Float64, 1}[]
+
+    for (spiketrain, lands) in zip(spiketrains, landmarks)
+		for l in lands 
+			push!(s, cut(spiketrain, l, around))
+		end
+    end
+    s
+end
+
+
+# function cut(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Vector)::Array{Array{Float64, 1}, 1}
+# 	s = Array{Float64, 1}[]
+
+#     for (spiketrain, l) in zip(spiketrains, landmarks)
+# 		push!(s, cut(spiketrain, l, around))
+#     end
+#     s
+# end
 

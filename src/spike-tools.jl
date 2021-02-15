@@ -8,7 +8,7 @@ using OffsetArrays
 # TODO: add inbounds
 # TODO: some data (ex. idx=21) have landmarks that are taken at times larger than the spike times, how should I fix that?
 # TODO: average doesn't work in certain cases
-include(srcdir("utils.jl"))
+include(srcdir("drop.jl"))
 
 
 """
@@ -99,52 +99,6 @@ function bigSlice(data, binsize=1, around=4, average=true, normalization=true)
 	s
 end
 
-function cut(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector)::Array{Float64, 1}
-    idxs = spiketrain[landmark + around[1] .< spiketrain .< landmark + around[2]]
-	return idxs .- landmark .- around[1]
-end
-
-function cut(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Array{Float64, 1}, 1}
-
-	s = Array{Float64, 1}[]
-
-    for l in landmarks
-		push!(s, cut(spiketrain, l, around))
-    end
-    s
-end
-
-function cut(spiketrains::Array{Array{Float64,1}, 1}, landmark::Number, around::AbstractVector)::Array{Array{Float64, 1}, 1}
-	s = Array{Float64, 1}[]
-
-    for st in spiketrains
-		push!(s, cut(st, landmark, around))
-    end
-    s
-end
-
-function cut(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::AbstractVector)::Array{Array{Float64, 1}, 1}
-	s = Array{Float64, 1}[]
-
-    for (spiketrain, l) in zip(spiketrains, landmarks)
-		push!(s, cut(spiketrain, l, around))
-    end
-    s
-end
-
-function cut(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::AbstractVector)::Array{Array{Float64, 1}, 1}
-
-	s = Array{Float64, 1}[]
-
-	i = 1
-    for (spiketrain, lands) in zip(spiketrains, landmarks)
-		for l in lands 
-			push!(s, cut(spiketrain, l, around))
-		end
-    end
-    s
-end
-
 function bigSlice(spiketrain::Array{T, 1}, lift::T, cover::T, grasp::T, nbins, around)::Array{T, 1} where {T <: Float64}
 	reachBin = (cover - lift) / nbins
 	graspBin = (grasp - cover) / nbins
@@ -186,7 +140,7 @@ function bigSlice(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2
 	s
 end
 
-function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::AbstractVector, binsize=1.)::Array{Float64, 1}
+function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::Vector, binsize=1.)::Array{Float64, 1}
 	s = zeros(round(Int, diff(around)[1]/binsize))
 
 	if isnan(landmark)
@@ -199,7 +153,7 @@ function slice_(spiketrain::Array{Float64,1}, landmark::Number, around::Abstract
     s
 end
 
-function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::AbstractVector, binsize=1.)::Array{Float64, 2}
+function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, around::Vector, binsize=1.)::Array{Float64, 2}
 	rows = round(Int, diff(around)[1]/binsize)
 	cols = size(landmarks, 1)
 	s = zeros(rows, cols)
@@ -210,7 +164,7 @@ function slice_(spiketrain::Array{Float64,1}, landmarks::Array{Float64,1}, aroun
     s
 end
 
-function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::AbstractVector, binsize=1.)::Array{Float64, 2}
+function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float64,1}, around::Vector, binsize=1.)::Array{Float64, 2}
 	rows = round(Int, diff(around)[1]/binsize)
 	cols = size(spiketrains, 1)
 	s = zeros(rows, cols)
@@ -221,7 +175,7 @@ function slice_(spiketrains::Array{Array{Float64,1}, 1}, landmarks::Array{Float6
     s
 end
 
-function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::AbstractVector, binsize=1.)::Array{Float64, 2}
+function slice_(spiketrains::Array{Array{Float64,1}}, landmarks::Array{Array{Float64,1}}, around::Vector, binsize=1.)::Array{Float64, 2}
 	rows = round(Int, diff(around)[1]/binsize)
 	cols = map(length, landmarks) |> sum
 	s = zeros(rows, cols)
