@@ -44,13 +44,16 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 
 
 	if convolution || normalization
+		σ = Int(σ/binsize)
 		pad = [around[1] - 2σ, around[2] + 2σ]
-		s .= convolve(slice_(spiketrains, landmarks, pad), σ)
+		tmp = convolve(slice_(spiketrains, landmarks, pad, binsize), σ)
+		@infiltrate
+		s .= tmp
 	end
 
 	if normalization
 		pad = [over[1] - 2σ, over[2] + 2σ]
-		s = slice_(spiketrains, landmarks, pad) |> x->convolve(x, σ) |> x->normalize(s, x)
+		s = slice_(spiketrains, landmarks, pad, binsize) |> x->convolve(x, σ) |> x->normalize(s, x)
 	end
 
 	if average

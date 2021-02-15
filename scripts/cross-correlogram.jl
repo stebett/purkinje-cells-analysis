@@ -8,7 +8,7 @@ import StatsBase.crosscor
 include(srcdir("spike-tools.jl"))
 include(srcdir("data-tools.jl"))
 include(scriptsdir("load-data.jl"))
-
+include(scriptsdir("load-full.jl"))
 
 
 
@@ -24,33 +24,56 @@ end
 # You need to make a function to select stuff that has decent values on the autocorrelogram
 # And another function to see when the modulation of the activity is significant for a given cell
 # 3B
-around = [-300, 300]
+function crosscorr_3B()
+	around = [-500, 500]
 
-s1 = slice(data.t[157], data.lift[157], around=around, binsize=0.5)[:]
-s2 = slice(data.t[157], data.cover[157], around=around, binsize=0.5)[:]
-s3 = slice(data.t[157], data.grasp[157], around=around, binsize=0.5)[:]
-s = vcat(s1, s2, s3)
+	idx1 = 55
+	idx2 = 56
+	thr = 2.0
+	binsize = 0.5
 
-t1 = slice(data.t[158], data.lift[158], around=around, binsize=0.5)[:]
-t2 = slice(data.t[158], data.cover[158], around=around, binsize=0.5)[:]
-t3 = slice(data.t[158], data.grasp[158], around=around, binsize=0.5)[:]
-t = vcat(s1, s2, s3)
+	sig_lift = slice(data.t[idx1], data.lift[idx1], around=around, binsize=binsize, normalization=true) .> thr
+	sig_cover = slice(data.t[idx1], data.cover[idx1], around=around, binsize=binsize, normalization=true) .> thr
+	sig_grasp = slice(data.t[idx1], data.grasp[idx1], around=around, binsize=binsize, normalization=true) .> thr
 
-Cₘ = crosscor(s, t, [-40:40;])
+	s1 = slice(data.t[idx1], data.lift[idx1], around=around, binsize=binsize)[sig_lift]
+	s2 = slice(data.t[idx1], data.cover[idx1], around=around, binsize=binsize)[sig_cover]
+	s3 = slice(data.t[idx1], data.grasp[idx1], around=around, binsize=binsize)[sig_grasp]
 
-around2 = [-2000, 2000]
-s2 = slice(data.t[157], data.cover[157], around=around2, binsize=0.5)[:]
-t2 = slice(data.t[158], data.cover[158], around=around2, binsize=0.5)[:]
+	t1 = slice(data.t[idx2], data.lift[idx2], around=around, binsize=binsize)[sig_lift]
+	t2 = slice(data.t[idx2], data.cover[idx2], around=around, binsize=binsize)[sig_cover]
+	t3 = slice(data.t[idx2], data.grasp[idx2], around=around, binsize=binsize)[sig_grasp]
 
-C = crosscor(s2, t2, [-40:40;])
-plot(Cₘ)
-plot!(C)
+	s = vcat(s1, s2, s3)
+	t = vcat(t1, t2, t3)
 
+	Cₘ = crosscor(s, t, [-40:40;])
+	plot(Cₘ)
+
+	s1 = slice(data.t[idx1], data.lift[idx1], around=around, binsize=binsize)[:]
+	s2 = slice(data.t[idx1], data.cover[idx1], around=around, binsize=binsize)[:]
+	s3 = slice(data.t[idx1], data.grasp[idx1], around=around, binsize=binsize)[:]
+
+	t1 = slice(data.t[idx2], data.lift[idx2], around=around, binsize=binsize)[:]
+	t2 = slice(data.t[idx2], data.cover[idx2], around=around, binsize=binsize)[:]
+	t3 = slice(data.t[idx2], data.grasp[idx2], around=around, binsize=binsize)[:]
+
+	s = vcat(s1, s2, s3)
+	t = vcat(t1, t2, t3)
+
+	C = crosscor(s, t, [-40:40;])
+	plot(Cₘ)
+	plot!(C)
+end
 # 3C
-around = [-50, 50]
+
+around = [-500, 500]
 n = slice(data.t, data.lift, around=[-25, 25], normalization=true, average=true)
-idx = active_neurons(n, -0.5, 2.5)
-tmp = data[idx, :];
+
+acorrs = data_full[:, :p_acorr] .< 0.1
+activ = active_neurons(n, -0.5, 2.5) 
+idx = activ .& acorrs
+tmp = data[acorrs, :];
 
 s = slice(tmp.t, tmp.lift, around=around, binsize=1.)
 neigh = get_pairs(tmp, "n")
