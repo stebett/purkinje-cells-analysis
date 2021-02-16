@@ -52,6 +52,20 @@ function crosscor(data, idx1::Int, idx2::Int; thr=1.5, binsize=0.5, lags=[-40, 4
 	crosscor_custom(s, t, lags)
 end
 
+function crosscor_3B(df, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], dir="")
+	p = plot(crosscor(df, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], filt=true))
+	p = plot!(crosscor(df, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], filt=false))
+	if length(dir) > 0
+		savefig(plotsdir("crosscor", dir, "$idx1+$idx2.png"))
+	else
+		p
+	end
+end
+
+# for couple in get_pairs(data, "n")
+# 	crosscor_3B(couple[1], couple[2], dir="new")
+# end
+
 # function crosscor(s::Matrix, couples::Matrix, lags=[-min(size(x,1)-1, 10*log10(size(x,1))):min(size(x,1), 10*log10(size(x,1)));])
 # 	m = zeros(length(lags), length(couples))
 # 	for i in 1:length(couples)
