@@ -40,26 +40,33 @@ for p in neigh
 end
 
 # 3C
-tmp = data[acorrs .> 1., :];
+tmp = data[acorrs .> 0.5, :];
 size(tmp)
 
 neigh = get_pairs(tmp, "n")
-cc_n = mass_crosscor(tmp, neigh, around=[-50, 50])
+cc_n = mass_crosscor(tmp, neigh, around=[-200, 200])
 
 cc_n_mean = mean(cc_n, dims=2)
 cc_n_sem = sem(cc_n, dims=2)
+
+closeall()
 plot(cc_n_mean, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
+
 # 3D
 distant = get_pairs(tmp, "d")
-cc_d = mass_crosscor(tmp, distant, around=[-50, 50])
+cc_d = mass_crosscor(tmp, distant, around=[-200, 200])
 
 cc_d_mean = mean(cc_d, dims=2)
 cc_d_sem = sem(cc_d, dims=2)
-plot(cc_d_mean, c=:red, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
+
+closeall()
+low = min((cc_n_mean.- cc_n_sem)...)
+high = max((cc_n_mean.+ cc_n_sem)...)
+plot(cc_d_mean, ylims=(low, high), c=:black, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
