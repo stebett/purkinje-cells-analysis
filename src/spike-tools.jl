@@ -44,16 +44,14 @@ function slice(spiketrains, landmarks; around=[-50, 50], convolution=false, σ=1
 
 
 	if convolution || normalization
-		σ = Int(σ/binsize)
 		pad = [around[1] - 2σ, around[2] + 2σ]
-		tmp = convolve(slice_(spiketrains, landmarks, pad, binsize), σ)
-		@infiltrate
+		tmp = convolve(slice_(spiketrains, landmarks, pad, binsize), Int(σ/binsize))
 		s .= tmp
 	end
 
 	if normalization
 		pad = [over[1] - 2σ, over[2] + 2σ]
-		s = slice_(spiketrains, landmarks, pad, binsize) |> x->convolve(x, σ) |> x->normalize(s, x)
+		s = slice_(spiketrains, landmarks, pad, binsize) |> x->convolve(x, σ) |> x->norm_slice(s, x)
 	end
 
 	if average
@@ -81,7 +79,7 @@ function bigSlice(data, binsize=1, around=4, average=true, normalization=true)
 
 	if normalization
 		pad = [over[1] - 2σ, over[2] + 2σ]
-		s = slice_(data.t, data.lift, pad) |> x->convolve(x, σ) |> x->normalize(s, x)
+		s = slice_(data.t, data.lift, pad) |> x->convolve(x, σ) |> x->norm_slice(s, x)
 	end
 
 	if average
@@ -261,14 +259,14 @@ function convolve(s::Array{Float64, 2}, σ=10)::Array{Float64, 2}
     c
 end
 
-function normalize(target::T, baseline::T)::T where {T <: Array{Float64,1}}
+function norm_slice(target::T, baseline::T)::T where {T <: Array{Float64,1}}
 	base_mean = mean(baseline)
 	base_std = std(baseline)
 
     (target .- base_mean) ./ base_std
 end
 
-function normalize(target::T, baseline::T)::T where {T <: Array{Float64,2}}
+function norm_slice(target::T, baseline::T)::T where {T <: Array{Float64,2}}
 	base_mean = mean(baseline, dims=1)
 	base_std = std(baseline, dims=1)
 

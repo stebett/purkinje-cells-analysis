@@ -39,12 +39,12 @@ function test_discretize()
     return true
 end
 
-function test_normalize()
+function test_norm_slice()
     idx = rand(1:length(spiketrains)-10)  
     idx2 = idx+10
-    normalize(spiketrains[idx], covers[idx])
-    normalize(spiketrains[idx:idx2], covers[idx:idx2])
+    norm_slice(spiketrains[idx], covers[idx])
+    norm_slice(spiketrains[idx:idx2], covers[idx:idx2])
     return true
 end
 
-@test test_slice() && test_discretize() && test_normalize()
+@test test_slice() && test_discretize() && test_norm_slice()

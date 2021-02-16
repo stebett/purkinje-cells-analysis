@@ -5,9 +5,9 @@ using DataFrames
 using Combinatorics
 
 
-function get_pairs(data::DataFrame, kind::String)
+function get_pairs(df::DataFrame, kind::String)
 	if kind == "neigh" || kind == "neighbors" || kind == "n"
-		neigh = unique(get_neighbors(data, grouped=true)) 
+		neigh = unique(get_neighbors(df, grouped=true)) 
 		idx = map(length, neigh)
 		neigh = neigh[idx .> 1]
 		couples = Array{Int64, 1}[]
@@ -17,8 +17,8 @@ function get_pairs(data::DataFrame, kind::String)
 		return couples
 
 	elseif kind == "dist" || kind == "distant" || kind == "d"
-		idx = [1:size(data, 1);]
-		dist = get_distant(data, idx, true)
+		idx = [1:size(df, 1);]
+		dist = get_distant(df, idx, true)
 		couples = Array{Int64, 1}[]
 		for (i, d) in enumerate(dist)
 			for x in d
@@ -29,7 +29,7 @@ function get_pairs(data::DataFrame, kind::String)
 		return couples
 
 	elseif kind == "all" || kind == "a"
-		return collect(combinations([1:593;], 2))
+		return collect(combinations([1:size(df, 1);], 2))
 	end
 end
 
@@ -38,9 +38,9 @@ function get_distant(df::DataFrame, idx, grouped=false)
 		index = [idx]
 	end
 
-    rats = data[idx, :].rat
-    sites = data[idx, :].site
-    tetrodes = data[idx, :].tetrode
+    rats = df[idx, :].rat
+    sites = df[idx, :].site
+    tetrodes = df[idx, :].tetrode
 
 	if grouped
 		indexes = Array{Int, 1}[]
@@ -58,14 +58,14 @@ function get_distant(df::DataFrame, idx, grouped=false)
 end
 
 
-function get_neighbors(df::DataFrame, idx=[1:593;]; grouped=false)
+function get_neighbors(df::DataFrame, idx=[1:size(df, 1);]; grouped=false)
 	if typeof(idx) ≡ Int
 		index = [idx]
 	end
 
-    rats = data[idx, :].rat
-    sites = data[idx, :].site
-    tetrodes = data[idx, :].tetrode
+    rats = df[idx, :].rat
+    sites = df[idx, :].site
+    tetrodes = df[idx, :].tetrode
 
 	if grouped
 		indexes = Array{Int, 1}[]
