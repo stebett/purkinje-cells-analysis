@@ -4,41 +4,66 @@ using DrWatson
 using Statistics
 using LinearAlgebra
 using Plots; gr()
+import StatsBase.sem
 using Revise
 
 includet(srcdir("cross-correlation.jl"))
 include(scriptsdir("load-data.jl"))
 include(scriptsdir("load-full.jl"))
 
+function sem(x::Matrix; dims=2)
+	r = zeros(size(x, dims % 2 + 1)) 
+	for i in 1 : length(r)
+		r[i] = sem(x[i, :])
+	end
+	r
+end
+
+
 # 3B
 acorrs = data_full[:, :p_acorr1000] 
 tmp_acorr = data[findall(0.5 .< acorrs .< 1.), :];
-get_pairs(tmp_acorr, "n")
+neigh = get_pairs(tmp_acorr, "n")
 
-idx1 = 30
-idx2 = 34
+for p in neigh
+	idx1, idx2 = p
 
-plot(crosscor(tmp_acorr, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], filt=true))
-plot!(crosscor(tmp_acorr, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], filt=false))
+	cc_mod = crosscor(tmp_acorr, idx1, idx2, filt=true)
+	cc_unmod = crosscor(tmp_acorr, idx1, idx2, filt=false)
+	cc_unmod_norm = (cc_unmod .- mean(cc_unmod)) ./ std(cc_unmod)
+	cc_unmod_norm = (cc_unmod_norm .* std(cc_mod)) .+ mean(cc_mod)
+
+	plot(cc_mod, lw=2, c=:orange, labels="during modulation", fill = min(cc_mod..., cc_unmod_norm...), fillalpha = 0.3, fillcolor=:grey)
+	plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
+
+	savefig(plotsdir("crosscor", "3b", "$idx1+$idx2"))
+end
 
 # 3C
-tmp = data[acorrs .> 0.5, :];
+tmp = data[acorrs .> 1., :];
 size(tmp)
 
 neigh = get_pairs(tmp, "n")
-cc_n = mass_crosscor(tmp, neigh)
+cc_n = mass_crosscor(tmp, neigh, around=[-50, 50])
 
 cc_n_mean = mean(cc_n, dims=2)
-cc_n_std = std(cc_n, dims=2)
-plot(cc_n_mean) #, ribbon=cc_n_std,fc=:blue,fa=0.3,label="neighbors", linewidth=3)
-
+cc_n_sem = sem(cc_n, dims=2)
+plot(cc_n_mean, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
+xticks!([1:10:81;],["$i" for i =-20:5:20])
+title!("Pairs of neighboring cells")
+xlabel!("Time (ms)")
+ylabel!("Mean ± sem deviation")
 # 3D
 distant = get_pairs(tmp, "d")
-cc_d = mass_crosscor(tmp, distant)
+cc_d = mass_crosscor(tmp, distant, around=[-50, 50])
 
 cc_d_mean = mean(cc_d, dims=2)
-cc_d_std = std(cc_d, dims=2)
-plot!(cc_d_mean) #, ribbon=cc_d_std,fc=:blue,fa=0.3,label="distant", linewidth=3)
+cc_d_sem = sem(cc_d, dims=2)
+plot(cc_d_mean, c=:red, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
+xticks!([1:10:81;],["$i" for i =-20:5:20])
+title!("Pairs of distant cells")
+xlabel!("Time (ms)")
+ylabel!("Mean ± sem deviation")
 
 # 3E
 cc_n_mod = mass_crosscor(tmp, neigh, filt=false) 
