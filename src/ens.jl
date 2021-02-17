@@ -1,6 +1,5 @@
 module ens
 
-using Pkg
 using DrWatson
 
 include(srcdir("section.jl"))

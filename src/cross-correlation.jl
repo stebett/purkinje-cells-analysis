@@ -5,21 +5,25 @@ using Statistics
 import StatsBase.crosscor
 
 
-@inline function crosscor_custom(c1::Vector, c2::Vector, lags=[-40, 40])
-	bins = zeros(diff(lags)[1])
-	spikes = c1 .* [1:length(c1);]
-	spikes = spikes[spikes .> 0]
-	@inbounds for s in spikes
-		low = floor(Int, s+lags[1])
-		high = floor(Int, s+lags[2]-1)
-		idx = findall(0 .< [low:high;] .< length(c2))
-		bins[idx] .+= view(c2, max(low, 1):min(high, length(c2)-1))
+@inline function crosscor_custom(c1::Vector, c2::Vector, lags=[-40:40;])
+	bins = zeros(length(lags))
+	center = ceil(Int, length(lags)/2)
+	x = c1 .* [1:length(c1);]
+	x = x[x .> 0]
+	x = Array{Int, 1}(x)
+
+	y = c2 .* [1:length(c2);]
+	y = y[y .> 0]
+	y = Array{Int, 1}(y)
+
+	@inbounds for z in x
+		bins[intersect((-z .+ y), lags) .+ center] .+= 1
 	end
 	bins
 end
 
-function mass_crosscor(df, couples; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
-	m = zeros(diff(lags)[1], length(couples))
+function mass_crosscor(df, couples; thr=1.5, binsize=0.5, lags=[-40:40;], around=[-200, 200], filt=true)
+	m = zeros(length(lags), length(couples))
 	for (i, c) in enumerate(couples)
 		m[:, i] = crosscor(df, c[1], c[2], thr=thr, binsize=binsize, lags=lags, around=around, filt=filt)
 	end
@@ -28,7 +32,7 @@ end
 
 
 
-function crosscor(df, idx1::Int, idx2::Int; thr=1., binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
+function crosscor(df, idx1::Int, idx2::Int; thr=1., binsize=0.5, lags=[-40:40;], around=[-200, 200], filt=true)
 	idx = Colon()
 	if filt
 		z = section(df[idx1, "t"], df[idx1, "cover"], around, over=[-1000, -500], binsize=binsize, :norm) 
