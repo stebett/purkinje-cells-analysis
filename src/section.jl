@@ -6,9 +6,9 @@ using ImageFiltering
 using OffsetArrays
 import LinearAlgebra.normalize
 
-export slice, normalize, convolve, bin, section
+export section, normalize, convolve, bin 
 
-function slice(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)
+function section(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)
 	if :conv in args || :norm in args
 		z = [z[1] - 2σ, z[2] + 2σ]
 	end
@@ -33,12 +33,12 @@ function slice(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)
 		for i = idx
 			push!(M, mean(hcat(m[i]...), dims=2)[:])
 		end
-		return hcat(M...)
+		return M
 
 	elseif :avg in args && y isa Array{Float64, 1}
-		return hcat(mean(hcat(m...), dims=2)...)
+		return mean(hcat(m...), dims=2)
 	end
-	hcat(m...)
+	.
 end
 
 function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, })::Array{Array{Float64, 1}, 1}
