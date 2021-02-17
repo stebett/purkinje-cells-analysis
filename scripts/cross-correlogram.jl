@@ -17,6 +17,7 @@ function sem(x::Matrix; dims=2)
 	r
 end
 
+#<
 acorrs = data_full[:, :p_acorr] 
 tmp = data[acorrs .< 0.2, :];
 neigh = get_pairs(tmp, "n")
@@ -24,19 +25,19 @@ distant = get_pairs(tmp, "d")
 
 n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...)
 findall(sum(n .> 1., dims=1) .> 1)
+#>
 
-# Heatmap
+#< Heatmap
 idx1, idx2 = 49, 50
-heatmap(hcat(section(tmp.t[idx1], tmp.cover[idx1], [-400, 400], :norm)...)')
-heatmap(hcat(section(tmp.t[idx2], tmp.cover[idx2], [-400, 400], :norm)...)')
 
 x = section(tmp[idx1, "t"], tmp[idx1, "cover"], [-400, 400], binsize=.5) 
 y = section(tmp[idx2, "t"], tmp[idx2, "cover"], [-400, 400], binsize=.5) 
 
 heatmap(hcat(crosscor_custom.(x, y)...)')
+#>
 
+#< 3B
 
-# 3B
 cc_mod = crosscor(tmp, idx1, idx2, filt=true)
 cc_unmod = crosscor(tmp, idx1, idx2, around=[-800, 800], filt=false)
 cc_unmod_norm = (cc_unmod ./ mean(cc_unmod)) .* mean(cc_mod)  # TODO
@@ -50,8 +51,8 @@ xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
 ylabel!("Count")
 
-
-# 3C
+#>
+#< 3C
 
 cc_n = mass_crosscor(tmp, neigh, around=[-200, 200], thr=2.)
 
@@ -67,7 +68,8 @@ title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
 
-# 3D
+#>
+#< 3D
 
 cc_d = mass_crosscor(tmp, distant, around=[-400, 400])
 
@@ -82,7 +84,8 @@ title!("Pairs of distant cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviakion")
 
-# 3E
+#>
+#< 3E
 cc_n_mod = mass_crosscor(tmp, neigh, filt=true, around=[-200, 200]) 
 cc_n_unmod = mass_crosscor(tmp, neigh, filt=false, around=[-200, 200]) 
 
@@ -112,7 +115,8 @@ xlabel!("Time (ms)")
 
 
 
-# 3F
+#>
+#< 3F
 n = section(tmp.t, tmp.lift, [-200, 200], :conv, :avg)
 cors = [cor(n[x[1]], n[x[2]]) for x in neigh]
 
@@ -141,3 +145,4 @@ x = x ./ mean(x)
 x = mean(drop(x), dims=2)
 x = convolve(x[:], σ)
 plot(x)
+#>
