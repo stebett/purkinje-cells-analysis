@@ -87,14 +87,25 @@ cc_n_unmod = mass_crosscor(tmp, neigh, filt=false)
 
 σ = 1
 x = reverse(cc_n_mod[1:40, :], dims=1) .+ cc_n_mod[41:end, :]
-x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
+# x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
+x = x .- mean(x, dims=1) 
 x = mean(x, dims=2)
+xs = copy(x)[1+2σ:end-2σ]
 x = convolve(x[:], σ)
-closeall()
-plot(x)
 
-cc_n_mod |> drop |> x->x[42-2σ:70+2σ, :] |> x->mean(x, dims=2) |> x->convolve(x[:], σ) |> plot
-cc_n_unmod |> drop |> x->x[42-2σ:70+2σ, :] |> x->mean(x, dims=2) |> x->convolve(x[:], σ) |> plot!
+y = reverse(cc_n_unmod[1:40, :], dims=1) .+ cc_n_unmod[41:end, :]
+# y = drop((y .- mean(y, dims=1)) ./ std(y, dims=1))
+y = y .- mean(y, dims=1)
+y = mean(y, dims=2)
+y = convolve(y[:], σ)
+
+closeall()
+plot([2:length(x)+1;], x, xlims=(0, 24), label="during modulation (smoothed)")
+plot!([2:length(y)+1;], y, label="during whole task")
+scatter!(2:length(xs)+1, xs, c=:black, label="modulation")
+vline!([10], line = (1, :dash, :black), lab="")
+hline!([0], line = (1, :dash, :black), lab="")
+xticks!([0:4:24;], ["$i" for i = 0:2:12])
 
 
 
