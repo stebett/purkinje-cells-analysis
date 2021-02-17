@@ -62,20 +62,20 @@ function correlate(convolutions)
 end
 
 r = [-500, 500]
-n = slice(data.t, data.cover, around=r, convolution=true, normalization=true, over=r, average=true)
+n = slice(data.t, data.cover, around=r, convolution=true, :norm, over=r, average=true)
 
 correlations = correlate(n)
 cover_neigh = neighbor_correlation(correlations, neigh_list)
 cover_dist = distant_correlation(correlations, dist_list, neuron_list)
 
 
-n = slice(data.t, data.grasp, around=r, convolution=true, normalization=true, over=r, average=true)
+n = slice(data.t, data.grasp, around=r, convolution=true, :norm, over=r, average=true)
 correlations = correlate(n)
 
 grasp_neigh = neighbor_correlation(correlations, neigh_list)
 grasp_dist = distant_correlation(correlations, dist_list, neuron_list)
 
-n = slice(data.t, data.lift, around=r, convolution=true, normalization=true, over=r, average=true)
+n = slice(data.t, data.lift, around=r, convolution=true, :norm, over=r, average=true)
 correlations = correlate(n)
 
 lift_neigh = neighbor_correlation(correlations, neigh_list)

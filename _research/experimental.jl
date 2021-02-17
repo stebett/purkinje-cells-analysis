@@ -85,7 +85,7 @@ end
 function single_trials(df, landmark::String)
 	new_df = DataFrame(rat=String[], site=String[], tetrode=String[], neuron=String[], lift=Float64[], cover=Float64[], grasp=Float64[], t=Array{Float64, 1}[])
 
-	trials = slice(df["t"], df[landmark], around=[-250, 250], normalization=true, convolution=true)
+	trials = slice(df["t"], df[landmark], around=[-250, 250], :norm, convolution=true)
 
 	idx = map(length, df[landmark]) |> x->pushfirst!(x, 0) |> cumsum
 	idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]

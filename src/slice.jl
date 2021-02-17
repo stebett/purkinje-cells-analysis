@@ -6,6 +6,8 @@ using ImageFiltering
 using OffsetArrays
 import LinearAlgebra.normalize
 
+export slice, normalize, convolve, bin, section
+
 function slice(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)
 	if :conv in args || :norm in args
 		z = [z[1] - 2σ, z[2] + 2σ]

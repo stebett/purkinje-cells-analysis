@@ -81,7 +81,7 @@ cc_n_unmod |> dropnancols |> normalize |> x->x[42:70, :] |> x->mean(x, dims=2) |
 
 
 # 3F
-n = slice(tmp.t, tmp.lift, around=[-200, 200], convolution=true, average=true)
+n = slice(tmp.t, tmp.lift, [-200, 200], :conv, :avg)
 cors = [cor(n[:, x[1]], n[:, x[2]]) for x in neigh]
 
 fr_sim = findall(cors .> 0.2)

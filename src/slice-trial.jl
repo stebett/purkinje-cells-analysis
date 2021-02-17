@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate "ens"
 
-function bigSlice(data, binsize=1, around=4, average=true, normalization=true) 
+function bigSlice(data, binsize=1, around=4, average=true, :norm) 
 	# TODO
 	σ = 10
 	over = [-5000, -3000]

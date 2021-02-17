@@ -10,7 +10,7 @@ include(scriptsdir("load-data.jl"))
 
 low, high = -0.7, 1.6
 
-n = slice(data.t, data.lift, convolution=true, normalization=true, average=true, around=[-5000, 5000], over=[-5000, -2000])
+n = slice(data.t, data.lift, convolution=true, :norm, average=true, around=[-5000, 5000], over=[-5000, -2000])
 
 
 function sort_active(n)

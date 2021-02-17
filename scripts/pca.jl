@@ -12,7 +12,7 @@ using Plots; plotlyjs()
 
 
 function scatter_dynamics(around, title)
-	N = slice(data.t, data.lift, convolution=true, normalization=true, average=true, around=around)
+	N = slice(data.t, data.lift, convolution=true, :norm, average=true, around=around)
 	N = dropnancols(N)
 	N = dropinfcols(N)
 	N = dropoutliercols(N)

@@ -4,6 +4,7 @@ using DrWatson
 using DataFrames
 using Combinatorics
 
+export get_pairs
 
 function get_pairs(df::DataFrame, kind::String)
 	if kind == "neigh" || kind == "neighbors" || kind == "n"
@@ -80,10 +81,4 @@ function get_neighbors(df::DataFrame, idx=[1:size(df, 1);]; grouped=false)
 		push!(indexes, findall((df.rat .== rat) .& (df.site .== site) .& (df.tetrode .== tetrode))...)
 	end
 	indexes
-end
-
-
-function active_neurons(n, low=-0.5, high=1.)
-	idx = (sum(n .> high, dims=1) .> 1) .| (sum(n .< low, dims=1) .> 1)
-	idx[:]
 end

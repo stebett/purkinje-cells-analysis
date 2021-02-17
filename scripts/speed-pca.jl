@@ -17,7 +17,7 @@ function sort_active(n, thr=0.5)
 	n[:, high_rates[:]]
 end
 
-n = slice(data.t, data.lift, around=[-50, 5000], convolution=true, normalization=true, average=false)
+n = slice(data.t, data.lift, around=[-50, 5000], convolution=true, :norm, average=false)
 n = dropnancols(n)
 N = sort_active(n, 1.5)
 
@@ -35,7 +35,7 @@ scatter(M.proj[:, 1], M.proj[:, 2], M.proj[:, 3], zcolor=[1:size(M.proj, 1);], c
 #
 #
 x = 50
-n = slice(data.t, data.lift, around=[-x, x], convolution=true, normalization=true, average=false)
+n = slice(data.t, data.lift, around=[-x, x], convolution=true, :norm, average=false)
 n = dropnancols(n)
 N = sort_active(n, 1.8)
 M = fit(PCA, N, maxoutdim=3)
