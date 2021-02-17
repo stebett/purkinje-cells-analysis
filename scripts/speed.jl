@@ -3,7 +3,7 @@ using DrWatson
 
 include(scriptsdir("load-data.jl"))
 include(srcdir("spike-tools.jl"))
-include(srcdir("utils.jl"))
+include(srcdir("drop.jl"))
 include(srcdir("data-tools.jl"))
 
 
