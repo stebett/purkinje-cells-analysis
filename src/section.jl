@@ -38,7 +38,7 @@ function section(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)
 	elseif :avg in args && y isa Array{Float64, 1}
 		return mean(hcat(m...), dims=2)
 	end
-	.
+	m
 end
 
 function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, })::Array{Array{Float64, 1}, 1}
@@ -46,11 +46,12 @@ function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, }
 end
 
 function normalize(x::Array{Float64, 1}, y::Array{Float64, 1})::Array{Float64, 1}
-	if std(x) == 0.
+	if std(y) == 0.
 		return zeros(size(x))
 	end
-	(((x .- mean(x)) ./ std(x)) .* std(y) ) .+ mean(y)
+	(x .- mean(y)) ./ std(y)
 end
+
 
 function convolve(x::Array{Array{Float64, 1}, 1}, σ::Int=10)::Array{Array{Float64, 1}, 1}
 	convolve.(x, σ)

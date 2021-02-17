@@ -1,6 +1,7 @@
 using DrWatson
 @quickactivate "ens"
 
+export drop
 
 function drop(v::Matrix; dims=1, nan=true, inf=true, outliers=false, threshold=3.5)
 	todrop = falses(size(v, dims % 2 + 1))

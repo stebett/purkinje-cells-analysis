@@ -28,26 +28,21 @@ end
 
 
 
-function crosscor(df, idx1::Int, idx2::Int; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
+function crosscor(df, idx1::Int, idx2::Int; thr=1., binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
+	idx = Colon()
 	if filt
-		sig_lift = abs.(slice(df.t[idx1], df.lift[idx1], around, binsize=binsize, :norm)) .> thr
-		sig_cover = abs.(slice(df.t[idx1], df.cover[idx1], around, binsize=binsize, :norm)).> thr
-		sig_grasp = abs.(slice(df.t[idx1], df.grasp[idx1], around, binsize=binsize, :norm)) .> thr
-	else
-		sig_lift, sig_cover, sig_grasp = Colon(),Colon(),Colon()
+		z = section(df[idx1, "t"], df[idx1, "cover"], around, over=[-1000, -500], binsize=binsize, :norm) 
+
+		idx = vcat(z...) .> thr
 	end
 
-	s1 = slice(df.t[idx1], df.lift[idx1], around, binsize=binsize)[sig_lift]
-	s2 = slice(df.t[idx1], df.cover[idx1], around, binsize=binsize)[sig_cover]
-	s3 = slice(df.t[idx1], df.grasp[idx1], around, binsize=binsize)[sig_grasp]
+	x = section(df[idx1, "t"], df[idx1, "cover"], around, binsize=binsize) 
+	y = section(df[idx2, "t"], df[idx2, "cover"], around, binsize=binsize) 
 
-	t1 = slice(df.t[idx2], df.lift[idx2], around, binsize=binsize)[sig_lift]
-	t2 = slice(df.t[idx2], df.cover[idx2], around, binsize=binsize)[sig_cover]
-	t3 = slice(df.t[idx2], df.grasp[idx2], around, binsize=binsize)[sig_grasp]
-
-	s = vcat(s1, s2, s3)
-	t = vcat(t1, t2, t3)
-	crosscor_custom(s, t, lags)
+	x = vcat(x...)[idx]
+	y = vcat(y...)[idx]
+	
+	crosscor_custom(x, y, lags)
 end
 
 function crosscor_3B(df, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], dir="")
