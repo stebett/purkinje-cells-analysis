@@ -18,32 +18,32 @@ import StatsBase.crosscor
 	bins
 end
 
-function mass_crosscor(data, couples; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
+function mass_crosscor(df, couples; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
 	m = zeros(diff(lags)[1], length(couples))
 	for (i, c) in enumerate(couples)
-		m[:, i] = crosscor(data, c[1], c[2], thr=thr, binsize=binsize, lags=lags, around=around, filt=filt)
+		m[:, i] = crosscor(df, c[1], c[2], thr=thr, binsize=binsize, lags=lags, around=around, filt=filt)
 	end
 	m
 end
 
 
 
-function crosscor(data, idx1::Int, idx2::Int; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
+function crosscor(df, idx1::Int, idx2::Int; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], filt=true)
 	if filt
-		sig_lift = abs.(slice(data.t[idx1], data.lift[idx1], around, binsize=binsize, :norm)) .> thr
-		sig_cover = abs.(slice(data.t[idx1], data.cover[idx1], around, binsize=binsize, :norm)).> thr
-		sig_grasp = abs.(slice(data.t[idx1], data.grasp[idx1], around, binsize=binsize, :norm)) .> thr
+		sig_lift = abs.(slice(df.t[idx1], df.lift[idx1], around, binsize=binsize, :norm)) .> thr
+		sig_cover = abs.(slice(df.t[idx1], df.cover[idx1], around, binsize=binsize, :norm)).> thr
+		sig_grasp = abs.(slice(df.t[idx1], df.grasp[idx1], around, binsize=binsize, :norm)) .> thr
 	else
 		sig_lift, sig_cover, sig_grasp = Colon(),Colon(),Colon()
 	end
 
-	s1 = slice(data.t[idx1], data.lift[idx1], around, binsize=binsize)[sig_lift]
-	s2 = slice(data.t[idx1], data.cover[idx1], around, binsize=binsize)[sig_cover]
-	s3 = slice(data.t[idx1], data.grasp[idx1], around, binsize=binsize)[sig_grasp]
+	s1 = slice(df.t[idx1], df.lift[idx1], around, binsize=binsize)[sig_lift]
+	s2 = slice(df.t[idx1], df.cover[idx1], around, binsize=binsize)[sig_cover]
+	s3 = slice(df.t[idx1], df.grasp[idx1], around, binsize=binsize)[sig_grasp]
 
-	t1 = slice(data.t[idx2], data.lift[idx2], around, binsize=binsize)[sig_lift]
-	t2 = slice(data.t[idx2], data.cover[idx2], around, binsize=binsize)[sig_cover]
-	t3 = slice(data.t[idx2], data.grasp[idx2], around, binsize=binsize)[sig_grasp]
+	t1 = slice(df.t[idx2], df.lift[idx2], around, binsize=binsize)[sig_lift]
+	t2 = slice(df.t[idx2], df.cover[idx2], around, binsize=binsize)[sig_cover]
+	t3 = slice(df.t[idx2], df.grasp[idx2], around, binsize=binsize)[sig_grasp]
 
 	s = vcat(s1, s2, s3)
 	t = vcat(t1, t2, t3)

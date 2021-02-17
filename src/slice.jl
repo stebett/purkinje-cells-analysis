@@ -33,12 +33,12 @@ function slice(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)
 		for i = idx
 			push!(M, mean(hcat(m[i]...), dims=2)[:])
 		end
-		return M
+		return hcat(M...)
 
 	elseif :avg in args && y isa Array{Float64, 1}
-		return mean(hcat(m...), dims=2)
+		return hcat(mean(hcat(m...), dims=2)...)
 	end
-	m
+	hcat(m...)
 end
 
 function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, })::Array{Array{Float64, 1}, 1}
