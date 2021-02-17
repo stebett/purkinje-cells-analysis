@@ -1,15 +1,13 @@
 using DrWatson
-@quickactivate "ens"
+@quickactivate :ens
 
 using Statistics
 using LinearAlgebra
 using Plots; gr()
 import StatsBase.sem
-using Revise
 
-includet(srcdir("cross-correlation.jl"))
-include(scriptsdir("load-data.jl"))
-include(scriptsdir("load-full.jl"))
+include(srcdir("cross-correlation.jl"))
+include(scriptsdir("data", "load-full.jl"))
 
 function sem(x::Matrix; dims=2)
 	r = zeros(size(x, dims % 2 + 1)) 

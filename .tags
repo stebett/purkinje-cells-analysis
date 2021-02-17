@@ -10,6 +10,11 @@
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
+bigSlice	src/slice-trial.jl	/^function bigSlice(data, binsize=1, around=4, average=true, :norm) $/;"	f
+bin	src/slice.jl	/^function bin(x::Array{Array{Float64, 1}, 1}, len::Int, binsize::Float64=1.)::Array{Array{Float64/;"	f
+bin	src/slice.jl	/^function bin(x::Array{Float64, 1}, len::Int, binsize::Float64=1.)::Array{Float64, 1}$/;"	f
+convolve	src/slice.jl	/^function convolve(x::Array{Array{Float64, 1}, 1}, σ::Int=10)::Array{Array{Float64, 1}, 1}$/;"	f
+convolve	src/slice.jl	/^function convolve(x::Array{Float64, 1}, σ::Int=10)::Array{Float64, 1}$/;"	f
 correlate	scripts/corr-coef.jl	/^function correlate(convolutions)$/;"	f
 crosscor	src/cross-correlation.jl	/^function crosscor(data, idx1::Int, idx2::Int; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200/;"	f
 crosscor_3B	src/cross-correlation.jl	/^function crosscor_3B(df, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], dir="")$/;"	f
@@ -18,6 +23,7 @@ distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlat
 drop	src/drop.jl	/^function drop(v::Matrix; dims=1, nan=true, inf=true, outliers=false, threshold=3.5)$/;"	f
 drop	src/drop.jl	/^function drop(v::Vector; nan=true, inf=true, outliers=false, threshold=3.5)$/;"	f
 drop_inactive	scripts/psth-v2.jl	/^function drop_inactive(n, thresh=3)$/;"	f
+ens	src/ens.jl	/^module ens$/;"	n
 extract_trials	scripts/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/save-trials.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/save-trials.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
@@ -40,6 +46,8 @@ load_full	scripts/load-full.jl	/^function load_full()$/;"	f
 mass_crosscor	src/cross-correlation.jl	/^function mass_crosscor(data, couples; thr=1.5, binsize=0.5, lags=[-40, 40], around=[-200, 200], /;"	f
 neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/load-full.jl	/^function nodouble(x)$/;"	f
+normalize	src/slice.jl	/^function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, })::Array{Array{F/;"	f
+normalize	src/slice.jl	/^function normalize(x::Array{Float64, 1}, y::Array{Float64, 1})::Array{Float64, 1}$/;"	f
 padder	scripts/save-trials.jl	/^function padder(n, trials)$/;"	f
 plot_gpfa	scripts/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	scripts/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
@@ -50,10 +58,16 @@ pₙ	_research/information.jl	/^function pₙ(x)$/;"	f
 save_trials	scripts/save-trials.jl	/^function save_trials(trials)$/;"	f
 scatter_dynamics	scripts/pca.jl	/^function scatter_dynamics(around, title)$/;"	f
 search_routes	scripts/load-full.jl	/^function search_routes(x, l, saved_list::Vector)$/;"	f
+section	src/slice.jl	/^function section(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, 1}, z::Array{Int, 1/;"	f
+section	src/slice.jl	/^function section(x::Array{Float64, 1}, y::Array{Float64, 1}, z::Array{Int, 1})::Array{Array{Floa/;"	f
+section	src/slice.jl	/^function section(x::Array{Float64, 1}, y::Number, z::Array{Int, 1})::Array{Float64, 1}$/;"	f
+sectionTrial	src/slice-trial.jl	/^function sectionTrial(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{Flo/;"	f
+sectionTrial	src/slice-trial.jl	/^function sectionTrial(x::Array{T, 1}, lift::T, cover::T, grasp::T, n::Int, k::Int)::Array{T, 1} /;"	f
 sem	scripts/cross-correlogram.jl	/^function sem(x::Matrix; dims=2)$/;"	f
 single_trials	_research/experimental.jl	/^function single_trials(df, landmark::String)$/;"	f
 single_trials	scripts/plot-gpfa.jl	/^function single_trials(df, landmark::String)$/;"	f
 single_trials	scripts/save-trials.jl	/^function single_trials(df, landmark::String)$/;"	f
+slice	src/slice.jl	/^function slice(x, y, z, args...;σ=10, over=[-500, 500], binsize=1.)$/;"	f
 sort_active	scripts/psth.jl	/^function sort_active(n)$/;"	f
 sort_active	scripts/speed-pca.jl	/^function sort_active(n, thr=0.5)$/;"	f
 sort_peaks	scripts/psth-v2.jl	/^function sort_peaks(n)$/;"	f
