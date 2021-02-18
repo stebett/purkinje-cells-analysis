@@ -28,12 +28,14 @@ findall(sum(n .> 1., dims=1) .> 1)
 #>
 
 #< Heatmap
-idx1, idx2 = 49, 50
+idx1, idx2 = 29, 30
 
 x = section(tmp[idx1, "t"], tmp[idx1, "cover"], [-400, 400], binsize=.5) 
 y = section(tmp[idx2, "t"], tmp[idx2, "cover"], [-400, 400], binsize=.5) 
 
 heatmap(hcat(crosscor_custom.(x, y)...)')
+savefig(plotsdir("crosscor", "heatmap"), "scripts/cross-correlogram.jl")
+
 #>
 
 #< 3B
@@ -50,7 +52,7 @@ plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
 ylabel!("Count")
-
+#savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
@@ -67,6 +69,7 @@ xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
+savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
 
 #>
 #< 3D
