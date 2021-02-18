@@ -6,7 +6,8 @@ using LinearAlgebra
 using Plots; gr()
 import StatsBase.sem
 
-include(srcdir("cross-correlation.jl"))
+include(srcdir("plots", "cross-correlation.jl"))
+include(srcdir("plots", "psth.jl"))
 include(scriptsdir("io", "load-full.jl"))
 
 function sem(x::Matrix; dims=2)
@@ -23,7 +24,6 @@ tmp = data[acorrs .< 0.2, :];
 neigh = get_pairs(tmp, "n")
 distant = get_pairs(tmp, "d")
 
-tmp = data;
 n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...);
 active = tmp[findall(sum(n .> 0.75, dims=1)[:] .> 1), :];
 active_neigh = get_pairs(active, "n")
@@ -31,7 +31,7 @@ active_neigh = get_pairs(active, "n")
 
 #>
 
-#< Heatmap
+#< Heatmap 2 neurons
 # R31 Block27 Tetrode2 C1 & C2 -> 437, 438
 idx1, idx2 = active_neigh[2]
 idx1, idx2 = 437, 438
@@ -41,6 +41,23 @@ y = section(tmp[findall(tmp.index .== idx2), "t"], tmp[findall(tmp.index .== idx
 
 heatmap(hcat(crosscor_custom.(x, y)...)')
 #savefig(plotsdir("crosscor", "heatmap"), "scripts/cross-correlogram.jl")
+
+#>
+#< Heatmap all couples
+
+tmp = data
+neigh = get_pairs(tmp, "n")
+
+cc_n = mass_crosscor(tmp, neigh, around=[-500, 500], thr=2.)
+cc_n = (cc_n .- mean(cc_n, dims=1)) ./ std(cc_n, dims=1)
+cc_n = sort_active(cc_n, 10)
+psth(cc_n, -1.5, 1.8, "normalized cross-correlation")
+xticks!([1, 41, 79], ["-20", "0", "20"])
+xlabel!("Time (ms)")
+ylabel!("Couples of neighboring neurons")
+
+
+
 
 #>
 
@@ -62,7 +79,7 @@ savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
-cc_n = mass_crosscor(tmp, neigh, around=[-200, 200], thr=2.)
+cc_n = mass_crosscor(tmp, neigh, around=[-500, 500], thr=2.)
 
 cc_n_mean = mean(cc_n, dims=2)[:]
 cc_n_sem = sem(cc_n, dims=2)[:]
