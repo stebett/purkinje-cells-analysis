@@ -23,6 +23,7 @@ tmp = data[acorrs .< 0.2, :];
 neigh = get_pairs(tmp, "n")
 distant = get_pairs(tmp, "d")
 
+tmp = data;
 n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...);
 active = tmp[findall(sum(n .> 0.75, dims=1)[:] .> 1), :];
 active_neigh = get_pairs(active, "n")
@@ -31,13 +32,15 @@ active_neigh = get_pairs(active, "n")
 #>
 
 #< Heatmap
+# R31 Block27 Tetrode2 C1 & C2 -> 437, 438
 idx1, idx2 = active_neigh[2]
+idx1, idx2 = 437, 438
 
 x = section(tmp[findall(tmp.index .== idx1), "t"], tmp[findall(tmp.index .== idx1), "cover"], [-400, 400], binsize=.5) 
 y = section(tmp[findall(tmp.index .== idx2), "t"], tmp[findall(tmp.index .== idx2), "cover"], [-400, 400], binsize=.5) 
 
 heatmap(hcat(crosscor_custom.(x, y)...)')
-savefig(plotsdir("crosscor", "heatmap"), "scripts/cross-correlogram.jl")
+#savefig(plotsdir("crosscor", "heatmap"), "scripts/cross-correlogram.jl")
 
 #>
 
@@ -55,7 +58,7 @@ plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
 ylabel!("Count")
-savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
+#savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
@@ -75,7 +78,7 @@ xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
-savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
+#savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
 
 #>
 #< 3D
@@ -91,7 +94,7 @@ xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviakion")
-savefig(plotsdir("crosscor", "figure_3d"), "scripts/cross-correlogram.jl")
+#savefig(plotsdir("crosscor", "figure_3d"), "scripts/cross-correlogram.jl")
 
 #>
 #< 3E
@@ -121,7 +124,7 @@ xticks!([0:4:24;], ["$i" for i = 0:2:12])
 title!("Pairs of neighboring cells")
 ylabel!("Average normalized cross-correlogram")
 xlabel!("Time (ms)")
-savefig(plotsdir("crosscor", "figure_3e"), "scripts/cross-correlogram.jl")
+#savefig(plotsdir("crosscor", "figure_3e"), "scripts/cross-correlogram.jl")
 
 
 #>
