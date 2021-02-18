@@ -18,8 +18,9 @@ function savefig(fn::AbstractString, source::AbstractString)
 	@show fn
 	d = Dict()
 	t = tag!(d)["gitcommit"]
-	run(`exiftool -model=$t $fn`)
-	run(`exiftool -source=$source $fn`)
+	_ = run(`exiftool -model=$t $fn`)
+	_ = run(`exiftool -source=$source $fn`)
+	nothing
 end
 
 
