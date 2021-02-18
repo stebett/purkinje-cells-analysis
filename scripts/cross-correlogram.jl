@@ -45,7 +45,8 @@ heatmap(hcat(crosscor_custom.(x, y)...)')
 #>
 #< Heatmap all couples
 
-tmp = data
+tmp = data;
+tmp = data[acorrs .< 0.2, :];
 neigh = get_pairs(tmp, "n")
 
 cc_n = mass_crosscor(tmp, neigh, around=[-500, 500], thr=2.)
@@ -56,7 +57,7 @@ xticks!([1, 41, 79], ["-20", "0", "20"])
 xlabel!("Time (ms)")
 ylabel!("Couples of neighboring neurons")
 
-
+savefig(plotsdir("crosscor", "heatmap-small-acorr"), "scripts/cross-correlogram.jl")
 
 
 #>
