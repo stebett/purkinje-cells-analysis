@@ -33,8 +33,6 @@
 
 # TODO
 
-- [x] Method to modify dataset so that we have single trials with info about rat and site 
-- [x] Gaussian-process factor analysis
-- [ ] Predict speed from neurons
-- [ ] Unitary analysis
-- [ ] lfads
+- [ ] Make psth a reusable function
+- [ ] heatmap of all crosscors
+- [ ] figures Ac and Ad

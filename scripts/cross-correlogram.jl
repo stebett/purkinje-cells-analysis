@@ -58,7 +58,7 @@ plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
 ylabel!("Count")
-#savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
+savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 

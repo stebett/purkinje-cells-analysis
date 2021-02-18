@@ -1,21 +1,17 @@
 using DrWatson
-@quickactivate "ens"
+@quickactivate :ens
 
 using Statistics
 using Plots;
 
-include(srcdir("spike-tools.jl"))
-include(srcdir("data-tools.jl"))
-include(scriptsdir("load-data.jl"))
 
 low, high = -0.7, 1.6
 
-n = slice(data.t, data.lift, convolution=true, :norm, average=true, around=[-5000, 5000], over=[-5000, -2000])
+n = section(data.t, data.lift, [-5000, 5000], over=[-5000, -2000], :norm, :avg)
 
 
 function sort_active(n)
-	n = dropnancols(n)
-	n = dropinfcols(n)
+	n = drop(n)
 	half = size(n, 1) ÷ 2
 	rates = mean(@view(n[half-250:half+250, :]), dims=1)
 	p = sortperm(rates[:])
@@ -23,19 +19,18 @@ function sort_active(n)
 end
 
 
-function plot_psth(n, low, high)
-	ordered_n = sort_active(n)
-	x = -size(ordered_n, 1) ÷ 2:size(ordered_n, 1) ÷ 2 - 1
-	y = 1:size(ordered_n, 2)
-	heatmap(x, y, ordered_n', clim=(low, high), size=(750, 1000), colorbar_title="Normalized firing rate", c=:viridis)
-	xaxis!("Time (ms)", (x[1], x[end]+1), [x[1], 0, x[end]+1], showaxis = true)
-	yaxis!("Neurons", (y[1], y[end]), [y[1],  y[end]])
+function plot_psth(n::Array{Array{Float64, 1}}, low::Float64, high::Float64, around=[])
+	ordered_n = sort_active(hcat(n...))
+	heatmap(ordered_n', clim=(low, high), size=(750, 1000), colorbar_title="Normalized firing rate", c=:viridis)
+	l, h = size(ordered_n)
+	x0, x1 = [0, l] .- l ÷ 2
+	xticks!([0, l÷2, l-l/1000], ["$x0", "0", "$x1"])
+	yticks!([1, h-1], ["1", "$h"])
+	xaxis!("Time (ms)")
+	yaxis!("Neuron #")
 end
 
 
 gr()
-theme(:dark)
 fig = plot_psth(n, low, high)
-savefig(fig, plotsdir("psth-lime.svg"))
-
-savefig(fig, plotsdir("psth.pdf"))
+savefig(plotsdir("psth", "psth"), "scripts/psth/psth.jl")
