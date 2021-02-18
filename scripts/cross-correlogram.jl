@@ -52,7 +52,7 @@ plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
 ylabel!("Count")
-#savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
+savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
@@ -61,10 +61,13 @@ cc_n = mass_crosscor(tmp, neigh, around=[-200, 200], thr=2.)
 cc_n_mean = mean(cc_n, dims=2)[:]
 cc_n_sem = sem(cc_n, dims=2)[:]
 
-cc_n_mean[41] = NaN 
-cc_n_sem[41] = NaN 
+cc_n_mean[40:41] .= NaN 
+cc_n_sem[40:41] .= NaN 
 
-plot(cc_n_mean, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
+cc_n_mean_norm = cc_n_mean .- mean(drop(cc_n_mean))
+
+closeall()
+plot(cc_n_mean_norm, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
@@ -77,6 +80,7 @@ savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
 cc_d = mass_crosscor(tmp, distant, around=[-400, 400])
 
 cc_d_mean = mean(cc_d, dims=2)
+cc_d_mean_norm = cc_d_mean ./ mean(cc_d_mean)
 cc_d_sem = sem(cc_d, dims=2)
 
 low = min(drop(cc_n_mean.- cc_n_sem)...)
@@ -86,6 +90,7 @@ xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviakion")
+savefig(plotsdir("crosscor", "figure_3d"), "scripts/cross-correlogram.jl")
 
 #>
 #< 3E
