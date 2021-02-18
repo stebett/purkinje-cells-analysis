@@ -83,7 +83,7 @@ cc_d_mean = mean(cc_d, dims=2)
 cc_d_mean_norm = cc_d_mean .- mean(cc_d_mean)
 cc_d_sem = sem(cc_d, dims=2)
 
-plot(cc_d_mean, c=:black, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
+plot(cc_d_mean_norm, c=:black, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
