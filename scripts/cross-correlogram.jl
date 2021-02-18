@@ -118,7 +118,7 @@ xticks!([0:4:24;], ["$i" for i = 0:2:12])
 title!("Pairs of neighboring cells")
 ylabel!("Average normalized cross-correlogram")
 xlabel!("Time (ms)")
-
+savefig(plotsdir("crosscor", "figure_3e"), "scripts/cross-correlogram.jl")
 
 
 #>
