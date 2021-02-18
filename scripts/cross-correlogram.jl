@@ -23,15 +23,18 @@ tmp = data[acorrs .< 0.2, :];
 neigh = get_pairs(tmp, "n")
 distant = get_pairs(tmp, "d")
 
-n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...)
-findall(sum(n .> 1., dims=1) .> 1)
+n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...);
+active = tmp[findall(sum(n .> 0.75, dims=1)[:] .> 1), :];
+active_neigh = get_pairs(active, "n")
+
+
 #>
 
 #< Heatmap
-idx1, idx2 = 29, 30
+idx1, idx2 = active_neigh[2]
 
-x = section(tmp[idx1, "t"], tmp[idx1, "cover"], [-400, 400], binsize=.5) 
-y = section(tmp[idx2, "t"], tmp[idx2, "cover"], [-400, 400], binsize=.5) 
+x = section(tmp[findall(tmp.index .== idx1), "t"], tmp[findall(tmp.index .== idx1), "cover"], [-400, 400], binsize=.5) 
+y = section(tmp[findall(tmp.index .== idx2), "t"], tmp[findall(tmp.index .== idx2), "cover"], [-400, 400], binsize=.5) 
 
 heatmap(hcat(crosscor_custom.(x, y)...)')
 savefig(plotsdir("crosscor", "heatmap"), "scripts/cross-correlogram.jl")
@@ -41,13 +44,13 @@ savefig(plotsdir("crosscor", "heatmap"), "scripts/cross-correlogram.jl")
 #< 3B
 
 cc_mod = crosscor(tmp, idx1, idx2, filt=true)
-cc_unmod = crosscor(tmp, idx1, idx2, around=[-800, 800], filt=false)
+cc_unmod = crosscor(tmp, idx1, idx2, around=[-2000, 2000], filt=false)
 cc_unmod_norm = (cc_unmod ./ mean(cc_unmod)) .* mean(cc_mod)  # TODO
 
 cc_mod[41] = NaN
 cc_unmod_norm[41] = NaN
 
-plot(cc_mod, lw=2, c=:orange, labels="during modulation", fill = min(drop(cc_mod)..., drop(cc_unmod_norm)...), fillalpha = 0.2, fillcolor=:grey)
+plot(cc_mod, lw=2, c=:orange, labels="during modulation", fill = -1, fillalpha = 0.2, fillcolor=:grey)
 plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
@@ -150,5 +153,5 @@ x = reverse(cc_diff[1:40, :], dims=1) .+ cc_diff[41:end-1, :]
 x = x ./ mean(x) 
 x = mean(drop(x), dims=2)
 x = convolve(x[:], σ)
-plot(x)
+plot!(x)
 #>

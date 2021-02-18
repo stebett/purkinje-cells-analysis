@@ -35,13 +35,13 @@ end
 function crosscor(df, idx1::Int, idx2::Int; thr=1., binsize=0.5, lags=[-40:40;], around=[-200, 200], filt=true)
 	idx = Colon()
 	if filt
-		z = section(df[idx1, "t"], df[idx1, "cover"], around, over=[-1000, -500], binsize=binsize, :norm) 
+		z = section(df[findall(df.index .== idx1), "t"], df[findall(df.index .== idx1), "cover"], around, over=[-1000, -500], binsize=binsize, :norm) 
 
 		idx = vcat(z...) .> thr
 	end
 
-	x = section(df[idx1, "t"], df[idx1, "cover"], around, binsize=binsize) 
-	y = section(df[idx2, "t"], df[idx2, "cover"], around, binsize=binsize) 
+	x = section(df[findall(df.index .== idx1), "t"], df[findall(df.index .== idx1), "cover"], around, binsize=binsize) 
+	y = section(df[findall(df.index .== idx2), "t"], df[findall(df.index .== idx2), "cover"], around, binsize=binsize) 
 
 	x = vcat(x...)[idx]
 	y = vcat(y...)[idx]
