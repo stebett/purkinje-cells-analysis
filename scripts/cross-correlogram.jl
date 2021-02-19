@@ -62,6 +62,8 @@ y_fr = section(tmp[findall(tmp.index .== idx2), "t"], tmp[findall(tmp.index .== 
 plot(y_fr, legend=false)
 p4= xticks!([0, 800, 1595], ["-400", "0", "400"])
 plot(p1, p3, p2, p4, layout = @layout [ a b ; c d ])
+savefig(plotsdir("crosscor", "Figure 3A"), "scripts/cross-correlogram.jl")
+
 
 heatmap(hcat(crosscor_custom.(x, y)...)')
 #savefig(plotsdir("crosscor", "heatmap-couple"), "scripts/cross-correlogram.jl")
