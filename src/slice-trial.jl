@@ -1,50 +1,7 @@
 using DrWatson
 @quickactivate "ens"
 
-function bigSlice(data, binsize=1, around=4, average=true) 
-	# TODO
-	σ = 10
-	over = [-5000, -3000]
-
-	s = sectionTrial(data.t, data.lift, data.cover, data.grasp, binsize, around)
-
-	if normalization
-		pad = [over[1] - 2σ, over[2] + 2σ]
-		s = slice_(data.t, data.lift, pad) |> x->convolve(x, σ) |> x->norm_slice(s, x)
-	end
-
-	if average
-		idx = map(length, data.lift) |> x->pushfirst!(x, 0) |> cumsum
-		idx_list = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
-
-		rows = 2binsize + 2around*binsize
-		cols = (map(length, idx_list) .>= 1) |> sum
-		s_avg = zeros(rows, cols)
-		k = 1
-		for i = idx_list 
-			s_avg[:, k] = mean(s[:, i], dims=2)
-			k += 1
-		end
-		return s_avg
-	end
-	s
-end
-
-function sectionTrial(spiketrains::T, lift::T, cover::T, grasp::T, nbins=4, around=2)::Array{Float64, 2} where {T <: Array{Array{Float64, 1}, 1}}
-	rows = 2nbins+2around*nbins
-	cols = map(length, lift) |> sum
-	s = zeros(rows, cols)
-
-	i = 1
-	for j in 1:length(spiketrains)
-		for k in 1:length(lift[j])
-			s[:, i] .= bigSlice(spiketrains[j], lift[j][k], cover[j][k], grasp[j][k], nbins, around)
-			i += 1
-		end
-	end
-	s
-end
-
+import DataFrames.DataFrame
 
 """
 
@@ -54,29 +11,34 @@ end
 - `n::Int`: the number of segments of a bin
 
 """
-function sectionTrial(x::Array{T, 1}, lift::T, cover::T, grasp::T, n::Int, k::Int)::Array{T, 1} where {T <: Float64}
-	bin1 = 50. / n
-	bin2 = (cover - lift) / n
-	bin3 = (grasp - cover) / n
 
-	binsizes = [fill(bin1, n*k)..., fill(bin2, n)..., fill(bin3, n)..., fill(bin1, n*k)...]
+function sectionTrial(x::Array{T, 1}, lift::T, cover::T, grasp::T, n::Int, k::Int, args...) where {T <: Float64}
+	b1 = 200. / n
+	b2 = (cover - lift) / n
+	b3 = (grasp - cover) / n
 
-	t0 = lift - n*k*bin1
-	t1 = grasp + n*k*bin1
-
-	s = x[t0 .<= x .<= t1]
-	y = zeros(2n + 2k*n)
-
-	if length(s) == 0
-		return y
+	if any(isnan.([lift, cover, grasp]))
+		return fill(NaN, 2k÷Int(b1)+2)
 	end
-	s .= s .- t0
 
-	t = 0
-	for i in 1:length(y)
-		y[i] = sum(0 .<= s.-t .< binsizes[i]) / binsizes[i]
-		t += binsizes[i]
-	end
-	y
+	p1 = [x, lift, [-k, 0]]
+	p2 = [x, lift, [0, floor(Int, cover-lift)]]
+	p3 = [x, cover, [0, floor(Int, grasp-cover)]]
+	p4 = [x, grasp, [0, k]]
+
+	# TODO fix this!
+	[section(p..., binsize=b) for (p, b) in zip([p1, p2, p3, p4], [b1, b2, b3, b1])]
 end
 
+function sectionTrial(x::T, lift::T, cover::T, grasp::T, n::Int, k::Int) where {T <: Array{Float64, 1}}
+	mean(sectionTrial.(Ref(x), lift, cover, grasp, n, k))
+end
+
+function sectionTrial(x::T, lift::T, cover::T, grasp::T, n::Int, k::Int) where {T <: Array{Array{Float64, 1}, 1}}
+	sectionTrial.(x, lift, cover, grasp, n, k)
+end
+
+function sectionTrial(df::DataFrame, n::Int=4, k::Int=4)
+	sectionTrial(df.t, df.lift, df.cover, df.grasp, n, k)
+end
+	

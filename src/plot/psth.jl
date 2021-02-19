@@ -21,3 +21,9 @@ function sort_active(n, center)
 	p = sortperm(rates[:])
 	ordered_n = n[:, p]
 end
+
+function sort_peaks(n)
+	peaks = map(x -> x[1][1], argmax(n, dims=1))
+	p = sortperm(peaks[:])
+	ordered_n = n[:, p]
+end
