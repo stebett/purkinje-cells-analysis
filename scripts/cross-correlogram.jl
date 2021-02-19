@@ -20,7 +20,7 @@ end
 
 #<
 acorrs = data_full[:, :p_acorr] 
-tmp = data[acorrs .< 0.2, :];
+tmp = data[acorrs .< 0.05, :];
 neigh = get_pairs(tmp, "n")
 distant = get_pairs(tmp, "d")
 
@@ -33,7 +33,7 @@ active_neigh = get_pairs(active, "n")
 
 #< Heatmap 2 neurons
 # R31 Block27 Tetrode2 C1 & C2 -> 437, 438
-# findall((df.path .== "/import/bragi8/hygao/R31/data/Block27") .& (df.name .== "tet2.t2
+# findall((df.path .== "/import/bragi8/hygao/R31/data/Block27") .& (df.name .== "tet2.t1"))
 idx1, idx2 = active_neigh[2]
 idx1, idx2 = 437, 438
 
@@ -69,17 +69,14 @@ savefig(plotsdir("crosscor", "Figure 3A"), "scripts/cross-correlogram.jl")
 heatmap(hcat(crosscor_custom.(x, y)...)')
 #savefig(plotsdir("crosscor", "heatmap-couple"), "scripts/cross-correlogram.jl")
 
+
 #>
 #< Heatmap all couples
-
-tmp = data;
-tmp = data[acorrs .< 0.2, :];
-neigh = get_pairs(tmp, "n")
 
 cc_n = mass_crosscor(tmp, neigh, around=[-500, 500], thr=2.)
 cc_n = (cc_n .- mean(cc_n, dims=1)) ./ std(cc_n, dims=1)
 cc_n = sort_active(cc_n, 10)
-psth(cc_n, -1.5, 1.8, "normalized cross-correlation")
+psth(cc_n, -1.5, 3., "normalized cross-correlation")
 xticks!([1, 41, 79], ["-20", "0", "20"])
 xlabel!("Time (ms)")
 ylabel!("Couples of neighboring neurons")
@@ -107,13 +104,13 @@ savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
-cc_n = mass_crosscor(tmp, neigh, around=[-500, 500], thr=2.)
+cc_n = mass_crosscor(tmp, neigh, around=[-400, 400], thr=2.)
 
 cc_n_mean = mean(cc_n, dims=2)[:]
 cc_n_sem = sem(cc_n, dims=2)[:]
 
-cc_n_mean[40:41] .= NaN 
-cc_n_sem[40:41] .= NaN 
+# cc_n_mean[40:41] .= NaN 
+# cc_n_sem[40:41] .= NaN 
 
 cc_n_mean_norm = cc_n_mean .- mean(drop(cc_n_mean))
 
@@ -123,6 +120,7 @@ xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
+
 #savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
 
 #>
@@ -175,31 +173,24 @@ xlabel!("Time (ms)")
 #>
 #< 3F
 n = section(tmp.t, tmp.lift, [-200, 200], :conv, :avg)
-cors = [cor(n[x[1]], n[x[2]]) for x in neigh]
+cors = [cor(n[findall(tmp.index .== x[1])[1]], n[findall(tmp.index .== x[2])[1]]) for x in neigh]
 
 fr_sim = findall(cors .> 0.2)
 fr_diff = findall(cors .<= 0.2)
 
-tmp_sim = tmp[fr_sim, :];
-tmp_diff = tmp[fr_diff, :];
+cc_sim = mass_crosscor(tmp, neigh[fr_sim], thr=2.)
+cc_diff = mass_crosscor(tmp, neigh[fr_diff], thr=2.)
 
-neigh_sim = get_pairs(tmp_sim, "n")
-neigh_diff = get_pairs(tmp_diff, "n")
-
-cc_sim = mass_crosscor(tmp_sim, neigh_sim)
-cc_diff = mass_crosscor(tmp_diff, neigh_diff)
-
+σ = 1
 x = reverse(cc_sim[1:40, :], dims=1) .+ cc_sim[41:end-1, :]
-# x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
-x = x ./ mean(x) 
+x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
 x = mean(drop(x), dims=2)
 x = convolve(x[:], σ)
 plot(x)
 
-x = reverse(cc_diff[1:40, :], dims=1) .+ cc_diff[41:end-1, :]
-# x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
-x = x ./ mean(x) 
-x = mean(drop(x), dims=2)
-x = convolve(x[:], σ)
-plot!(x)
+y = reverse(cc_diff[1:40, :], dims=1) .+ cc_diff[41:end-1, :]
+y = drop((y .- mean(y, dims=1)) ./ std(y, dims=1))
+y = mean(drop(y), dims=2)
+y = convolve(y[:], σ)
+plot!(y)
 #>
