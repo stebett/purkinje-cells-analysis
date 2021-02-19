@@ -6,8 +6,8 @@ using LinearAlgebra
 using Plots; gr()
 import StatsBase.sem
 
-include(srcdir("plots", "cross-correlation.jl"))
-include(srcdir("plots", "psth.jl"))
+include(srcdir("plot", "cross-correlation.jl"))
+include(srcdir("plot", "psth.jl"))
 include(scriptsdir("io", "load-full.jl"))
 
 function sem(x::Matrix; dims=2)
@@ -33,6 +33,7 @@ active_neigh = get_pairs(active, "n")
 
 #< Heatmap 2 neurons
 # R31 Block27 Tetrode2 C1 & C2 -> 437, 438
+# findall((df.path .== "/import/bragi8/hygao/R31/data/Block27") .& (df.name .== "tet2.t2
 idx1, idx2 = active_neigh[2]
 idx1, idx2 = 437, 438
 

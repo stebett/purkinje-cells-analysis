@@ -1,17 +1,17 @@
 using DrWatson
-@quickactivate "ens"
+@quickactivate :ens
 
 using Statistics
 using Plots; gr()
 
-include(srcdir("spike-tools.jl"))
-include(srcdir("data-tools.jl"))
-include(scriptsdir("load-data.jl"))
+include(srcdir("slice-trial.jl"))
 
 low, high, thresh = -2.5, 2.5, 1.5
 
 n = bigSlice(data, 6, 4)
 
+# rate should be deviation from baseline
+# baseline is first fourth of -5000:5000
 
 
 

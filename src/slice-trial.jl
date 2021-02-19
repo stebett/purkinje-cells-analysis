@@ -1,12 +1,12 @@
 using DrWatson
 @quickactivate "ens"
 
-function bigSlice(data, binsize=1, around=4, average=true, :norm) 
+function bigSlice(data, binsize=1, around=4, average=true) 
 	# TODO
 	σ = 10
 	over = [-5000, -3000]
 
-	s = bigSlice(data.t, data.lift, data.cover, data.grasp, binsize, around)
+	s = sectionTrial(data.t, data.lift, data.cover, data.grasp, binsize, around)
 
 	if normalization
 		pad = [over[1] - 2σ, over[2] + 2σ]
