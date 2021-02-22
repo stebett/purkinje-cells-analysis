@@ -7,7 +7,7 @@ import StatsBase.crosscor
 include(srcdir("section.jl"))
 
 
-@inline function crosscor(c1::Vector, c2::Vector, args...; binsize::Number, lags=[-40:40;])
+@inline function crosscor(c1::Vector, c2::Vector, norm::Bool; binsize::Number, lags=[-40:40;])
 	bins = zeros(length(lags))
 	center = ceil(Int, length(lags)/2)
 	x = c1 .* [1:length(c1);]
@@ -16,22 +16,19 @@ include(srcdir("section.jl"))
 	x = x[x .> 0.]
 	y = y[y .> 0.]
 
-	isempty(x) & isempty(y) ? (return zeros(length(lags))) : 0
-
 	x = Array{Int, 1}(x)
 	y = Array{Int, 1}(y)
 
 	@inbounds for z in x
 		bins[intersect((-z .+ y), lags) .+ center] .+= 1
 	end
-
-	if :norm in args
+	if norm
 		return bins ./ (length(x)*length(y)*binsize/(max(x..., y...)-min(x...,y...)))
 	end
 	bins
 end
 
-function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5)
+@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5)
 	idx = Colon()
 	if :filt in args
 		z = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, over=[-1000., -500.], binsize=binsize, :norm) 
@@ -45,7 +42,20 @@ function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::
 	x = vcat(x...)[idx]
 	y = vcat(y...)[idx]
 	
-	crosscor(x, y, args..., binsize=binsize, lags=lags)
+	if isempty(x[x.>0]) || isempty(y[y.>0]) 
+		return fill(NaN, length(lags))
+	end
+
+	if :preimp in args
+		return crosscor(x, y, lags, demean=true)
+	end
+
+	if :norm in args
+		return crosscor(x, y, args..., binsize=binsize, lags=lags, norm=true)
+	end
+
+	crosscor(x, y, args..., binsize=binsize, lags=lags, norm=false)
+
 end
 
 function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Number, lags=[-40:40;], thr=1.5)
@@ -55,4 +65,3 @@ function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args.
 	end
 	m
 end
-

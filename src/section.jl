@@ -8,34 +8,34 @@ import LinearAlgebra.normalize
 
 export section, normalize, convolve, bin 
 
-function section(x, y, z, args...; σ=10, over=[-500, 500], binsize=1.)
-	if :conv in args || :norm in args
+function section(x, y, z, args...; σ=10, over=[-500., 500.], binsize=1.)
+	if :conv in args 
 		z = [z[1] - 2σ, z[2] + 2σ]
 	end
 
 	m = cut(x, y, z) |> k->bin(k, floor(Int, diff(z)...), binsize)
 
-	if :conv in args || :norm in args
+	if :conv in args 
 		m = convolve(m, σ/binsize)
-
-		if :norm in args
-			n = section(x, y, z) |> k->bin(k, floor(Int, diff(z)...), binsize) |> k->convolve(k, σ/binsize) 
-			m = normalize(m, n)
-		end
 	end
 
-	if :avg in args && y isa Array{Array{<:Real, 1}, 1}
+	if :norm in args
+		n = section(x, y, over) |> k->bin(k, floor(Int, diff(over)...), binsize) 
+		m = normalize(m, n)
+	end
+
+	if :avg in args && y isa Array{Array{Float64, 1}, 1}
 		idx = map(length, y) |> x->pushfirst!(x, 0) |> cumsum
 		idx = [[idx[i]+1:idx[i+1];] for i = 1:length(idx) - 1]
 		rows = diff(z)[1]
 		cols = (map(length, idx) .> 1) |> sum
-		M = Array{<:Real, 1}[]
+		M = Array{Float64, 1}[]
 		for i = idx
 			push!(M, mean(hcat(m[i]...), dims=2)[:])
 		end
 		return M
 
-	elseif :avg in args && y isa Array{<:Real, 1}
+	elseif :avg in args && y isa Array{Float64, 1}
 		return mean(hcat(m...), dims=2)
 	end
 	m

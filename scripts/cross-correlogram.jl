@@ -20,12 +20,14 @@ end
 
 #<
 acorrs = data_full[:, :p_acorr] 
-tmp = data[acorrs .< 0.2, :];
+tmp = data[acorrs .< 0.5, :];
 neigh = get_pairs(tmp, "n")
-distant = get_pairs(tmp, "d")
-n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...);
-active = tmp[findall(sum(n .> 0.75, dims=1)[:] .> 1), :];
+dist = get_pairs(tmp, "d")
+
+n = hcat(section(tmp.t, tmp.cover, [-500., 500.], :norm, :avg)...)
+active = tmp[findall(sum(n .> 2.5, dims=1)[:] .> 1), :];
 active_neigh = get_pairs(active, "n")
+active_dist = get_pairs(active, "d")
 
 
 #>
@@ -101,14 +103,15 @@ savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
-cc_n = drop(mass_crosscor(tmp, neigh, around=[-400., 400.], thr=0.))
 
-cc_n_mean = mean(cc_n, dims=2)[:]
-cc_n_sem = sem(cc_n, dims=2)[:]
+neighbors = crosscor(tmp, neigh, [-400., 400.], binsize=0.5, :preimp, :filt, thr=1.5) |> drop
 
-cc_n_mean[40:42] .= NaN 
+mean_neighbors = mean(neighbors, dims=2)[:]
+sem_neighbors = sem(neighbors, dims=2)[:]
 
-plot(cc_n_mean, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
+mean_neighbors[40:42] .= NaN 
+
+plot(mean_neighbors, c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
@@ -119,12 +122,12 @@ ylabel!("Mean ± sem deviation")
 #>
 #< 3D
 
-cc_d = drop(mass_crosscor(tmp, distant, around=[-400., 400.]))
+distant = crosscor(tmp, dist, [-400., 400.], binsize=0.5, :filt, :preimp, thr=1.5) |> drop
 
-cc_d_mean = mean(cc_d, dims=2)
-cc_d_sem = sem(cc_d, dims=2)
+mean_distant = mean(distant, dims=2)[:]
+sem_distant = sem(distant, dims=2)[:]
 
-plot!(cc_d_mean, c=:black, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
+plot!(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
