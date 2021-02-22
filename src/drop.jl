@@ -36,3 +36,16 @@ function drop(v::Vector; nan=true, inf=true, outliers=false, threshold=3.5)
 
 	v[.!todrop]
 end
+
+function drop(v::Vector{<:Vector}; nan=true, inf=true)
+	todrop = falses(size(v))
+	if nan
+		todrop .|= map(x->any(isnan.(x)), v)
+	end
+
+	if inf
+		todrop .|= map(x->any(isinf.(x)), v)
+	end
+
+	v[.!todrop]
+end
