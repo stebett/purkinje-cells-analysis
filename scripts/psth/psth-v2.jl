@@ -4,12 +4,8 @@ using DrWatson
 using Statistics
 using Plots; gr()
 
-include(srcdir("slice-trial.jl"))
+include(srcdir("section-trial.jl"))
 include(srcdir("plot", "psth.jl"))
-
-
-# rate should be deviation from baseline
-# baseline is first fourth of -5000:5000
 
 
 low, high = -10, 10
@@ -27,7 +23,7 @@ xaxis!("Landmarks")
 yaxis!("Neuron #")
 
 
-savefig(plotsdir("psth-v2.png"))
+savefig(plotsdir("psth-v2.png"), "scripts/psth/psth-v2.jl")
 
 # savefig(fig, plotsdir("psth-lime.svg"))
 
