@@ -23,8 +23,4 @@ xaxis!("Landmarks")
 yaxis!("Neuron #")
 
 
-savefig(plotsdir("psth-v2.png"), "scripts/psth/psth-v2.jl")
-
-# savefig(fig, plotsdir("psth-lime.svg"))
-
-# savefig(fig, plotsdir("psth.pdf"))
+savefig(plotsdir("psth", "psth-v2"), "scripts/psth/psth-v2.jl")

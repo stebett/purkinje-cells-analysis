@@ -14,39 +14,32 @@ function get_pairs(df::DataFrame, kind::String)
 		return couples
 
 	elseif kind == "dist" || kind == "distant" || kind == "d"
-		idx = [1:size(df, 1);]
-		dist = get_distant(df, idx)
-		couples = Array{Int64, 1}[]
-		for (i, d) in enumerate(dist)
-			for x in d
-				push!(couples, [i, x])
-			end
-		end
-		couples = unique(sort.(couples))
+		dist = get_distant(df)
+		couples = unique(sort.(dist))
 		return couples
 
 	elseif kind == "all" || kind == "a"
-		return collect(combinations([1:size(df, 1);], 2))
+		return collect(combinations(df.index, 2))
 	end
 end
 
-function get_distant(df::DataFrame, idx)
-	if typeof(idx) ≡ Int
-		index = [idx]
-	end
 
-    rats = df[idx, :].rat
-    sites = df[idx, :].site
-    tetrodes = df[idx, :].tetrode
+function get_distant(df::DataFrame)
 
-	indexes = Array{Int, 1}[]
-	for (rat, site, tetrode) in zip(rats, sites, tetrodes)
-		idx = findall((df.rat .== rat) .& (df.site .== site) .& (df.tetrode .!= tetrode))
-		push!(indexes, df[idx, :index])
+    rats = df[:, :rat]
+    sites = df[:, :site]
+    tetrodes = df[:, :tetrode]
+	indexes = df[:, :index]
+	dist = []
+
+	for (rat, site, tetrode, index) in zip(rats, sites, tetrodes, indexes)
+		idx = df[(df.rat .== rat) .& (df.site .== site) .& (df.tetrode .!= tetrode), :index]
+		for i in idx
+			push!(dist, [index, i])
+		end
 	end
-	indexes
+	dist
 end
-
 
 function get_neighbors(df::DataFrame)
 	[g.index for g in groupby(df, [:rat, :site, :tetrode])]

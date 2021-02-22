@@ -20,10 +20,9 @@ end
 
 #<
 acorrs = data_full[:, :p_acorr] 
-tmp = data[acorrs .< 0.05, :];
+tmp = data[acorrs .< 0.2, :];
 neigh = get_pairs(tmp, "n")
 distant = get_pairs(tmp, "d")
-
 n = hcat(section(tmp.t, tmp.cover, [-50, 50], :norm, :avg)...);
 active = tmp[findall(sum(n .> 0.75, dims=1)[:] .> 1), :];
 active_neigh = get_pairs(active, "n")
@@ -34,12 +33,9 @@ active_neigh = get_pairs(active, "n")
 #< Heatmap 2 neurons
 # R31 Block27 Tetrode2 C1 & C2 -> 437, 438
 # findall((df.path .== "/import/bragi8/hygao/R31/data/Block27") .& (df.name .== "tet2.t1"))
-idx1, idx2 = active_neigh[2]
 idx1, idx2 = 437, 438
 
-tmp = data;
-
-x = section(tmp[findall(tmp.index .== idx1), "t"], tmp[findall(tmp.index .== idx1), "cover"], [-400, 400], binsize=.5) 
+x = section(tmp[(tmp.index .== idx1), "t"], tmp[findall(tmp.index .== idx1), "cover"], [-400., 400.], binsize=.5) 
 c1 = sort_active(hcat(x...), 10)
 heatmap(c1', c=:grays, cbar=false)
 xticks!([0, 800, 1595], ["-400", "0", "400"])
@@ -53,7 +49,7 @@ p2= xticks!([0, 800, 1595], ["-400", "0", "400"])
 
 
 
-y = section(tmp[findall(tmp.index .== idx2), "t"], tmp[findall(tmp.index .== idx2), "cover"], [-400, 400], binsize=.5) 
+y = section(tmp[findall(tmp.index .== idx2), "t"], tmp[findall(tmp.index .== idx2), "cover"], [-400., 400.], binsize=.5) 
 c2 = sort_active(hcat(y...), 10)
 heatmap(c2', c=:grays, cbar=false)
 xticks!([0, 800, 1595], ["-400", "0", "400"])
@@ -65,18 +61,18 @@ p4= xticks!([0, 800, 1595], ["-400", "0", "400"])
 plot(p1, p3, p2, p4, layout = @layout [ a b ; c d ])
 savefig(plotsdir("crosscor", "Figure 3A"), "scripts/cross-correlogram.jl")
 
-
-heatmap(hcat(crosscor_custom.(x, y)...)')
+cc = crosscor.(x, y, binsize=0.5, :norm)
+cc = sort_active(hcat(cc...), 10)
+heatmap(cc')
 #savefig(plotsdir("crosscor", "heatmap-couple"), "scripts/cross-correlogram.jl")
 
 
 #>
 #< Heatmap all couples
 
-cc_n = mass_crosscor(tmp, neigh, around=[-500, 500], thr=2.)
-cc_n = (cc_n .- mean(cc_n, dims=1)) ./ std(cc_n, dims=1)
+cc_n = crosscor(tmp, neigh, [-500., 500.], binsize=0.5, thr=2., :norm)
 cc_n = sort_active(cc_n, 10)
-psth(cc_n, -1.5, 3., "normalized cross-correlation")
+psth(cc_n, 0., 13., "normalized cross-correlation")
 xticks!([1, 41, 79], ["-20", "0", "20"])
 xlabel!("Time (ms)")
 ylabel!("Couples of neighboring neurons")
@@ -87,16 +83,17 @@ savefig(plotsdir("crosscor", "heatmap-small-acorr"), "scripts/cross-correlogram.
 #>
 
 #< 3B
+modulated = crosscor(tmp, [idx1, idx2], [-400., 400.], binsize=0.5, :filt, thr=2.)
+unmodulated = crosscor(tmp, [idx1, idx2], [-2000., 2000.], binsize=0.5)
+unmodulated ./= mean(unmodulated)
+unmodulated .*= mean(modulated)
 
-cc_mod = crosscor(tmp, idx1, idx2, filt=true)
-cc_unmod = crosscor(tmp, idx1, idx2, around=[-2000, 2000], filt=false)
-cc_unmod_norm = (cc_unmod ./ mean(cc_unmod)) .* mean(cc_mod)  # TODO
 
-cc_mod[41] = NaN
-cc_unmod_norm[41] = NaN
+modulated[41] = NaN
+unmodulated[41] = NaN
 
-plot(cc_mod, lw=2, c=:orange, labels="during modulation", fill = -1, fillalpha = 0.2, fillcolor=:grey)
-plot!(cc_unmod_norm, c=:black, lw=2, labels="during whole task", α=0.6)
+plot(modulated, lw=2, c=:orange, labels="during modulation", fill = -1, fillalpha = 0.2, fillcolor=:grey)
+plot!(unmodulated, c=:black, lw=2, labels="during whole task", α=0.6)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 xlabel!("Time (ms)")
 ylabel!("Count")
@@ -104,18 +101,14 @@ savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #>
 #< 3C
 
-cc_n = mass_crosscor(tmp, neigh, around=[-400, 400], thr=2.)
+cc_n = drop(mass_crosscor(tmp, neigh, around=[-400., 400.], thr=0.))
 
 cc_n_mean = mean(cc_n, dims=2)[:]
 cc_n_sem = sem(cc_n, dims=2)[:]
 
-# cc_n_mean[40:41] .= NaN 
-# cc_n_sem[40:41] .= NaN 
+cc_n_mean[40:42] .= NaN 
 
-cc_n_mean_norm = cc_n_mean .- mean(drop(cc_n_mean))
-
-closeall()
-plot(cc_n_mean_norm, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
+plot(cc_n_mean, c=:red, ribbon=cc_n_sem, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of neighboring cells")
 xlabel!("Time (ms)")
@@ -126,13 +119,12 @@ ylabel!("Mean ± sem deviation")
 #>
 #< 3D
 
-cc_d = mass_crosscor(tmp, distant, around=[-400, 400])
+cc_d = drop(mass_crosscor(tmp, distant, around=[-400., 400.]))
 
 cc_d_mean = mean(cc_d, dims=2)
-cc_d_mean_norm = cc_d_mean .- mean(cc_d_mean)
 cc_d_sem = sem(cc_d, dims=2)
 
-plot(cc_d_mean_norm, c=:black, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
+plot!(cc_d_mean, c=:black, ribbon=cc_d_sem, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
@@ -141,8 +133,8 @@ ylabel!("Mean ± sem deviakion")
 
 #>
 #< 3E
-cc_n_mod = mass_crosscor(tmp, neigh, filt=true, around=[-200, 200]) 
-cc_n_unmod = mass_crosscor(tmp, neigh, filt=false, around=[-200, 200]) 
+cc_n_mod = drop(mass_crosscor(tmp, neigh, filt=true, around=[-200., 200.]))
+cc_n_unmod = drop(mass_crosscor(tmp, neigh, filt=false, around=[-200., 200.]))
 
 σ = 1
 x = reverse(cc_n_mod[1:40, :], dims=1) .+ cc_n_mod[41:end-1, :]

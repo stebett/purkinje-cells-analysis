@@ -41,7 +41,7 @@ function section(x, y, z, args...; σ=10, over=[-500, 500], binsize=1.)
 	m
 end
 
-function normalize(x::Array{Array{<:Real, 1}, 1}, y::Array{Array{<:Real, 1}, })::Array{Array{<:Real, 1}, 1}
+function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, })::Array{Array{Float64, 1}, 1}
 	normalize.(x, y)
 end
 
@@ -53,31 +53,31 @@ function normalize(x::Array{<:Real, 1}, y::Array{<:Real, 1})::Array{<:Real, 1}
 end
 
 
-function convolve(x::Array{Array{<:Real, 1}, 1}, σ::Real=10)::Array{Array{<:Real, 1}, 1}
+function convolve(x::Array{Array{Float64, 1}, 1}, σ::Float64=10)::Array{Array{Float64, 1}, 1}
 	convolve.(x, σ)
 end
 
-function convolve(x::Array{<:Real, 1}, σ::Real=10)::Array{<:Real, 1}
+function convolve(x::Array{Float64, 1}, σ::Float64=10)::Array{Float64, 1}
     kernel = Kernel.gaussian((σ,))
 	OffsetArrays.no_offset_view(imfilter(x, kernel, Inner()))
 end
 
-function bin(x::Array{Array{<:Real, 1}, 1}, len::Int, binsize::Real=1.)::Array{Array{<:Real,1 }, 1}
+function bin(x::Array{Array{Float64, 1}, 1}, len::Int, binsize::Float64=1.)::Array{Array{Float64,1 }, 1}
 	bin.(x, len, binsize)
 end
 
-function bin(x::Array{<:Real, 1}, len::Int, binsize::Real=1.)
+function bin(x::Array{Float64, 1}, len::Int, binsize::Float64=1.)
 	[sum([i .<= x .< i+binsize][1]) for i = 1:binsize:len+1-binsize]
 end
 
-function cut(x::Array{Array{<:Real, 1}, 1}, y::Array{Array{<:Real, 1}, 1}, z::Array{<:Real, 1})::Array{Array{<:Real, 1}, 1}
+function cut(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, 1}, z::Array{Float64, 1})::Array{Array{Float64, 1}, 1}
 	[(cut.(x, y, Ref(z))...)...]
 end
 
-function cut(x::Array{<:Real, 1}, y::Array{<:Real, 1}, z::Array{<:Real, 1})::Array{Array{<:Real, 1}, 1}
+function cut(x::Array{Float64, 1}, y::Array{Float64, 1}, z::Array{Float64, 1})::Array{Array{Float64, 1}, 1}
 	cut.(Ref(x), y, Ref(z))
 end
 
-function cut(x::Array{<:Real, 1}, y::Real, z::Array{<:Real, 1})::Array{<:Real, 1}
+function cut(x::Array{Float64, 1}, y::Float64, z::Array{Float64, 1})::Array{Float64, 1}
 	@views x[y + z[1] .<= x .<= y + z[2]] .- y .- z[1]
 end
