@@ -2,6 +2,7 @@ using DrWatson
 @quickactivate "ens"
 
 using Statistics
+using StatsBase
 using ImageFiltering
 using OffsetArrays
 import LinearAlgebra.normalize
@@ -41,14 +42,19 @@ function section(x, y, z, args...; σ=10, over=[-500., 500.], binsize=1.)
 	m
 end
 
-function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, })::Array{Array{Float64, 1}, 1}
+function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, }, args...)::Array{Array{Float64, 1}, 1}
 	normalize.(x, y)
 end
 
-function normalize(x::Array{<:Real, 1}, y::Array{<:Real, 1})::Array{<:Real, 1}
+function normalize(x::Array{<:Real, 1}, y::Array{<:Real, 1}, args...)::Array{<:Real, 1}
 	if std(y) == 0.
 		return zeros(size(x))
 	end
+
+	if :mad in args
+		return (x .- median(y)) ./ mad(y)
+	end
+
 	(x .- mean(y)) ./ std(y)
 end
 
@@ -66,7 +72,7 @@ function bin(x::Array{Array{Float64, 1}, 1}, len::Int, binsize::Float64=1.)::Arr
 	bin.(x, len, binsize)
 end
 
-function bin(x::Array{Float64, 1}, len::Int, binsize::Float64=1.)
+function bin(x::Array{Float64, 1}, len::Int, binsize::Float64=1.)::Array{Float64, 1}
 	[sum([i .<= x .< i+binsize][1]) for i = 1:binsize:len+1-binsize]
 end
 

@@ -10,7 +10,7 @@ include(srcdir("plot", "psth.jl"))
 
 low, high = -10, 10
 
-pad = 1000
+pad = 1000.
 bin_num = 8
 n = sectionTrial(data, bin_num, pad)
 n = hcat(drop(n)...)
