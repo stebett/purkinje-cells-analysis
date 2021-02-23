@@ -79,3 +79,29 @@ function get_ranges(lift, cover, grasp, n, k, b)
 	rn4 = [[b[1]*i+grasp[1]-cover[1], b[1]*(i+1)+grasp[1]-cover[1]] for i=0:k/b[1]]
 	hcat(rn1..., rn2..., rn3..., rn4...)
 end
+
+function get_active_ranges(df, num_bins=6, pad=1000., b=200, thr=2.5)
+	n, r = sectionTrial(df, num_bins, pad, b, :mad);
+	idx = drop(n, index=true)
+	active_bins = get_active_bins(n)
+
+	results = []
+	for (i, act, rng) = zip(idx, active_bins, r)
+		if i
+			push!(results, [])
+		elseif isempty(act)
+			push!(results, [])
+		else
+			push!(results, rng[:, act])
+		end
+	end
+	results
+end
+
+function get_active_bins(m::Array{Array{Float64, 1}, 1}, thr=2.5)
+	get_active_bins.(m, thr)
+end
+
+function get_active_bins(m::Array{Float64, 1}, thr=2.5)
+	findall(m .> thr)
+end
