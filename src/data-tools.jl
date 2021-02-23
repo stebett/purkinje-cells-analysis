@@ -3,6 +3,7 @@ using DrWatson
 
 using DataFrames
 using Combinatorics
+include(srcdir("section-trial.jl"))
 
 # TODO new file, change get_pairs to couple() and strings to symbols
 export get_pairs
