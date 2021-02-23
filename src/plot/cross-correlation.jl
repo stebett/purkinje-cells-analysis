@@ -4,7 +4,9 @@ using DrWatson
 using Statistics
 import StatsBase.crosscor
 
+
 include(srcdir("section.jl"))
+include(srcdir("section-trial.jl"))
 
 
 @inline function crosscor(c1::Vector, c2::Vector, norm::Bool; binsize::Number, lags=[-40:40;])
@@ -29,18 +31,12 @@ include(srcdir("section.jl"))
 end
 
 @inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5)
-	idx = Colon()
-	if :filt in args
-		z = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, over=[-1000., -500.], binsize=binsize, :norm) 
-
-		idx = vcat(z...) .> thr
-	end
 
 	x = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, binsize=binsize) 
 	y = section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], around, binsize=binsize) 
 
-	x = vcat(x...)[idx]
-	y = vcat(y...)[idx]
+	x = vcat(x...)
+	y = vcat(y...)
 	
 	if isempty(x[x.>0]) || isempty(y[y.>0]) 
 		return fill(NaN, length(lags))
@@ -58,6 +54,38 @@ end
 
 end
 
+@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5, idx)
+
+	x = []
+	y = []
+	
+	if isempty(idx)
+		return fill(NaN, length(lags))
+	end
+
+	for i in 1:size(idx, 2)
+		push!(x, section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], idx[:, i], binsize=binsize))
+		push!(y, section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], idx[:, i], binsize=binsize))
+	end
+
+	x = vcat((x...)...)
+	y = vcat((y...)...)
+	
+	if isempty(x[x.>0]) || isempty(y[y.>0]) 
+		return fill(NaN, length(lags))
+	end
+
+	if :preimp in args
+		return crosscor(x, y, lags, demean=true)
+	end
+
+	if :norm in args
+		return crosscor(x, y, true, binsize=binsize, lags=lags)
+	end
+
+	crosscor(x, y, false, binsize=binsize, lags=lags)
+end
+
 function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Number, lags=[-40:40;], thr=1.5)
 	m = zeros(length(lags), length(couples))
 	for (i, c) in enumerate(couples)
@@ -65,3 +93,26 @@ function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args.
 	end
 	m
 end
+
+function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Number, lags=[-40:40;], thr=1.5, indexes=Array{Array{Float64, 2}})
+	m = zeros(length(lags), length(couples))
+	for (i, c) in enumerate(couples)
+		active = concat(indexes[c]...)
+		m[:, i] = crosscor(df, c, around, args..., binsize=binsize, thr=thr, lags=lags,idx=active)
+	end
+	m
+end
+
+function concat(x, y)
+	if isempty(x) && isempty(y)
+		return []
+	elseif isempty(x)
+		return y
+	elseif isempty(y)
+		return x
+	end
+	hcat(x, y)
+end
+
+
+

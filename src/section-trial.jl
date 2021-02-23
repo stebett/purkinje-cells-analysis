@@ -80,10 +80,10 @@ function get_ranges(lift, cover, grasp, n, k, b)
 	hcat(rn1..., rn2..., rn3..., rn4...)
 end
 
-function get_active_ranges(df, num_bins=6, pad=1000., b=200, thr=2.5)
+function get_active_ranges(df; num_bins=6, pad=1000., b=200, thr=2.5)
 	n, r = sectionTrial(df, num_bins, pad, b, :mad);
 	idx = drop(n, index=true)
-	active_bins = get_active_bins(n)
+	active_bins = get_active_bins(n, thr)
 
 	results = []
 	for (i, act, rng) = zip(idx, active_bins, r)

@@ -10,21 +10,21 @@
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	/d532b5c4/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
-bin	src/section.jl	/^function bin(x::Array{<:Real, 1}, len::Int, binsize::Real=1.)$/;"	f
-bin	src/section.jl	/^function bin(x::Array{Array{<:Real, 1}, 1}, len::Int, binsize::Real=1.)::Array{Array{<:Real,1 },/;"	f
-convolve	src/section.jl	/^function convolve(x::Array{<:Real, 1}, σ::Real=10)::Array{<:Real, 1}$/;"	f
-convolve	src/section.jl	/^function convolve(x::Array{Array{<:Real, 1}, 1}, σ::Real=10)::Array{Array{<:Real, 1}, 1}$/;"	f
+bin	src/section.jl	/^function bin(x::Array{Array{Float64, 1}, 1}, len::Int, binsize::Float64=1.)::Array{Array{Float64/;"	f
+bin	src/section.jl	/^function bin(x::Array{Float64, 1}, len::Int, binsize::Float64=1.)::Array{Float64, 1}$/;"	f
+convolve	src/section.jl	/^function convolve(x::Array{Array{Float64, 1}, 1}, σ::Float64=10)::Array{Array{Float64, 1}, 1}$/;"	f
+convolve	src/section.jl	/^function convolve(x::Array{Float64, 1}, σ::Float64=10)::Array{Float64, 1}$/;"	f
 correlate	scripts/corr-coef.jl	/^function correlate(convolutions)$/;"	f
-crosscor	src/plot/cross-correlation.jl	/^function crosscor(df, idx1::Int, idx2::Int; thr=1., binsize=0.5, lags=[-40:40;], around=[-200, 2/;"	f
-crosscor_3B	src/plot/cross-correlation.jl	/^function crosscor_3B(df, idx1, idx2; thr=1.5, binsize=0.5, around=[-200, 200], dir="")$/;"	f
-crosscor_custom	src/plot/cross-correlation.jl	/^@inline function crosscor_custom(c1::Vector, c2::Vector, lags=[-40:40;])$/;"	f
-cut	src/section.jl	/^function cut(x::Array{<:Real, 1}, y::Array{<:Real, 1}, z::Array{<:Real, 1})::Array{Array{<:Real,/;"	f
-cut	src/section.jl	/^function cut(x::Array{<:Real, 1}, y::Real, z::Array{<:Real, 1})::Array{<:Real, 1}$/;"	f
-cut	src/section.jl	/^function cut(x::Array{Array{<:Real, 1}, 1}, y::Array{Array{<:Real, 1}, 1}, z::Array{<:Real, 1}):/;"	f
+crosscor	src/plot/cross-correlation.jl	/^@inline function crosscor(c1::Vector, c2::Vector, norm::Bool; binsize::Number, lags=[-40:40;])$/;"	f
+crosscor	src/plot/cross-correlation.jl	/^@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, /;"	f
+crosscor	src/plot/cross-correlation.jl	/^function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Num/;"	f
+cut	src/section.jl	/^function cut(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, 1}, z::Array{Float64, 1/;"	f
+cut	src/section.jl	/^function cut(x::Array{Float64, 1}, y::Array{Float64, 1}, z::Array{Float64, 1})::Array{Array{Floa/;"	f
+cut	src/section.jl	/^function cut(x::Array{Float64, 1}, y::Float64, z::Array{Float64, 1})::Array{Float64, 1}$/;"	f
 distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
-drop	src/drop.jl	/^function drop(v::Matrix; dims=1, nan=true, inf=true, outliers=false, threshold=3.5)$/;"	f
-drop	src/drop.jl	/^function drop(v::Vector; nan=true, inf=true, outliers=false, threshold=3.5)$/;"	f
-drop	src/drop.jl	/^function drop(v::Vector{<:Vector}; nan=true, inf=true)$/;"	f
+drop	src/drop.jl	/^function drop(v::Matrix; dims=1, nan=true, inf=true, index=false)$/;"	f
+drop	src/drop.jl	/^function drop(v::Vector; nan=true, inf=true, index=false)$/;"	f
+drop	src/drop.jl	/^function drop(v::Vector{<:Vector}; nan=true, inf=true, index=false)$/;"	f
 ens	src/ens.jl	/^module ens$/;"	n
 extract_index	scripts/io/fix-full-data-index.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
 extract_index	scripts/io/load-full.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
@@ -37,24 +37,27 @@ find_broken_landmarks	scripts/io/fix-landmarks.jl	/^function find_broken_landmar
 fit_fourths	scripts/pca/speed.jl	/^function fit_fourths(st)$/;"	f
 fit_halfes	scripts/pca/speed.jl	/^function fit_halfes(st)$/;"	f
 fit_thirds	scripts/pca/speed.jl	/^function fit_thirds(st)$/;"	f
+get_active_bins	src/section-trial.jl	/^function get_active_bins(m::Array{Array{Float64, 1}, 1}, thr=2.5)$/;"	f
+get_active_bins	src/section-trial.jl	/^function get_active_bins(m::Array{Float64, 1}, thr=2.5)$/;"	f
+get_active_ranges	src/section-trial.jl	/^function get_active_ranges(df, num_bins=6, pad=1000., b=200, thr=2.5)$/;"	f
 get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
-get_distant	scripts/cross-correlogram.jl	/^function get_distant(df::DataFrame)$/;"	f
 get_distant	src/data-tools.jl	/^function get_distant(df::DataFrame)$/;"	f
 get_neighbors	src/data-tools.jl	/^function get_neighbors(df::DataFrame)$/;"	f
 get_pairs	src/data-tools.jl	/^function get_pairs(df::DataFrame, kind::String)$/;"	f
+get_params	src/section-trial.jl	/^function get_params(lift, cover, grasp, n, k, b)$/;"	f
+get_ranges	src/section-trial.jl	/^function get_ranges(lift, cover, grasp, n, k, b)$/;"	f
 get_trial	_research/single-trials.jl	/^@inline function get_trial(df, n, i, after)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
 interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
 jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 load_full	scripts/io/load-full.jl	/^function load_full()$/;"	f
-mass_crosscor	src/plot/cross-correlation.jl	/^function mass_crosscor(df, couples; thr=1.5, binsize=0.5, lags=[-40:40;], around=[-200, 200], fi/;"	f
 neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
 norm_slice	src/spike-tools.jl	/^function norm_slice(target::T, baseline::T)::T where {T <: Array{Float64,1}}$/;"	f
 norm_slice	src/spike-tools.jl	/^function norm_slice(target::T, baseline::T)::T where {T <: Array{Float64,2}}$/;"	f
-normalize	src/section.jl	/^function normalize(x::Array{<:Real, 1}, y::Array{<:Real, 1})::Array{<:Real, 1}$/;"	f
-normalize	src/section.jl	/^function normalize(x::Array{Array{<:Real, 1}, 1}, y::Array{Array{<:Real, 1}, })::Array{Array{<:R/;"	f
+normalize	src/section.jl	/^function normalize(x::Array{<:Real, 1}, y::Array{<:Real, 1}, args...)::Array{<:Real, 1}$/;"	f
+normalize	src/section.jl	/^function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, }, args...)::Arra/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
 plot_gpfa	scripts/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	scripts/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
@@ -66,11 +69,11 @@ save_trials	scripts/io/save-trials.jl	/^function save_trials(trials)$/;"	f
 savefig	src/io-tools.jl	/^function savefig(fn::AbstractString, source::AbstractString)$/;"	f
 scatter_dynamics	scripts/pca/pca.jl	/^function scatter_dynamics(around, title)$/;"	f
 search_routes	scripts/io/load-full.jl	/^function search_routes(x, l, saved_list::Vector)$/;"	f
-section	src/section.jl	/^function section(x, y, z, args...; σ=10, over=[-500, 500], binsize=1.)$/;"	f
-sectionTrial	src/section-trial.jl	/^function sectionTrial(df::DataFrame, n::Int=4, k::Int=4)$/;"	f
-sectionTrial	src/section-trial.jl	/^function sectionTrial(x::Array{T, 1}, lift::T, cover::T, grasp::T, n::Int, k::Int) where {T <: F/;"	f
-sectionTrial	src/section-trial.jl	/^function sectionTrial(x::T, lift::T, cover::T, grasp::T, n::Int, k::Int) where {T <: Array{Array/;"	f
-sectionTrial	src/section-trial.jl	/^function sectionTrial(x::T, lift::T, cover::T, grasp::T, n::Int, k::Int) where {T <: Array{Float/;"	f
+section	src/section.jl	/^function section(x, y, z, args...; σ=10, over=[-500., 500.], binsize=1.)$/;"	f
+sectionTrial	src/section-trial.jl	/^function sectionTrial(df::DataFrame, n::Int, pad::Float64, b::Int=200, args...)$/;"	f
+sectionTrial	src/section-trial.jl	/^function sectionTrial(r, x::Array{T, 1}, lift::T, cover::T, grasp::T, n::Int, k::Float64, p, b, /;"	f
+sectionTrial	src/section-trial.jl	/^function sectionTrial(r1, r2, r3, x::T, lift::T, cover::T, grasp::T, n::Int, k::Float64, b::Int,/;"	f
+sectionTrial	src/section-trial.jl	/^function sectionTrial(r1::Array{T}, r2::Array{Array{Float64, 2}, 1}, r3::T, x::T, lift::T, cover/;"	f
 sem	scripts/cross-correlogram.jl	/^function sem(x::Matrix; dims=2)$/;"	f
 single_trials	_research/experimental.jl	/^function single_trials(df, landmark::String)$/;"	f
 single_trials	scripts/io/save-trials.jl	/^function single_trials(df, landmark::String)$/;"	f
