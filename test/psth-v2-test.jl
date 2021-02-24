@@ -11,7 +11,7 @@ tmp = data[data.p_acorr .< 0.5, :];
 
 function test_active(df, idx, rng)
 	heatmap(hcat(vcat.(section.(Ref(df[df.index .== idx, :t]), Ref(df[df.index .== idx, :cover]), rng)...)...)')
-	savefig(plotsdir("crosscor", "active", "$idx"))
+	savefig(plotsdir("crosscor", "test", "$idx"))
 end
 
 function test_all_active(df)
