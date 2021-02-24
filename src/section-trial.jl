@@ -37,20 +37,21 @@ function sectionTrial(r1, r2, r3, x::T, lift::T, cover::T, grasp::T, n::Int, k::
 		return
 	end
 
-	r2 .= get_ranges(lift, cover, grasp, n, k, bins)
+	b = get_ranges(lift, cover, grasp, n, k, bins)
+	r2 .= b
 	r3 .= mean(hcat(r1...), dims=2)[:]
 end
 
-function sectionTrial(r1::Array{T}, r2::Array{Array{Float64, 2}, 1}, r3::T, x::T, lift::T, cover::T, grasp::T, n::Int, k::Float64, b::Int, args...) where {T <: Array{Array{Float64, 1}, 1}}
+function sectionTrial(r1::Array{T}, r2, r3::T, x::T, lift::T, cover::T, grasp::T, n::Int, k::Float64, b::Int, args...) where {T <: Array{Array{Float64, 1}, 1}}
 	sectionTrial.(r1, r2, r3, x, lift, cover, grasp, n, k, b, args...)
 end
 
 
 function sectionTrial(df::DataFrame, n::Int, pad::Float64, b::Int=200, args...)
-	k = Int(pad)
-	r1 = [[zeros(2n+k÷b*2n) for _ in 1:length(l)] for l in df.lift]
-	r2 = [zeros(2, 2n+k÷b*2n) for _ in 1:size(df, 1)] #TODO transform in 72 tuples
-	r3 = [zeros(2n+k÷b*2n) for _ in 1:size(df, 1)]
+	dim = 2n+Int(pad)÷b*2n
+	r1 = [[zeros(dim) for _ in 1:length(l)] for l in df.lift]
+	r2 = [Array{Tuple{Float64,Float64}, 1}(undef, dim) for _ in 1:size(df, 1)]
+	r3 = [zeros(dim) for _ in 1:size(df, 1)]
 
 	sectionTrial(r1, r2, r3, df.t, df.lift, df.cover, df.grasp, n, pad, b, args...)
 	return r3, r2
@@ -85,14 +86,14 @@ function get_active_ranges(df; num_bins=6, pad=1000., b=200, thr=2.5)
 	todrop = drop(n, index=true)
 	active_bins = get_active_bins(n, thr)
 
-	results = Dict()
+	results = Dict{Int, Array{Tuple{Float64, Float64}, 1}}()
 	for (i, bad, act, rng) = zip(df.index, todrop, active_bins, r)
 		if bad
 			results[i] = []
 		elseif isempty(act)
 			results[i] = []
 		else
-			results[i] = rng[:, act]
+			results[i] = rng[act]
 		end
 	end
 	results

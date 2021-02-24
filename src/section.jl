@@ -14,6 +14,10 @@ function section(x, y, z, args...; σ=10, over=[-500., 500.], binsize=1.)
 		z = [z[1] - 2σ, z[2] + 2σ]
 	end
 
+	if z isa Tuple
+		z = [z[1], z[2]]
+	end
+
 	m = cut(x, y, z) |> k->bin(k, floor(Int, diff(z)...), binsize)
 
 	if :conv in args 

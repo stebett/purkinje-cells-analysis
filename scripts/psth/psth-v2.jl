@@ -14,6 +14,7 @@ num_bins = 6
 b = 200
 
 n, r = sectionTrial(data, num_bins, pad, b, :mad);
+
 idx = drop(n, index=true)
 
 active_bins = get_active_bins(n[.!idx])

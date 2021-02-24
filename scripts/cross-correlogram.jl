@@ -8,7 +8,6 @@ import StatsBase.sem
 
 include(srcdir("plot", "cross-correlation.jl"))
 include(srcdir("plot", "psth.jl"))
-include(scriptsdir("io", "load-full.jl"))
 
 function sem(x::Matrix; dims=2)
 	r = zeros(size(x, dims % 2 + 1)) 
@@ -19,15 +18,9 @@ function sem(x::Matrix; dims=2)
 end
 
 #<
-acorrs = data_full[:, :p_acorr] 
-tmp = data[acorrs .< 0.5, :];
+tmp = data[data.p_acorr .< 0.5, :];
 neigh = get_pairs(tmp, "n")
 dist = get_pairs(tmp, "d")
-
-n = hcat(section(tmp.t, tmp.cover, [-500., 500.], :norm, :avg)...)
-active = tmp[findall(sum(n .> 2.5, dims=1)[:] .> 1), :];
-active_neigh = get_pairs(active, "n")
-active_dist = get_pairs(active, "d")
 
 
 #>
@@ -104,9 +97,14 @@ savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #< 3C
 
 
-n, r = sectionTrial(tmp)
-indexes = get_active_ranges(tmp, thr=1.5) # fix the indexing
-neighbors = crosscor(tmp, neigh, [-400., 400.], binsize=0.5, indexes=indexes, :mad) |> drop
+n, r = sectionTrial(tmp, 6, 1000., 200)
+indexes = get_active_ranges(tmp, thr=1.5) 
+active(x) = Tuple{Float64, Float64}[indexes[x[1]]..., indexes[x[2]]...]
+ranges = active.(neigh)
+heatmap(hcat(vcat.(section.(Ref(tmp[tmp.index .== neigh[1][1], :t]), Ref(tmp[tmp.index .== neigh[1][1], :cover]), ranges[1])...)...))
+
+
+neighbors = crosscor(tmp, neigh, ranges, binsize=0.5, :norm) |> drop
 
 mean_neighbors = mean(neighbors, dims=2)[:]
 sem_neighbors = sem(neighbors, dims=2)[:]

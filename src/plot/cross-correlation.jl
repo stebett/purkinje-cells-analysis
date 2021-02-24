@@ -18,6 +18,10 @@ include(srcdir("section-trial.jl"))
 	x = x[x .> 0.]
 	y = y[y .> 0.]
 
+	if isempty(x) || isempty(y) 
+		return fill(NaN, length(lags))
+	end
+
 	x = Array{Int, 1}(x)
 	y = Array{Int, 1}(y)
 
@@ -31,21 +35,12 @@ include(srcdir("section-trial.jl"))
 end
 
 
-@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5, idx=Dict())
+@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5)
 
-	x = []
-	y = []
-	
-	if isempty(idx)
-		return fill(NaN, length(lags))
-	end
+	x = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, binsize=binsize)
+	y = section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], around, binsize=binsize)
 
-	for i in 1:size(idx, 2)
-		push!(x, section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], idx[:, i], binsize=binsize))
-		push!(y, section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], idx[:, i], binsize=binsize))
-	end
-
-	x = vcat((x...)...)
+	x = vcat((x...)...) #Can't concatenate trials like this!
 	y = vcat((y...)...)
 	
 	if isempty(x[x.>0]) || isempty(y[y.>0]) 
@@ -63,6 +58,27 @@ end
 	crosscor(x, y, false, binsize=binsize, lags=lags)
 end
 
+@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector{<:Tuple}, args...; binsize::Number, lags=[-40:40;], thr=1.5)
+
+	if isempty(around)
+		return [fill(NaN, length(lags))]
+	end
+
+	# section around active ranges and concat each trial with its parts
+	x = vcat.([section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], i, binsize=binsize) for i in around]...)
+	y = vcat.([section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], i, binsize=binsize) for i in around]...)
+	
+	if :preimp in args
+		return crosscor.(x, y, Ref(lags), demean=true)
+	end
+
+	if :norm in args
+		return crosscor.(x, y, true, binsize=binsize) #, lags=lags)
+	end
+
+	crosscor.(x, y, false, binsize=binsize) # TODO lags=lags)
+end
+
 function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Number, lags=[-40:40;], thr=1.5)
 	m = zeros(length(lags), length(couples))
 	for (i, c) in enumerate(couples)
@@ -71,25 +87,12 @@ function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args.
 	m
 end
 
-function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Number, lags=[-40:40;], thr=1.5, indexes::Dict)
-	m = zeros(length(lags), length(couples))
-	for (i, c) in enumerate(couples)
-		active = concat(indexes[c[1]], indexes[c[2]])
-		m[:, i] = crosscor(df, c, around, args..., binsize=binsize, thr=thr, lags=lags,idx=active)
-	end
-	m
+function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Dict,  args...; binsize::Number, lags=[-40:40;], thr=1.5)
+	active(x) = Tuple{Float64, Float64}[around[x[1]]..., around[x[2]]...]
+	# for (i, c) in enumerate(couples)
+	# 	m[:, i] = crosscor(df, c, active(c), args..., binsize=binsize, thr=thr, lags=lags)
+	# end
+	# m
+	crosscor.(Ref(df), couples, active.(couples), Ref(args...), binsize=binsize, thr=thr) 
 end
-
-function concat(x, y)
-	if isempty(x) && isempty(y)
-		return []
-	elseif isempty(x)
-		return y
-	elseif isempty(y)
-		return x
-	end
-	hcat(x, y)
-end
-
-
 
