@@ -104,8 +104,9 @@ savefig(plotsdir("crosscor", "figure_3b"), "scripts/cross-correlogram.jl")
 #< 3C
 
 
-indexes = get_active_ranges(data, thr=1.5) # fix the indexing
-neighbors = crosscor(tmp, neigh, [-400., 400.], binsize=0.5, indexes=indexes) |> drop
+n, r = sectionTrial(tmp)
+indexes = get_active_ranges(tmp, thr=1.5) # fix the indexing
+neighbors = crosscor(tmp, neigh, [-400., 400.], binsize=0.5, indexes=indexes, :mad) |> drop
 
 mean_neighbors = mean(neighbors, dims=2)[:]
 sem_neighbors = sem(neighbors, dims=2)[:]

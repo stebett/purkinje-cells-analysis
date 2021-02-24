@@ -49,7 +49,7 @@ end
 function sectionTrial(df::DataFrame, n::Int, pad::Float64, b::Int=200, args...)
 	k = Int(pad)
 	r1 = [[zeros(2n+k÷b*2n) for _ in 1:length(l)] for l in df.lift]
-	r2 = [zeros(2, 2n+k÷b*2n) for _ in 1:size(df, 1)]
+	r2 = [zeros(2, 2n+k÷b*2n) for _ in 1:size(df, 1)] #TODO transform in 72 tuples
 	r3 = [zeros(2n+k÷b*2n) for _ in 1:size(df, 1)]
 
 	sectionTrial(r1, r2, r3, df.t, df.lift, df.cover, df.grasp, n, pad, b, args...)
@@ -73,26 +73,26 @@ function get_params(lift, cover, grasp, n, k, b)
 end
 
 function get_ranges(lift, cover, grasp, n, k, b)
-	rn1 = [[b[1]*i-k-cover[1]+lift[1], b[1]*(i+1)-k-cover[1]+lift[1]] for i = 0:k/b[1]]
-	rn2 = [[b[2]*i-cover[1]+lift[1],b[2]*(i+1)-cover[1]+lift[1]] for i = 0:n-1]
-	rn3 = [[b[3]*i, b[3]*(i+1)] for i = 0:n-1]
-	rn4 = [[b[1]*i+grasp[1]-cover[1], b[1]*(i+1)+grasp[1]-cover[1]] for i=0:k/b[1]]
-	hcat(rn1..., rn2..., rn3..., rn4...)
+	rn1 = [(b[1]*i-k-cover[1]+lift[1], b[1]*(i+1)-k-cover[1]+lift[1]) for i = 0:k/b[1]]
+	rn2 = [(b[2]*i-cover[1]+lift[1],b[2]*(i+1)-cover[1]+lift[1]) for i = 0:n-1]
+	rn3 = [(b[3]*i, b[3]*(i+1)) for i = 0:n-1]
+	rn4 = [(b[1]*i+grasp[1]-cover[1], b[1]*(i+1)+grasp[1]-cover[1]) for i=0:k/b[1]]
+	[rn1..., rn2..., rn3..., rn4...]
 end
 
 function get_active_ranges(df; num_bins=6, pad=1000., b=200, thr=2.5)
 	n, r = sectionTrial(df, num_bins, pad, b, :mad);
-	idx = drop(n, index=true)
+	todrop = drop(n, index=true)
 	active_bins = get_active_bins(n, thr)
 
-	results = []
-	for (i, act, rng) = zip(idx, active_bins, r)
-		if i
-			push!(results, [])
+	results = Dict()
+	for (i, bad, act, rng) = zip(df.index, todrop, active_bins, r)
+		if bad
+			results[i] = []
 		elseif isempty(act)
-			push!(results, [])
+			results[i] = []
 		else
-			push!(results, rng[:, act])
+			results[i] = rng[:, act]
 		end
 	end
 	results
