@@ -19,44 +19,58 @@ function sem(x::Matrix; dims=2)
 end
 
 #%
-merge(ranges, x) = Tuple{Float64, Float64}[ranges[x[1]]..., ranges[x[2]]...]
-
 tmp = data[data.p_acorr .< 0.2, :];
-pad = 1000.
-num_bins = 6
-b = 200
+pad = 1000
+n = 6
+b1 = 50
 binsize=.5
-n, r = sectionTrial(tmp, num_bins, pad, b, :mad);
-todrop = drop(n, index=true) .* tmp.index
-todrop = todrop[todrop .> 0]
-ranges = get_active_ranges(tmp, num_bins=num_bins, pad=pad, b=b)
-dist = get_pairs(tmp, "d")
-merged_ranges = merge.(Ref(ranges), dist)
+thr = 2.5
 
-c = []
-for (cell, bad, rng) = zip(dist, todrop, merged_ranges)
-	if cell[1] ∉ todrop && cell[2] ∉ todrop && !isempty(rng)
-		c1 = vcat.(section.(Ref(tmp[tmp.index .== cell[1], :t]), Ref(tmp[tmp.index .== cell[1], :cover]), rng, binsize=binsize)...)
-		c2 = vcat.(section.(Ref(tmp[tmp.index .== cell[2], :t]), Ref(tmp[tmp.index .== cell[2], :cover]), rng, binsize=binsize)...)
-		c3 = crosscor.(c1, c2, true, binsize=binsize) |> x->hcat(x...) |> drop |> x->mean(x, dims=2)
+#% mpsth and the timestamps of the bins for the respective spiketrain
+# It has to be done on full data or the index of ranges would be messed up
+mpsth, ranges = sectionTrial(data, pad, n, b1);
 
-		fr1 = hcat(c1...) |> drop |> mean
-		fr2 = hcat(c2...) |> drop |> mean
-
-		if fr1 >= 0.01 && fr2 >= 0.01
-			push!(c, c3)
-		end
-	end
+#% Active ranges for each trial TODO take care of inf and nan
+active_ranges = []
+for (spiketrain, rng) in zip(mpsth, ranges)
+	push!(active_ranges, [x[y .> thr] for (x, y) = zip(rng, spiketrain)])
 end
 
-distant = hcat(c...) |> drop
+#% Merge distant active ranges, keeping trial separated
+merge(r, c) = vcat.(r[c]...)
+dist = get_pairs(tmp, "d")
+
+merged_dist = merge.(Ref(active_ranges), dist); # TODO actually you can merge trials!
+
+#%
+distant = []
+for (cell, rng) = zip(dist, merged_dist)
+		c1 = cut(df[df.index .== cell[1], :t]..., r) |> sort
+		c2 = cut(df[df.index .== cell[2], :t]..., r) |> sort
+
+		if !isempty(c1) && !isempty(c2)
+			c3 = crosscor(c1, c2, false, binsize=binsize)
+
+			fr1 = length(c1)/(max(c1...) - min(c1...)) |> x->round(x, digits=4)
+			fr2 = length(c2)/(max(c2...) - min(c2...)) |> x->round(x, digits=4)
+
+			if !isinf(fr1) && !isinf(fr2) 
+				push!(distant, c3)
+			end
+		end
+end
+#%
+
+# savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
+
+distant = hcat(distant...) |> drop
 mean_distant = mean(distant, dims=2)[:]
 sem_distant = sem(distant, dims=2)[:]
 
-plot(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false)
+plot!(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false)
 xticks!([1:10:81;],["$i" for i =-20:5:20])
 title!("Pairs of distant cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
 #%
-savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3d.jl")
+# savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3d.jl")

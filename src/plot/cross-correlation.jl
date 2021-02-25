@@ -12,18 +12,10 @@ include(srcdir("section-trial.jl"))
 @inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number, lags=[-40:40;])
 	bins = zeros(length(lags))
 	center = ceil(Int, length(lags)/2)
-	# x = c1 .* [1:length(c1);]
-	# y = c2 .* [1:length(c2);]
 
-	# x = x[x .> 0.]
-	# y = y[y .> 0.]
-
-	if isempty(x) || isempty(y) 
+	if isempty(x) || isempty(y) || any(isinf.(x)) || any(isinf.(y))
 		return fill(NaN, length(lags))
 	end
-
-	# x = Array{Int, 1}(x)
-	# y = Array{Int, 1}(y)
 
 	@inbounds for k in x
 	    bins .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags] #TODO check
@@ -37,8 +29,8 @@ end
 
 @inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5)
 
-	x = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, binsize=binsize) # TODO adapt
-	y = section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], around, binsize=binsize)
+	x = cut(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around)
+	y = cut(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], around)
 
 	x = vcat((x...)...) #Can't concatenate trials like this!
 	y = vcat((y...)...)
@@ -65,8 +57,8 @@ end
 	end
 
 	# section around active ranges and concat each trial with its parts
-	x = vcat.([section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], i, binsize=binsize) for i in around]...)
-	y = vcat.([section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], i, binsize=binsize) for i in around]...)
+	x = vcat.([cut(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], i) for i in around]...)
+	y = vcat.([cut(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], i) for i in around]...) # TODO test
 	
 	if :preimp in args
 		return crosscor.(x, y, Ref(lags), demean=true)

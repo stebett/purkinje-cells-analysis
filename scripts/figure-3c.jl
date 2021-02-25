@@ -41,30 +41,30 @@ end
 merge(r, c) = vcat.(r[c]...)
 neigh = get_pairs(tmp, "n")
 
-merged_ranges = merge.(Ref(active_ranges), neigh);
+merged_neigh= merge.(Ref(active_ranges), neigh);
 
 #%
-diff(x::Tuple) = floor(Int, x[2] - x[1])
-
-c = []
-c3 = []
-for (cell, rng) = zip(neigh, merged_ranges)
+neighbors = []
+for (cell, rng) = zip(neigh, merged_neigh)
 	for r in rng
-		c1 = cut(tmp[tmp.index .== cell[1], :t]..., r)
-		c2 = cut(tmp[tmp.index .== cell[2], :t]..., r)
-		c3 = crosscor(c1, c2, false, binsize=binsize)
+		c1 = cut(df[df.index .== cell[1], :t]..., r) |> sort
+		c2 = cut(df[df.index .== cell[2], :t]..., r) |> sort
+
+		if !isempty(c1) && !isempty(c2)
+			c3 = crosscor(c1, c2, true, binsize=binsize)
+
+			fr1 = length(c1)/(max(c1...) - min(c1...)) |> x->round(x, digits=4)
+			fr2 = length(c2)/(max(c2...) - min(c2...)) |> x->round(x, digits=4)
+
+			if !isinf(fr1) && !isinf(fr2) 
+				push!(neighbors, c3)
+			end
+		end
 	end
-
-	# fr1 = hcat(c1...) |> drop |> mean
-	# fr2 = hcat(c2...) |> drop |> mean
-
-	# if fr1 >= 0.01 && fr2 >= 0.01
-	push!(c, c3)
-	# end
 end
 #%
 
-neighbors = hcat(c...) |> drop
+neighbors = hcat(neighbors...) |> drop
 
 mean_neighbors = mean(neighbors, dims=2)[:]
 sem_neighbors = sem(neighbors, dims=2)[:]
