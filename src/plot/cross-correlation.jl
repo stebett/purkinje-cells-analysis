@@ -9,24 +9,24 @@ include(srcdir("section.jl"))
 include(srcdir("section-trial.jl"))
 
 
-@inline function crosscor(c1::Vector, c2::Vector, norm::Bool; binsize::Number, lags=[-40:40;])
+@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number, lags=[-40:40;])
 	bins = zeros(length(lags))
 	center = ceil(Int, length(lags)/2)
-	x = c1 .* [1:length(c1);]
-	y = c2 .* [1:length(c2);]
+	# x = c1 .* [1:length(c1);]
+	# y = c2 .* [1:length(c2);]
 
-	x = x[x .> 0.]
-	y = y[y .> 0.]
+	# x = x[x .> 0.]
+	# y = y[y .> 0.]
 
 	if isempty(x) || isempty(y) 
 		return fill(NaN, length(lags))
 	end
 
-	x = Array{Int, 1}(x)
-	y = Array{Int, 1}(y)
+	# x = Array{Int, 1}(x)
+	# y = Array{Int, 1}(y)
 
-	@inbounds for z in x
-		bins[intersect((-z .+ y), lags) .+ center] .+= 1
+	@inbounds for k in x
+	    bins .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags] #TODO check
 	end
 	if norm
 		return bins ./ (length(x)*length(y)*binsize/(max(x..., y...)-min(x...,y...)))
@@ -37,7 +37,7 @@ end
 
 @inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, lags=[-40:40;], thr=1.5)
 
-	x = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, binsize=binsize)
+	x = section(df[(df.index .== cells[1]), "t"], df[(df.index .== cells[1]), "cover"], around, binsize=binsize) # TODO adapt
 	y = section(df[(df.index .== cells[2]), "t"], df[(df.index .== cells[2]), "cover"], around, binsize=binsize)
 
 	x = vcat((x...)...) #Can't concatenate trials like this!

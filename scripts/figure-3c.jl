@@ -18,45 +18,51 @@ function sem(x::Matrix; dims=2)
 	r
 end
 
-merge(ranges, x) = Tuple{Float64, Float64}[ranges[x[1]]..., ranges[x[2]]...]
 
 #%
 tmp = data[data.p_acorr .< 0.2, :];
 pad = 1000
 n = 6
 b1 = 50
-l = 2n + 2pad÷b1
 binsize=.5
-#%
-bins = zeros(l)
-r = [[zeros(l) for _ in 1:length(i)] for i in tmp.lift];
-ranges = [[Array{Tuple{Float64, Float64}, 1}(undef, l) for _ in 1:length(i)] for i in data.lift];
-#%
+thr = 2.5
 
-sectionTrial(r, ranges, bins, tmp, pad, n, b1);
+#% mpsth and the timestamps of the bins for the respective spiketrain
+# It has to be done on full data or the index of ranges would be messed up
+mpsth, ranges = sectionTrial(data, pad, n, b1);
 
-todrop = drop(n, index=true) .* tmp.index
-todrop = todrop[todrop .> 0]
-ranges = get_active_ranges(tmp, num_bins=num_bins, pad=pad, b=b, thr=0.0)
-neigh = get_pairs(tmp, "n")
-merged_ranges = merge.(Ref(ranges), neigh)
-
-#%
-c = []
-for (cell, bad, rng) = zip(neigh, todrop, merged_ranges)
-	if cell[1] ∉ todrop && cell[2] ∉ todrop && !isempty(rng)
-		c1 = vcat.(section.(Ref(tmp[tmp.index .== cell[1], :t]), Ref(tmp[tmp.index .== cell[1], :cover]), rng, binsize=binsize)...)
-		c2 = vcat.(section.(Ref(tmp[tmp.index .== cell[2], :t]), Ref(tmp[tmp.index .== cell[2], :cover]), rng, binsize=binsize)...)
-		c3 = crosscor.(c1, c2, true, binsize=binsize) |> x->hcat(x...) |> drop |> x->mean(x, dims=2)
-
-		fr1 = hcat(c1...) |> drop |> mean
-		fr2 = hcat(c2...) |> drop |> mean
-
-		if fr1 >= 0.01 && fr2 >= 0.01
-			push!(c, c3)
-		end
-	end
+#% Active ranges for each trial TODO take care of inf and nan
+active_ranges = []
+for (spiketrain, rng) in zip(mpsth, ranges)
+	push!(active_ranges, [x[y .> thr] for (x, y) = zip(rng, spiketrain)])
 end
+
+#% Merge neighbors active ranges, keeping trial separated
+merge(r, c) = vcat.(r[c]...)
+neigh = get_pairs(tmp, "n")
+
+merged_ranges = merge.(Ref(active_ranges), neigh);
+
+#%
+diff(x::Tuple) = floor(Int, x[2] - x[1])
+
+c = []
+c3 = []
+for (cell, rng) = zip(neigh, merged_ranges)
+	for r in rng
+		c1 = cut(tmp[tmp.index .== cell[1], :t]..., r)
+		c2 = cut(tmp[tmp.index .== cell[2], :t]..., r)
+		c3 = crosscor(c1, c2, false, binsize=binsize)
+	end
+
+	# fr1 = hcat(c1...) |> drop |> mean
+	# fr2 = hcat(c2...) |> drop |> mean
+
+	# if fr1 >= 0.01 && fr2 >= 0.01
+	push!(c, c3)
+	# end
+end
+#%
 
 neighbors = hcat(c...) |> drop
 
