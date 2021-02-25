@@ -18,18 +18,26 @@ function sem(x::Matrix; dims=2)
 	r
 end
 
-#% 
 merge(ranges, x) = Tuple{Float64, Float64}[ranges[x[1]]..., ranges[x[2]]...]
 
-tmp = data;
-pad = 1000.
-num_bins = 6
-b = 200
+#%
+tmp = data[data.p_acorr .< 0.2, :];
+pad = 1000
+n = 6
+b1 = 50
+l = 2n + 2pad÷b1
 binsize=.5
-n, r = sectionTrial(tmp, num_bins, pad, b, :mad);
+#%
+bins = zeros(l)
+r = [[zeros(l) for _ in 1:length(i)] for i in tmp.lift];
+ranges = [[Array{Tuple{Float64, Float64}, 1}(undef, l) for _ in 1:length(i)] for i in data.lift];
+#%
+
+sectionTrial(r, ranges, bins, tmp, pad, n, b1);
+
 todrop = drop(n, index=true) .* tmp.index
 todrop = todrop[todrop .> 0]
-ranges = get_active_ranges(tmp, num_bins=num_bins, pad=pad, b=b, thr=3.5)
+ranges = get_active_ranges(tmp, num_bins=num_bins, pad=pad, b=b, thr=0.0)
 neigh = get_pairs(tmp, "n")
 merged_ranges = merge.(Ref(ranges), neigh)
 

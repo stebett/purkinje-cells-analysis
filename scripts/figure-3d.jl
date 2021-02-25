@@ -59,4 +59,4 @@ title!("Pairs of distant cells")
 xlabel!("Time (ms)")
 ylabel!("Mean ± sem deviation")
 #%
-#savefig(plotsdir("crosscor", "figure_3d"), "scripts/cross-correlogram.jl")
+savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3d.jl")
