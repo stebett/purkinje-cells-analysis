@@ -9,19 +9,22 @@ include(srcdir("section.jl"))
 include(srcdir("section-trial.jl"))
 
 
-@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number, lags=[-40:40;])
-	bins = zeros(length(lags))
-	center = ceil(Int, length(lags)/2)
+@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number)
+	lags = -40*binsize:binsize:40*binsize
 
 	if isempty(x) || isempty(y) || any(isinf.(x)) || any(isinf.(y))
 		return fill(NaN, length(lags))
 	end
 
+	bins = zeros(length(lags))
+	center = ceil(Int, length(lags)/2)
+
 	@inbounds for k in x
-	    bins .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags] #TODO check
+	    bins .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags]
 	end
 	if norm
-		return bins ./ (length(x)*length(y)*binsize/(max(x..., y...)-min(x...,y...)))
+		# return bins ./ (length(x)*length(y)*binsize/(max(x..., y...)-min(x...,y...)))
+		return (bins .- median(bins)) ./ mad(bins)
 	end
 	bins
 end

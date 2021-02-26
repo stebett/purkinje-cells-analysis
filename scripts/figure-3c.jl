@@ -7,6 +7,7 @@ using LinearAlgebra
 using Plots; gr()
 import StatsBase.sem
 
+include(srcdir("filter-active.jl"))
 include(srcdir("plot", "cross-correlation.jl"))
 include(srcdir("plot", "psth.jl"))
 
@@ -18,63 +19,73 @@ function sem(x::Matrix; dims=2)
 	r
 end
 
+function get_active_couples(couples, ranges)
+	active_couples = Dict()
+	for c in couples
+		active_couples[c] = vcat(ranges[c[1]]..., ranges[c[2]])
+	end
+	active_couples
+end
 
+function crosscor_c(df, c, active_c, binsize)
+	r = zeros(81, length(c))
+	for i = eachindex(c)
+		c1 = cut(df[df.index .== c[i][1], :t]..., active_c[c[i]]) |> sort
+		c2 = cut(df[df.index .== c[i][2], :t]..., active_c[c[i]]) |> sort
+		r[:, i] = crosscor(c1, c2, true, binsize=binsize)
+	end
+	r
+end
+
+function plot_crosscor_neigh(neighbors::Matrix)
+	mean_neighbors = mean(neighbors, dims=2)[:]
+	sem_neighbors = sem(neighbors, dims=2)[:]
+	mean_neighbors[40:41] .= NaN 
+
+	plot(mean_neighbors, c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=3, label=false)
+	xticks!([1:10:81;],["$i" for i =-20:5:20])
+	title!("Pairs of neighboring cells")
+	xlabel!("Time (ms)")
+	ylabel!("Mean ± sem deviation")
+	# savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
+end
+ 
+function plot_crosscor_distant(distant::Matrix)
+	mean_distant = mean(distant, dims=2)[:]
+	sem_distant = sem(distant, dims=2)[:]
+
+	plot!(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false)
+	xticks!([1:10:81;],["$i" for i =-20:5:20])
+	title!("Pairs of distant cells")
+	xlabel!("Time (ms)")
+	ylabel!("Mean ± sem deviation")
+	# savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3d.jl")
+end
 #%
 tmp = data[data.p_acorr .< 0.2, :];
-pad = 1000
-n = 6
-b1 = 50
+
+pad = 250
+n = 5
+b1 = 5
 binsize=.5
 thr = 2.5
 
-#% mpsth and the timestamps of the bins for the respective spiketrain
-# It has to be done on full data or the index of ranges would be messed up
-mpsth, ranges = sectionTrial(data, pad, n, b1);
+mpsth, ranges = sectionTrial(tmp, pad, n, b1);
 
-#% Active ranges for each trial TODO take care of inf and nan
-active_ranges = []
-for (spiketrain, rng) in zip(mpsth, ranges)
-	push!(active_ranges, [x[y .> thr] for (x, y) = zip(rng, spiketrain)])
-end
+active_trials = get_active_trials(mpsth, ranges, thr);
+active_ranges = merge_trials(tmp, active_trials)
 
-#% Merge neighbors active ranges, keeping trial separated
-merge(r, c) = vcat.(r[c]...)
+
+#% Merge neighbors active ranges
 neigh = get_pairs(tmp, "n")
+active_neigh = get_active_couples(neigh, active_ranges)
+neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop
 
-merged_neigh= merge.(Ref(active_ranges), neigh);
+#% Merge distant active ranges
+dist = get_pairs(tmp, "d")
+active_dist = get_active_couples(dist, active_ranges)
+distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop
 
 #%
-neighbors = []
-for (cell, rng) = zip(neigh, merged_neigh)
-	for r in rng
-		c1 = cut(df[df.index .== cell[1], :t]..., r) |> sort
-		c2 = cut(df[df.index .== cell[2], :t]..., r) |> sort
-
-		if !isempty(c1) && !isempty(c2)
-			c3 = crosscor(c1, c2, true, binsize=binsize)
-
-			fr1 = length(c1)/(max(c1...) - min(c1...)) |> x->round(x, digits=4)
-			fr2 = length(c2)/(max(c2...) - min(c2...)) |> x->round(x, digits=4)
-
-			if !isinf(fr1) && !isinf(fr2) 
-				push!(neighbors, c3)
-			end
-		end
-	end
-end
-#%
-
-neighbors = hcat(neighbors...) |> drop
-
-mean_neighbors = mean(neighbors, dims=2)[:]
-sem_neighbors = sem(neighbors, dims=2)[:]
-
-mean_neighbors[41:42] .= NaN 
-
-plot(mean_neighbors, c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=3, label=false)
-xticks!([1:10:81;],["$i" for i =-20:5:20])
-title!("Pairs of neighboring cells")
-xlabel!("Time (ms)")
-ylabel!("Mean ± sem deviation")
-#%
-# savefig(plotsdir("crosscor", "figure_3c"), "scripts/cross-correlogram.jl")
+plot_crosscor_neigh(neighbors)
+plot_crosscor_distant(distant)
