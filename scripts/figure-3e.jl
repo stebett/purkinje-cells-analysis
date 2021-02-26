@@ -10,8 +10,8 @@ import StatsBase.sem
 include(srcdir("plot", "cross-correlation.jl"))
 
 #%
-neighbors;
-neighbors_unmod = mean(drop(crosscor(tmp, neigh, [-300., 300.], binsize=0.5, :norm)), dims=2)
+mean_neighbors = mean(neighbors, dims=2)
+neighbors_unmod = mean(drop(crosscor(tmp, neigh, [-500., 500.], binsize=0.5, :norm)), dims=2)
 
 σ = 1
 x = reverse(mean_neighbors[1:40, :], dims=1) .+ mean_neighbors[41:end-1, :]

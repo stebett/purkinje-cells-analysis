@@ -79,5 +79,4 @@ distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop
 #%
 closeall()
 plot_crosscor_neigh(neighbors)
-
 plot_crosscor_distant(distant)
