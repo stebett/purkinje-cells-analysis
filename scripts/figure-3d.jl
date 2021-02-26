@@ -25,7 +25,7 @@ pad = 1000
 n = 6
 b1 = 50
 binsize=.5
-thr = 10.5
+thr = 6.5
 
 mpsth, ranges = sectionTrial(tmp, pad, n, b1);
 
@@ -50,14 +50,3 @@ for cell = dist
 end
 #%
 
-distant_ = hcat(distant...) |> drop
-mean_distant = mean(distant_, dims=2)[:]
-sem_distant = sem(distant_, dims=2)[:]
-
-plot!(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false)
-xticks!([1:10:81;],["$i" for i =-20:5:20])
-title!("Pairs of distant cells")
-xlabel!("Time (ms)")
-ylabel!("Mean ± sem deviation")
-#%
-# savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3d.jl")

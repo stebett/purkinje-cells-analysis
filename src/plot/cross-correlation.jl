@@ -8,9 +8,33 @@ import StatsBase.crosscor
 include(srcdir("section.jl"))
 include(srcdir("section-trial.jl"))
 
+@inline function crosscor_c(df, c, active_c, binsize) 
+	r = zeros(81, length(c))
+	lags = -40. * binsize : binsize : 40. * binsize
+	@inbounds for i = eachindex(c)
+		c1 = cut(df[df.index .== c[i][1], :t]..., active_c[c[i]]) 
+		c2 = cut(df[df.index .== c[i][2], :t]..., active_c[c[i]])
+		crosscor!(view(r, :, i), c1, c2, lags, true, binsize=binsize)
+	end
+	r
+end
 
-@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number)
-	lags = -40*binsize:binsize:40*binsize
+@inline function crosscor!(r, x::Vector, y::Vector, lags, norm::Bool; binsize::Real)
+	if isempty(x) || isempty(y) || any(isinf.(x)) || any(isinf.(y))
+		r .= NaN
+		return
+	end
+
+	@inbounds for k in x
+	    r .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags] # is this faster if y is sorted?
+	end
+	if norm
+		zscore!(r, mean(r), std(r))
+	end
+end
+
+@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Real)
+	lags = -40. * binsize : binsize : 40. * binsize
 
 	if isempty(x) || isempty(y) || any(isinf.(x)) || any(isinf.(y))
 		return fill(NaN, length(lags))
@@ -20,12 +44,12 @@ include(srcdir("section-trial.jl"))
 	center = ceil(Int, length(lags)/2)
 
 	@inbounds for k in x
-	    bins .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags]
+	    bins .+= [sum([k+i .<= y .< k+i+binsize]...) for i = lags] # is this faster if y is sorted?
 	end
 	if norm
 		# return bins ./ (length(x)*length(y)*binsize/(max(x..., y...)-min(x...,y...)))
-		return (bins .- median(bins)) ./ mad(bins)
-		# return zscore(bins)
+		# return (bins .- median(bins)) ./ mad(bins)
+		return zscore(bins)
 	end
 	bins
 end

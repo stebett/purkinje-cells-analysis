@@ -92,11 +92,11 @@ function cut(x::Array{Float64, 1}, y::Float64, z::Array{Float64, 1})::Array{Floa
 	@views x[y + z[1] .<= x .<= y + z[2]] .- y .- z[1]
 end
 
-function cut(x::Vector{T}, z::Tuple{T, T}) where {T <: Real}
+@inline function cut(x::Vector{T}, z::Tuple{T, T})::Vector{Float64} where {T <: Real}
 	@views x[z[1] .<= x .<= z[2]]  
 end
 
-function cut(x::Vector{T}, z::Vector{<:Tuple{T, T}}) where {T <: Real}
+@inline function cut(x::Vector{T}, z::Vector{<:Tuple{T, T}})::Vector{Float64} where {T <: Real}
 	vcat(cut.(Ref(x), z)...)
 end
 

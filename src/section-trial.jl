@@ -1,8 +1,8 @@
 using DrWatson
 @quickactivate "ens"
 
-function sectionTrial(x::Vector{T}, around::Vector{<:Tuple}, binsizes::Vector{T}) where {T <:Real}
-	cut.(Ref(x), around) |> k->bin.(k, binsizes) |> k->vcat(k...)
+function sectionTrial(r::Vector{T}, x::Vector{T}, around::Vector{<:Tuple}, binsizes::Vector{T}) where {T <:Real}
+	r .= cut.(Ref(x), around) |> k->(length.(k)./binsizes) |> k->vcat(k...)
 end
 
 function binSizes!(b, lift, cover, grasp, pad, n, b1)
@@ -21,13 +21,12 @@ function tupleRanges!(r, start, bins)
 end
 
 function sectionTrial(r::Vector{T}, ranges::Vector{<:Tuple}, bins::Vector{T}, 
-		x::Vector{T}, lift::T, cover::T, grasp::T, 
-		pad::Int, n::Int, b1::Int) where {T <: Real}
+	x::Vector{T}, lift::T, cover::T, grasp::T, 
+	pad::Int, n::Int, b1::Int) where {T <: Real}
 	binSizes!(bins, lift, cover, grasp, pad, n, b1)
 	tupleRanges!(ranges, lift-pad, bins)
-	r .= cut.(Ref(x), ranges) |> k->length.(k) |> Array{Float64, 1} 
+	sectionTrial(r, x, ranges, bins)
 	zscore!(r, mean(r[1:floor(Int, length(r)÷4)]), std(r[1:floor(Int, length(r)÷4)]))
-	# r .= normalize(r, r[1:floor(Int, length(r)÷4)], :mad)
 end
 	
 function sectionTrial(r::Vector{Vector{T}}, ranges::Vector{<:Vector{<:Tuple}}, bins::Vector{T}, row, pad::Int, n::Int, b1::Int) where {T <: Real}

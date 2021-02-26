@@ -2,7 +2,7 @@
 function get_active_trials(mpsth, ranges, thr)
 	active_trials = []
 	for (rng, spiketrain) in zip(ranges, mpsth)
-		push!(active_trials, [x[(abs.(y) .> thr) .& .!isinf.(y)] for (x, y) = zip(rng, spiketrain)])
+		push!(active_trials, [x[(y .> thr) .& .!isinf.(y)] for (x, y) = zip(rng, spiketrain)])
 	end
 	active_trials
 end

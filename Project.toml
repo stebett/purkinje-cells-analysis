@@ -3,6 +3,7 @@ name = "ens"
 [deps]
 Arrow = "69666777-d1a9-59fb-9406-91d4454c9d45"
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CircularArrays = "7a955b69-7140-5f4e-a0ed-f168c5e2e749"
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"

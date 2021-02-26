@@ -27,16 +27,6 @@ function get_active_couples(couples, ranges)
 	active_couples
 end
 
-function crosscor_c(df, c, active_c, binsize)
-	r = zeros(81, length(c))
-	for i = eachindex(c)
-		c1 = cut(df[df.index .== c[i][1], :t]..., active_c[c[i]]) |> sort
-		c2 = cut(df[df.index .== c[i][2], :t]..., active_c[c[i]]) |> sort
-		r[:, i] = crosscor(c1, c2, true, binsize=binsize)
-	end
-	r
-end
-
 function plot_crosscor_neigh(neighbors::Matrix)
 	mean_neighbors = mean(neighbors, dims=2)[:]
 	sem_neighbors = sem(neighbors, dims=2)[:]
@@ -64,11 +54,11 @@ end
 #%
 tmp = data[data.p_acorr .< 0.2, :];
 
-pad = 250
+pad = 2500
 n = 5
 b1 = 50
 binsize=.5
-thr = 4.5
+thr = 2.5
 
 mpsth, ranges = sectionTrial(tmp, pad, n, b1);
 

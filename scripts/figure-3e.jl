@@ -34,4 +34,4 @@ title!("Pairs of neighboring cells")
 ylabel!("Average normalized cross-correlogram")
 xlabel!("Time (ms)")
 #%
-#savefig(plotsdir("crosscor", "figure_3e"), "scripts/cross-correlogram.jl")
+savefig(plotsdir("crosscor", "figure_3e"), "scripts/figure-3e.jl")
