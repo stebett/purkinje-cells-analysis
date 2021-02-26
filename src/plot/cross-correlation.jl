@@ -25,6 +25,7 @@ include(srcdir("section-trial.jl"))
 	if norm
 		# return bins ./ (length(x)*length(y)*binsize/(max(x..., y...)-min(x...,y...)))
 		return (bins .- median(bins)) ./ mad(bins)
+		# return zscore(bins)
 	end
 	bins
 end
@@ -47,10 +48,10 @@ end
 	end
 
 	if :norm in args
-		return crosscor(x, y, true, binsize=binsize, lags=lags)
+		return crosscor(x, y, true, binsize=binsize)
 	end
 
-	crosscor(x, y, false, binsize=binsize, lags=lags)
+	crosscor(x, y, false, binsize=binsize)
 end
 
 @inline function crosscor(df, cells::Array{Int64, 1}, around::Vector{<:Tuple}, args...; binsize::Number, lags=[-40:40;], thr=1.5)

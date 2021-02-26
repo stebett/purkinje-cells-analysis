@@ -4,12 +4,13 @@
 !_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
 !_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
 !_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
-!_TAG_PROC_CWD	/home/ginko/ens/	//
+!_TAG_PROC_CWD	/export/home1/users/nbc/bettani/ens/	//
 !_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
 !_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
-!_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
+!_TAG_PROGRAM_VERSION	5.9.0	/d532b5c4/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
+active	src/plot/cross-correlation.jl	/^	active(x) = Tuple{Float64, Float64}[around[x[1]]..., around[x[2]]...]$/;"	f	function:crosscor
 bin	src/section.jl	/^function bin(x::Array{Array{Float64, 1}, 1}, len::Int, binsize::Float64=1.)::Array{Array{Float64/;"	f
 bin	src/section.jl	/^function bin(x::Array{Float64, 1}, len::Int, binsize::Float64=1.)::Array{Float64, 1}$/;"	f
 binSizes!	src/section-trial.jl	/^function binSizes!(b, lift, cover, grasp, pad, n, b1)$/;"	f
@@ -18,16 +19,15 @@ convolve	src/section.jl	/^function convolve(x::Array{Float64, 1}, σ::Float64=10
 correlate	scripts/corr-coef.jl	/^function correlate(convolutions)$/;"	f
 crosscor	src/plot/cross-correlation.jl	/^@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector, args...; binsize::Number, /;"	f
 crosscor	src/plot/cross-correlation.jl	/^@inline function crosscor(df, cells::Array{Int64, 1}, around::Vector{<:Tuple}, args...; binsize:/;"	f
-crosscor	src/plot/cross-correlation.jl	/^@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number, lags=[-40:40;])$/;"	f
+crosscor	src/plot/cross-correlation.jl	/^@inline function crosscor(x::Vector, y::Vector, norm::Bool; binsize::Number)$/;"	f
 crosscor	src/plot/cross-correlation.jl	/^function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Dict,  args...; binsize::Numbe/;"	f
 crosscor	src/plot/cross-correlation.jl	/^function crosscor(df, couples::Array{Array{Int64, 1}, 1}, around::Vector,  args...; binsize::Num/;"	f
+crosscor_c	scripts/figure-3c.jl	/^function crosscor_c(df, c, active_c, binsize)$/;"	f
 cut	src/section.jl	/^function cut(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, 1}, z::Array{Float64, 1/;"	f
 cut	src/section.jl	/^function cut(x::Array{Float64, 1}, y::Array{Float64, 1}, z::Array{Float64, 1})::Array{Array{Floa/;"	f
 cut	src/section.jl	/^function cut(x::Array{Float64, 1}, y::Float64, z::Array{Float64, 1})::Array{Float64, 1}$/;"	f
 cut	src/section.jl	/^function cut(x::Vector{T}, z::Tuple{T, T}) where {T <: Real}$/;"	f
 cut	src/section.jl	/^function cut(x::Vector{T}, z::Vector{<:Tuple{T, T}}) where {T <: Real}$/;"	f
-cut	test/section-test.jl	/^@test cut(a, 50, [-10, 10]) == [0, 10, 20]$/;"	f
-diff	scripts/figure-3c.jl	/^diff(x::Tuple) = floor(Int, x[2] - x[1])$/;"	f
 distant_correlation	scripts/corr-coef.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
 drop	src/drop.jl	/^function drop(v::Matrix; dims=1, nan=true, inf=true, index=false)$/;"	f
 drop	src/drop.jl	/^function drop(v::Vector; nan=true, inf=true, index=false)$/;"	f
@@ -44,6 +44,8 @@ find_broken_landmarks	scripts/io/fix-landmarks.jl	/^function find_broken_landmar
 fit_fourths	scripts/pca/speed.jl	/^function fit_fourths(st)$/;"	f
 fit_halfes	scripts/pca/speed.jl	/^function fit_halfes(st)$/;"	f
 fit_thirds	scripts/pca/speed.jl	/^function fit_thirds(st)$/;"	f
+get_active_couples	scripts/figure-3c.jl	/^function get_active_couples(couples, ranges)$/;"	f
+get_active_trials	src/filter-active.jl	/^function get_active_trials(mpsth, ranges, thr)$/;"	f
 get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
 get_distant	src/data-tools.jl	/^function get_distant(df::DataFrame)$/;"	f
 get_neighbors	src/data-tools.jl	/^function get_neighbors(df::DataFrame)$/;"	f
@@ -54,8 +56,8 @@ get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
 interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
 jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 load_full	scripts/io/load-full.jl	/^function load_full()$/;"	f
-merge	scripts/figure-3c.jl	/^merge(r, c) = vcat.(r[c]...)$/;"	f
-merge	scripts/figure-3d.jl	/^merge(ranges, x) = Tuple{Float64, Float64}[ranges[x[1]]..., ranges[x[2]]...]$/;"	f
+merge	test/cross-corr-plot-test.jl	/^	merge(r, c) = vcat.(r[c]...)$/;"	f	function:test_all_active2
+merge_trials	src/filter-active.jl	/^function merge_trials(df, active_trials)$/;"	f
 neighbor_correlation	scripts/corr-coef.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
 norm_slice	src/spike-tools.jl	/^function norm_slice(target::T, baseline::T)::T where {T <: Array{Float64,1}}$/;"	f
@@ -63,6 +65,8 @@ norm_slice	src/spike-tools.jl	/^function norm_slice(target::T, baseline::T)::T w
 normalize	src/section.jl	/^function normalize(x::Array{<:Real, 1}, y::Array{<:Real, 1}, args...)::Array{<:Real, 1}$/;"	f
 normalize	src/section.jl	/^function normalize(x::Array{Array{Float64, 1}, 1}, y::Array{Array{Float64, 1}, }, args...)::Arra/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
+plot_crosscor_distant	scripts/figure-3c.jl	/^function plot_crosscor_distant(distant::Matrix)$/;"	f
+plot_crosscor_neigh	scripts/figure-3c.jl	/^function plot_crosscor_neigh(neighbors::Matrix)$/;"	f
 plot_gpfa	scripts/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	scripts/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
 plot_gpfa_speed	scripts/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
@@ -96,6 +100,7 @@ standardize_landmarks	_research/experimental.jl	/^function standardize_landmarks
 test_active	test/psth-v2-test.jl	/^function test_active(df, idx, rng)$/;"	f
 test_all_active	test/cross-corr-plot-test.jl	/^function test_all_active(df, saveplot=false)$/;"	f
 test_all_active	test/psth-v2-test.jl	/^function test_all_active(df)$/;"	f
+test_all_active2	test/cross-corr-plot-test.jl	/^function test_all_active2(df, saveplot=false)$/;"	f
 test_discretize	test/tests-psth.jl	/^function test_discretize()$/;"	f
 test_fractions	test/bin-test.jl	/^function test_fractions(a, i)$/;"	f
 test_int	test/bin-test.jl	/^function test_int(a, i)$/;"	f

@@ -10,22 +10,19 @@ import StatsBase.sem
 include(srcdir("plot", "cross-correlation.jl"))
 
 #%
-cc_n_mod = drop(mass_crosscor(tmp, neigh, filt=true, around=[-200., 200.]))
-cc_n_unmod = drop(mass_crosscor(tmp, neigh, filt=false, around=[-200., 200.]))
+neighbors;
+neighbors_unmod = mean(drop(crosscor(tmp, neigh, [-300., 300.], binsize=0.5, :norm)), dims=2)
 
 σ = 1
-x = reverse(cc_n_mod[1:40, :], dims=1) .+ cc_n_mod[41:end-1, :]
-# x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
-x = x ./ mean(x) 
-x = mean(drop(x), dims=2)
-xs = copy(x)[1+2σ:end-2σ]
-x = convolve(x[:], σ)
+x = reverse(mean_neighbors[1:40, :], dims=1) .+ mean_neighbors[41:end-1, :]
 
-y = reverse(cc_n_unmod[1:40, :], dims=1) .+ cc_n_unmod[41:end-1, :]
-# y = drop((y .- mean(y, dims=1)) ./ std(y, dims=1))
-y = y ./ mean(y)
-y = mean(drop(y), dims=2)
-y = convolve(y[:], σ)
+# x = drop((x .- mean(x, dims=1)) ./ std(x, dims=1))
+xs = copy(x)[1+2σ:end-2σ]
+
+x = convolve(x[:], Float64(σ))
+
+y = reverse(neighbors_unmod[1:40, :], dims=1) .+ neighbors_unmod[41:end-1, :]
+y = convolve(y[:], Float64(σ))
 
 plot([2:length(x)+1;], x, lw=2.5, c=:red, xlims=(0, 25), label="during modulation (smoothed)")
 plot!([2:length(y)+1;], y, lw=2.5, c=:black, label="during whole task")

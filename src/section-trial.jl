@@ -26,7 +26,8 @@ function sectionTrial(r::Vector{T}, ranges::Vector{<:Tuple}, bins::Vector{T},
 	binSizes!(bins, lift, cover, grasp, pad, n, b1)
 	tupleRanges!(ranges, lift-pad, bins)
 	r .= cut.(Ref(x), ranges) |> k->length.(k) |> Array{Float64, 1} 
-	r .= normalize(r, r[1:floor(Int, length(r)÷4)], :mad)
+	zscore!(r, mean(r[1:floor(Int, length(r)÷4)]), std(r[1:floor(Int, length(r)÷4)]))
+	# r .= normalize(r, r[1:floor(Int, length(r)÷4)], :mad)
 end
 	
 function sectionTrial(r::Vector{Vector{T}}, ranges::Vector{<:Vector{<:Tuple}}, bins::Vector{T}, row, pad::Int, n::Int, b1::Int) where {T <: Real}
