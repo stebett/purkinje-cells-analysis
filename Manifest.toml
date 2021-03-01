@@ -934,6 +934,12 @@ git-tree-sha1 = "d8d8b8a9f4119829410ecd706da4cc8594a1e020"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "0.10.3"
 
+[[Spikes]]
+deps = ["Combinatorics", "DataFrames", "ImageFiltering", "OffsetArrays", "Statistics", "StatsBase"]
+path = "/users/nbc/bettani/.julia/dev/Spikes"
+uuid = "a305d8b4-9cce-41f7-8708-a71367dc1260"
+version = "0.1.0"
+
 [[StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
 git-tree-sha1 = "da4cf579416c81994afd6322365d00916c79b8ae"

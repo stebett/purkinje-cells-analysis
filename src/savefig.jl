@@ -1,8 +1,5 @@
-using DrWatson
-@quickactivate "ens"
-
 import Plots.savefig
-export savefig
+using DrWatson 
 
 function savefig(fn::AbstractString, source::AbstractString)
 	fn = abspath(expanduser(fn))
@@ -22,5 +19,3 @@ function savefig(fn::AbstractString, source::AbstractString)
 	_ = run(`exiftool -source=$source $fn`)
 	nothing
 end
-
-

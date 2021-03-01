@@ -2,14 +2,11 @@ using DrWatson
 @quickactivate :ens
 
 #%
+using Spikes
 using Statistics
 using LinearAlgebra
 using Plots; gr()
 import StatsBase.sem
-
-include(srcdir("filter-active.jl"))
-include(srcdir("plot", "cross-correlation.jl"))
-include(srcdir("plot", "psth.jl"))
 
 function sem(x::Matrix; dims=2)
 	r = zeros(size(x, dims % 2 + 1)) 
@@ -55,30 +52,29 @@ end
 
 tmp = load_data("data-v5.arrow")
 
-#%
-pad = 2500
+pad = 250
 n = 5
 b1 = 50
 binsize=.5
-thr = 2.5
+thr = 1.5
 
-mpsth, ranges = sectionTrial(tmp, pad, n, b1);
+mpsth, ranges = section_trial(tmp, pad, n, b1);
 
 active_trials = get_active_trials(mpsth, ranges, thr);
-active_ranges = merge_trials(tmp, active_trials)
+active_ranges = merge_trials(tmp, active_trials);
 
 
 #% Merge neighbors active ranges
-neigh = get_pairs(tmp, "n")
+neigh = couple(tmp, :n)
 active_neigh = get_active_couples(neigh, active_ranges)
 neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop
 
 #% Merge distant active ranges
-dist = get_pairs(tmp, "d")
+dist = couple(tmp, :d)
 active_dist = get_active_couples(dist, active_ranges)
 distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop
 
 #%
-closeall()
 plot_crosscor_neigh(neighbors)
+
 plot_crosscor_distant(distant)

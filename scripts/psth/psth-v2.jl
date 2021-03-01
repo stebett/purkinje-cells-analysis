@@ -1,19 +1,18 @@
 using DrWatson
 @quickactivate :ens
 
+using Spikes
 using Statistics
 using Plots; gr()
 
-include(srcdir("section-trial.jl"))
-include(srcdir("plot", "psth.jl"))
-
+data = load_data("data-v5.arrow");
 
 #%
 pad = 2500
 num_bins = 12
 b1 = 25
 
-n, r = sectionTrial(data, pad, num_bins, b1);
+n, r = section_trial(data, pad, num_bins, b1);
 
 ordered_n = sort_peaks(drop(hcat([mean(i) for i in n]...)))
 
