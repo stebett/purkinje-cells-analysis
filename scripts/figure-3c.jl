@@ -37,7 +37,7 @@ function plot_crosscor_neigh(neighbors::Matrix)
 	title!("Pairs of neighboring cells")
 	xlabel!("Time (ms)")
 	ylabel!("Mean ± sem deviation")
-	savefig(plotsdir("crosscor", "figure_3c"), "scripts/figure-3c-correlogram.jl")
+	# savefig(plotsdir("crosscor", "figure_3c"), "scripts/figure-3c-correlogram.jl")
 end
  
 function plot_crosscor_distant(distant::Matrix)
@@ -49,11 +49,13 @@ function plot_crosscor_distant(distant::Matrix)
 	title!("Pairs of distant cells")
 	xlabel!("Time (ms)")
 	ylabel!("Mean ± sem deviation")
-	savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3c.jl")
+	# savefig(plotsdir("crosscor", "figure_3d"), "scripts/figure-3c.jl")
 end
 #%
-tmp = data[data.p_acorr .< 0.2, :];
 
+tmp = load_data("data-v5.arrow")
+
+#%
 pad = 2500
 n = 5
 b1 = 50

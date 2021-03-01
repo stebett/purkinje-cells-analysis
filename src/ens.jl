@@ -7,8 +7,7 @@ include(srcdir("data-tools.jl"))
 include(srcdir("spike-tools.jl"))
 include(srcdir("io-tools.jl"))
 include(srcdir("drop.jl"))
-include(scriptsdir("io", "load-arrow.jl"))
+include(srcdir("load-data.jl"))
 
-export data
 end
 
