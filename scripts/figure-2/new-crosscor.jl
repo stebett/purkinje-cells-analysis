@@ -16,7 +16,7 @@ relative!(neigh, data);
 dist = couple(data, :d);
 relative!(dist, data);
 
-function correlations(landmark::Symbol, neigh, dist)
+function corr_by_landmark(landmark::Symbol, neigh, dist)
 	n = cut(data.t, data[:, landmark], [-500., 500.])
 	n = bin(n, 1000, 1.0)
 	n = convolve(n, 10.)
