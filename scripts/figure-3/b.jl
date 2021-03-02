@@ -12,9 +12,9 @@ i1 = 437
 i2 = 438
 tmp = data[(data.index .== i1) .| (data.index .== i2), :]
 
-pad = 250
-n = 5
-b1 = 50
+pad = 500
+n = 2
+b1 = 100
 binsize=.5
 thr = 1.5
 around = [-600., 600.]

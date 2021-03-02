@@ -7,8 +7,9 @@ using Plots; gr()
 
 #%
 σ = 1
+data = load_data("data-v5.arrow");
 
-n = cut(data.t, data[:, landmark], [-500., 500.])
+n = cut(data.t, data[:, :cover], [-500., 500.])
 n = bin(n, 1000, 1.0)
 n = convolve(n, 10.)
 n = average(n, data)
@@ -38,6 +39,7 @@ folded_diff = reverse(different[1:40, :], dims=1) .+ different[41:end-1, :]
 
 folded_diff_mean = convolve(mean(folded_diff, dims=2)[:], Float64(σ))
 folded_diff_sem = sem(different, dims=2)
+#%
 
 plot(folded_sim_mean, c=:black, ribbon=folded_sim_sem, fillalpha=0.3,  linewidth=3, label=false)
 vline!([10], line = (1, :dash, :black), lab="")
@@ -46,7 +48,8 @@ xticks!([0:4:40;], ["$i" for i = 0:2:20])
 title!("Pairs of neighboring cells with similar firing time course")
 ylabel!("Average mean ± sem deviation")
 xlabel!("Time (ms)")
-savefig(plotsdir("crosscor", "figure_3F"), "scripts/figure-3/f-g.jl")
+# savefig(plotsdir("crosscor", "figure_3F"), "scripts/figure-3/f-g.jl")
+#%
 
 plot(folded_diff_mean, c=:black, ribbon=folded_diff_sem, fillalpha=0.3,  linewidth=3, label=false)
 vline!([10], line = (1, :dash, :black), lab="")
@@ -55,4 +58,4 @@ xticks!([0:4:40;], ["$i" for i = 0:2:20])
 title!("Pairs of neighboring cells with different firing time course")
 ylabel!("Average mean ± sem deviation")
 xlabel!("Time (ms)")
-savefig(plotsdir("crosscor", "figure_3G"), "scripts/figure-3/f-g.jl")
+# savefig(plotsdir("crosscor", "figure_3G"), "scripts/figure-3/f-g.jl")

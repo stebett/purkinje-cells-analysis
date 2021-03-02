@@ -34,7 +34,7 @@ function plot_crosscor_neigh(neighbors::Matrix)
 	title!("Pairs of neighboring cells")
 	xlabel!("Time (ms)")
 	ylabel!("Mean ± sem deviation")
-	savefig(plotsdir("crosscor", "figure_3C"), "scripts/figure-3/c-d.jl")
+	# savefig(plotsdir("crosscor", "figure_3C"), "scripts/figure-3/c-d.jl")
 end
  
 function plot_crosscor_distant(distant::Matrix)
@@ -46,15 +46,15 @@ function plot_crosscor_distant(distant::Matrix)
 	title!("Pairs of distant cells")
 	xlabel!("Time (ms)")
 	ylabel!("Mean ± sem deviation")
-	savefig(plotsdir("crosscor", "figure_3D"), "scripts/figure-3/c-d.jl")
+	# savefig(plotsdir("crosscor", "figure_3D"), "scripts/figure-3/c-d.jl")
 end
 #%
 
-tmp = load_data("data-v5.arrow")
+tmp = load_data("data-v5.arrow");
 
-pad = 250
-n = 5
-b1 = 50
+pad = 500
+n = 2
+b1 = 100
 binsize=.5
 thr = 1.5
 
@@ -65,14 +65,14 @@ active_ranges = merge_trials(tmp, active_trials);
 
 
 #% Merge neighbors active ranges
-neigh = couple(tmp, :n)
-active_neigh = get_active_couples(neigh, active_ranges)
-neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop
+neigh = couple(tmp, :n);
+active_neigh = get_active_couples(neigh, active_ranges);
+neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop;
 
 #% Merge distant active ranges
-dist = couple(tmp, :d)
-active_dist = get_active_couples(dist, active_ranges)
-distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop
+dist = couple(tmp, :d);
+active_dist = get_active_couples(dist, active_ranges);
+distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
 #%
 plot_crosscor_neigh(neighbors)
