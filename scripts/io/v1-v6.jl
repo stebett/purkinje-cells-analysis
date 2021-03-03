@@ -102,8 +102,12 @@ end
 #% Remove all zero length trials
 remove_zerotrials(new)
 
+#% Removed repeated spiketrains
+unique!(new, :t);
+
 @test isempty(find_broken_landmarks(new))
 @test sum([x for c in new.cover for x in c] .- [x for l in new.lift for x in l] .== 0) == 0
 @test sum([x for c in new.grasp for x in c] .- [x for l in new.cover for x in l] .== 0) == 0
+@test size(new.t) == size(unique(new.t))
 
 # Arrow.write(datadir("data-v6.arrow"), new)

@@ -48,23 +48,41 @@ function plot_crosscor_distant(distant::Matrix)
 	ylabel!("Mean ± sem deviation")
 	# savefig(plotsdir("crosscor", "figure_3D"), "scripts/figure-3/c-d.jl")
 end
+
+function merge_ranges(x::Vector{<:Tuple})
+	a = x |> unique |> sort
+	val, rep = vcat(collect.(a)...) |> sort |> rle
+	b = val[rep .== 1]
+	idx = BitArray(eachindex(b) .% 2)
+	tuple.(b[idx], b[.!idx])
+end
+
+function filter_by_length(x::Vector{<:Tuple}, minlen::Int)
+	x[diff.(x) .> minlen]
+end
+
+
 #%
 
-tmp = load_data("data-v5.arrow");
+tmp = load_data("data-v6.arrow");
 
 pad = 2000
 num_bins = 1
 b1 = 100
 binsize=.5
-thr = 3.5
+thr = 2
 
 n, ranges = multi_psth(tmp, pad, num_bins, b1);
 m = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(n, ranges)]
 
-baseline, ranges_b = multi_psth(tmp, 5000, num_bins, b1);
-baseline = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(baseline, ranges_b)]
-baseline = [x[1:floor(Int, 15)] for x in baseline]
-zscore!.(m, mean.(baseline), std.(baseline))
+for i in m
+	zscore!(i, mean(i), std(i))
+end
+
+# baseline, ranges_b = multi_psth(tmp, 5000, num_bins, b1);
+# baseline = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(baseline, ranges_b)]
+# baseline = [x[1:10] for x in m]
+# zscore!.(m, mean.(baseline), std.(baseline))
 
 active_trials = get_active_from_merged(m, ranges, thr);
 active_ranges = merge_trials(tmp, active_trials);
@@ -73,11 +91,21 @@ active_ranges = merge_trials(tmp, active_trials);
 #% Merge neighbors active ranges
 neigh = couple(tmp, :n);
 active_neigh = get_active_couples(neigh, active_ranges);
+
+for (key, val) in active_neigh
+	active_neigh[key] = merge_ranges(val)
+	active_neigh[key] = filter_by_length(val, 100)
+end
+
 neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop;
 
 #% Merge distant active ranges
 dist = couple(tmp, :d);
 active_dist = get_active_couples(dist, active_ranges);
+for (key, val) in active_dist
+	active_dist[key] = merge_ranges(val)
+	active_dist[key] = filter_by_length(val, 100)
+end
 distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
 #%

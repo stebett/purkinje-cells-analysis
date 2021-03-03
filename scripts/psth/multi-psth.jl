@@ -9,7 +9,7 @@ import Base.diff
 
 diff(x::Tuple) = x[2] - x[1]
 
-data = load_data("data-v5.arrow");
+data = load_data("data-v6.arrow");
 
 #%
 pad = 2500
@@ -18,11 +18,10 @@ b1 = 25
 
 n, ranges = multi_psth(data, pad, num_bins, b1);
 
-m = hcat([sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(n, ranges)]...)
-sort_peaks!(m)
-m = transpose(m)
+m = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(n, ranges)]
+m = hcat(m...) |> sort_peaks! |> drop |> transpose
 
-baseline = m[:, 1:floor(Int, size(m, 2)/4)]
+baseline = copy(m[:, 1:floor(Int, size(m, 2)/3)])
 zscore!(m, mean(baseline, dims=2), std(baseline, dims=2))
 
 
@@ -36,4 +35,4 @@ yaxis!("Neuron #")
 vline!([l÷2-num_bins, l÷2, l÷2+num_bins], line = (0.2, :dash, 0.6, :white), legend=false)
 
 
-savefig(plotsdir("psth", "multi-psth"), "scripts/psth/multi-psth.jl")
+# savefig(plotsdir("psth", "multi-psth"), "scripts/psth/multi-psth.jl")
