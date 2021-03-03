@@ -1,8 +1,7 @@
 using DrWatson
-@quickactivate "ens"
+@quickactivate :ens
 
-include(scriptsdir("load-data.jl"))
-include(srcdir("data-tools.jl"))
+data = load_data("data-v1.arrow");
 
 function find_broken_landmarks(data)
 	broken = Int[]

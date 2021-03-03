@@ -14,7 +14,11 @@ function load_data(filename)
 	data.lift = convert(Array{Array{Float64, 1}, 1}, data.lift);
 	data.cover = convert(Array{Array{Float64, 1}, 1}, data.cover);
 	data.grasp = convert(Array{Array{Float64, 1}, 1}, data.grasp);
-	data.index = convert(Array{Int64, 1}, data.index);
-	data.p_acorr = convert(Array{Float64, 1}, data.p_acorr);
+	if :index in names(data)
+		data.index = convert(Array{Int64, 1}, data.index);
+	end
+	if :p_acorr in names(data)
+		data.p_acorr = convert(Array{Float64, 1}, data.p_acorr);
+	end
 	data
 end
