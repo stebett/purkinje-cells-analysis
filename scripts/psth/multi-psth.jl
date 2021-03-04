@@ -5,9 +5,6 @@ using Spikes
 using Statistics
 using StatsBase
 using Plots; gr()
-import Base.diff
-
-diff(x::Tuple) = x[2] - x[1]
 
 data = load_data("data-v6.arrow");
 

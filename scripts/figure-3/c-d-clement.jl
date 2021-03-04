@@ -6,7 +6,8 @@ using Spikes
 using Statistics
 using LinearAlgebra
 using Plots; gr()
-import StatsBase.sem
+using StatsBase
+import StatsBase: sem
 
 function sem(x::Matrix; dims=2)
 	r = zeros(size(x, dims % 2 + 1)) 
@@ -34,7 +35,7 @@ function plot_crosscor_neigh(neighbors::Matrix)
 	title!("Pairs of neighboring cells")
 	xlabel!("Time (ms)")
 	ylabel!("Mean ± sem deviation")
-	# savefig(plotsdir("crosscor", "figure_3C"), "scripts/figure-3/c-d.jl")
+	# savefig(plotsdir("crosscor", "figure_3C"), "scripts/figure-3/c-d-clement.jl")
 end
  
 function plot_crosscor_distant(distant::Matrix)
@@ -46,7 +47,7 @@ function plot_crosscor_distant(distant::Matrix)
 	title!("Pairs of distant cells")
 	xlabel!("Time (ms)")
 	ylabel!("Mean ± sem deviation")
-	# savefig(plotsdir("crosscor", "figure_3D"), "scripts/figure-3/c-d.jl")
+	# savefig(plotsdir("crosscor", "figure_3D"), "scripts/figure-3/c-d-clement.jl")
 end
 
 function merge_ranges(x::Vector{<:Tuple})
@@ -66,18 +67,26 @@ end
 
 tmp = load_data("data-v6.arrow");
 
-pad = 2000
-num_bins = 1
-b1 = 100
+pad = 250
+num_bins = 2
+b1 = 25
 binsize=.5
 thr = 2
 
-n, ranges = multi_psth(tmp, pad, num_bins, b1);
-m = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(n, ranges)]
+m, ranges = multi_psth(tmp, pad, num_bins, b1);
+# m = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(n, ranges)]
 
-for i in m
-	zscore!(i, mean(i), std(i))
+m_mad = Array{Array{Float64, 1}, 1}(undef, length(m))
+for i in eachindex(m)
+	m_mad[i] = (m[i] .- median(m[i][1:8])) ./ (mad(m[i][1:8]))
 end
+
+m_z = Array{Array{Float64, 1}, 1}(undef, length(m))
+for i in eachindex(m)
+	m_z[i] = zscore(m[i], mean(m[i][1:8]), std(m[i][1:8]))
+end
+
+m = m_mad;
 
 # baseline, ranges_b = multi_psth(tmp, 5000, num_bins, b1);
 # baseline = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(baseline, ranges_b)]
@@ -110,5 +119,7 @@ distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
 #%
 plot_crosscor_neigh(neighbors)
+savefig(plotsdir("logbook", "04-03", "mad_norm"), "scripts/figure-3/c-d-clement.jl")
 
 plot_crosscor_distant(distant)
+savefig(plotsdir("logbook", "04-03", "mad_norm_d"), "scripts/figure-3/c-d-clement.jl")
