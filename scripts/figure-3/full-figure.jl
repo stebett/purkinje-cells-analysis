@@ -19,4 +19,4 @@ l = @layout [ [a1; a2] b c d ; [a3; a4] e f g ]
 plot(fig_a1, fig_a2, fig_b, fig_c, fig_d, fig_a3, fig_a4, fig_e, fig_f, fig_g, layout=l, size=(2000, 1000), margin=5mm)
 
 
-savefig("plots/logbook/04-03/full-figure")
+savefig("plots/crosscor/full-figure.png", "scripts/figure-3/full-figure.jl")
