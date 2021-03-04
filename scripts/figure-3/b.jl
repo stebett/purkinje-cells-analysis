@@ -37,7 +37,7 @@ unmodulated = crosscor.(c₁, c₂, true,  binsize=0.5) |> mean
 
 
 function figure_B(modulated, unmodulated; kwargs...)
-	m = minimum(modulated)
+	m = minimum(drop(modulated[:]))
 	modulated[40:41] .= NaN
 	unmodulated[40:41] .= NaN
 	plot(modulated; c=:orange, labels="during modulation", fill=m,  fillalpha = 0.2, fillcolor=:grey, kwargs...)

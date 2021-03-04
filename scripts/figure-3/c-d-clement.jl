@@ -47,6 +47,7 @@ function figure_C(neighbors::Matrix; kwargs...)
 	mean_neighbors[40:41] .= NaN 
 
 	plot(mean_neighbors; c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=1.5, label=false, ylim=(-1, 1), kwargs...)
+	vline!([30, 50], line = (1.5, :dash, :green), lab="")
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	title!("Pairs of neighboring cells")
 	xlabel!("Time (ms)")
@@ -59,6 +60,7 @@ function figure_D(distant::Matrix; kwargs...)
 	sem_distant = sem(distant, dims=2)[:]
 
 	plot(mean_distant; c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=1.5, label=false, ylim=(-1, 1), kwargs...)
+	vline!([30, 50], line = (1.5, :dash, :green), lab="")
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	title!("Pairs of distant cells")
 	xlabel!("Time (ms)")

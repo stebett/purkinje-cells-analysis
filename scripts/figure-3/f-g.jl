@@ -53,7 +53,7 @@ end
 # savefig(plotsdir("crosscor", "figure_3F"), "scripts/figure-3/f-g.jl")
 #%
 
-function figure_G(folded_diff_mean, folded_diff_sem, kwargs...)
+function figure_G(folded_diff_mean, folded_diff_sem; kwargs...)
 	plot(folded_diff_mean; c=:black, ribbon=folded_diff_sem, fillalpha=0.3, label=false, kwargs...)
 	vline!([10], line = (1, :dash, :black), lab="")
 	hline!([0], line = (1, :dash, :black), lab="")
