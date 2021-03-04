@@ -19,15 +19,15 @@ y = reverse(neighbors_unmod[1:40, :], dims=1) .+ neighbors_unmod[41:end-1, :]
 
 y = convolve(y[:], Float64(σ))
 
-plot([2:length(x)+1;], x, lw=2.5, c=:red, xlims=(0, 25), label="during modulation (smoothed)")
-plot!([2:length(y)+1;], y, lw=2.5, c=:black, label="during whole task")
-scatter!(2:length(xs)+1, xs, c=:black, label="modulation")
-vline!([10], line = (1, :dash, :black), lab="")
-hline!([0], line = (1, :dash, :black), lab="")
-xticks!([0:4:24;], ["$i" for i = 0:2:12])
-title!("Pairs of neighboring cells")
-ylabel!("Average normalized cross-correlogram")
-xlabel!("Time (ms)")
+fig_e = plot([2:length(x)+1;], x, lw=2.5, c=:red, xlims=(0, 25), label="during modulation (smoothed)")
+fig_e = plot!([2:length(y)+1;], y, lw=2.5, c=:black, label="during whole task")
+fig_e = scatter!(2:length(xs)+1, xs, c=:black, label="modulation")
+fig_e = vline!([10], line = (1, :dash, :black), lab="")
+fig_e = hline!([0], line = (1, :dash, :black), lab="")
+fig_e = xticks!([0:4:24;], ["$i" for i = 0:2:12])
+fig_e = title!("Pairs of neighboring cells")
+fig_e = ylabel!("Average normalized cross-correlogram")
+fig_e = xlabel!("Time (ms)")
 #%
 
 savefig(plotsdir("logbook", "04-03", "fig_e_z"), "scripts/figure-3/e.jl")

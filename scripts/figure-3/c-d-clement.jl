@@ -46,7 +46,7 @@ function plot_crosscor_neigh(neighbors::Matrix)
 	sem_neighbors = sem(neighbors, dims=2)[:]
 	mean_neighbors[40:41] .= NaN 
 
-	plot(mean_neighbors, c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=3, label=false)
+	plot(mean_neighbors, c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=3, label=false, ylim=(-1, 1))
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	title!("Pairs of neighboring cells")
 	xlabel!("Time (ms)")
@@ -58,7 +58,7 @@ function plot_crosscor_distant(distant::Matrix)
 	mean_distant = mean(distant, dims=2)[:]
 	sem_distant = sem(distant, dims=2)[:]
 
-	plot(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false)
+	plot(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false, ylim=(-1, 1))
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	title!("Pairs of distant cells")
 	xlabel!("Time (ms)")
@@ -105,6 +105,6 @@ end
 distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
 #%
-figure_c = plot_crosscor_neigh(neighbors)
+fig_c = plot_crosscor_neigh(neighbors)
 
-figure_d = plot_crosscor_distant(distant)
+fig_d = plot_crosscor_distant(distant)

@@ -39,10 +39,10 @@ c₂ = cut(data[data.index .== i₂, :t], data[data.index .== i₂, :cover], aro
 b₂ = bin(c₂, Int(diff(around)...), binsize) 
 r₂ = convolve(b₂, σ) |> mean
 
-p1, p2 = figure_A(b₁, r₁, "Spiketrain 437")
-p3, p4 = figure_A(b₂, r₂, "Spiketrain 438")
+fig_a1, fig_a2 = figure_A(b₁, r₁, "Spiketrain 437")
+fig_a3, fig_a4 = figure_A(b₂, r₂, "Spiketrain 438")
 
-f_3a = plot(p1, p3, p2, p4, layout = @layout [ a b ; c d ])
+f_3a = plot(fig_a1, fig_a3, fig_a2, fig_a4, layout = @layout [ a b ; c d ])
 
 #%
 savefig(plotsdir("crosscor", "Figure_3A"), "scripts/figure-3/a.jl")
