@@ -105,8 +105,6 @@ end
 distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
 #%
-plot_crosscor_neigh(neighbors)
-# savefig(plotsdir("logbook", "04-03", "mad_norm"), "scripts/figure-3/c-d-clement.jl")
+figure_c = plot_crosscor_neigh(neighbors)
 
-plot_crosscor_distant(distant)
-# savefig(plotsdir("logbook", "04-03", "mad_norm_d"), "scripts/figure-3/c-d-clement.jl")
+figure_d = plot_crosscor_distant(distant)

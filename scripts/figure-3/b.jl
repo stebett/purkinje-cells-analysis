@@ -35,17 +35,15 @@ c₂ = cut(data[data.index .== i₂, :t], data[data.index .== i₂, :cover], aro
 
 unmodulated = crosscor.(c₁, c₂, true,  binsize=0.5) |> mean
 
-unmodulated ./= mean(unmodulated)
-unmodulated .*= mean(modulated)
-
 m = minimum(modulated)
 modulated[41] = NaN
 unmodulated[41] = NaN
 
-plot(modulated, lw=2, c=:orange, labels="during modulation", fill = m,  fillalpha = 0.2, fillcolor=:grey)
-plot!(unmodulated, c=:black, lw=2, labels="during whole task", α=0.6)
-xticks!([1:10:81;],["$i" for i =-20:5:20])
-xlabel!("Time (ms)")
-ylabel!("Count")
+fig_b = plot(modulated, lw=2, c=:orange, labels="during modulation", fill = m,  fillalpha = 0.2, fillcolor=:grey)
+fig_b = plot!(unmodulated, c=:black, lw=2, labels="during whole task", α=0.6)
+fig_b = xticks!([1:10:81;],["$i" for i =-20:5:20])
+fig_b = xlabel!("Time (ms)")
+fig_b = ylabel!("Count")
 #%
+
 savefig(plotsdir("crosscor", "figure_3B"), "scripts/figure-3/b.jl")
