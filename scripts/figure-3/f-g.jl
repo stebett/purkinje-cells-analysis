@@ -7,7 +7,7 @@ using Plots; gr()
 
 #%
 σ = 1
-data = load_data("data-v5.arrow");
+data = load_data("data-v6.arrow");
 
 n = cut(data.t, data[:, :cover], [-500., 500.])
 n = bin(n, 1000, 1.0)
@@ -41,21 +41,25 @@ folded_diff_mean = convolve(mean(folded_diff, dims=2)[:], Float64(σ))
 folded_diff_sem = sem(different, dims=2)
 #%
 
-fig_f = plot(folded_sim_mean, c=:black, ribbon=folded_sim_sem, fillalpha=0.3,  linewidth=3, label=false)
-fig_f = vline!([10], line = (1, :dash, :black), lab="")
-fig_f = hline!([0], line = (1, :dash, :black), lab="")
-fig_f = xticks!([0:4:40;], ["$i" for i = 0:2:20])
-fig_f = title!("Pairs of neighboring cells with\n similar firing time course")
-fig_f = ylabel!("Average mean ± sem deviation")
-fig_f = xlabel!("Time (ms)")
+function figure_F(folded_sim_mean, folded_sim_sem; kwargs...)
+	fig_f = plot(folded_sim_mean; c=:black, ribbon=folded_sim_sem, fillalpha=0.3, label=false, kwargs...)
+	fig_f = vline!([10], line = (1, :dash, :black), lab="")
+	fig_f = hline!([0], line = (1, :dash, :black), lab="")
+	fig_f = xticks!([0:4:40;], ["$i" for i = 0:2:20])
+	fig_f = title!("Pairs of neighboring cells with\n similar firing time course")
+	fig_f = ylabel!("Average mean ± sem deviation")
+	fig_f = xlabel!("Time (ms)")
+end
 # savefig(plotsdir("crosscor", "figure_3F"), "scripts/figure-3/f-g.jl")
 #%
 
-fig_g = plot(folded_diff_mean, c=:black, ribbon=folded_diff_sem, fillalpha=0.3,  linewidth=3, label=false)
-fig_g = vline!([10], line = (1, :dash, :black), lab="")
-fig_g = hline!([0], line = (1, :dash, :black), lab="")
-fig_g = xticks!([0:4:40;], ["$i" for i = 0:2:20])
-fig_g = title!("Pairs of neighboring cells with\ndifferent firing time course")
-fig_g = ylabel!("Average mean ± sem deviation")
-fig_g = xlabel!("Time (ms)")
+function figure_G(folded_diff_mean, folded_diff_sem, kwargs...)
+	plot(folded_diff_mean; c=:black, ribbon=folded_diff_sem, fillalpha=0.3, label=false, kwargs...)
+	vline!([10], line = (1, :dash, :black), lab="")
+	hline!([0], line = (1, :dash, :black), lab="")
+	xticks!([0:4:40;], ["$i" for i = 0:2:20])
+	title!("Pairs of neighboring cells with\ndifferent firing time course")
+	ylabel!("Average mean ± sem deviation")
+	xlabel!("Time (ms)")
+end
 # savefig(plotsdir("crosscor", "figure_3G"), "scripts/figure-3/f-g.jl")

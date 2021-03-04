@@ -4,7 +4,7 @@ using DrWatson
 #%
 using Spikes
 using Statistics
-using Plots; gr()
+using Plots
 using StatsBase
 import StatsBase: sem
 
@@ -41,12 +41,12 @@ function filter_by_length(x::Vector{<:Tuple}, minlen::Int)
 	x
 end
 
-function plot_crosscor_neigh(neighbors::Matrix)
+function figure_C(neighbors::Matrix; kwargs...)
 	mean_neighbors = mean(neighbors, dims=2)[:]
 	sem_neighbors = sem(neighbors, dims=2)[:]
 	mean_neighbors[40:41] .= NaN 
 
-	plot(mean_neighbors, c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=3, label=false, ylim=(-1, 1))
+	plot(mean_neighbors; c=:red, ribbon=sem_neighbors, fillalpha=0.3,  linewidth=1.5, label=false, ylim=(-1, 1), kwargs...)
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	title!("Pairs of neighboring cells")
 	xlabel!("Time (ms)")
@@ -54,11 +54,11 @@ function plot_crosscor_neigh(neighbors::Matrix)
 	# savefig(plotsdir("crosscor", "figure_3C"), "scripts/figure-3/c-d-clement.jl")
 end
  
-function plot_crosscor_distant(distant::Matrix)
+function figure_D(distant::Matrix; kwargs...)
 	mean_distant = mean(distant, dims=2)[:]
 	sem_distant = sem(distant, dims=2)[:]
 
-	plot(mean_distant, c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=3, label=false, ylim=(-1, 1))
+	plot(mean_distant; c=:black, ribbon=sem_distant, fillalpha=0.3,  linewidth=1.5, label=false, ylim=(-1, 1), kwargs...)
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	title!("Pairs of distant cells")
 	xlabel!("Time (ms)")
