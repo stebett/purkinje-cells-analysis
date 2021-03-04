@@ -4,7 +4,6 @@ using DrWatson
 #%
 using Spikes
 using Statistics
-using LinearAlgebra
 using Plots; gr()
 using StatsBase
 import StatsBase: sem
@@ -23,6 +22,23 @@ function get_active_couples(couples, ranges)
 		active_couples[c] = vcat(ranges[c[1]]..., ranges[c[2]])
 	end
 	active_couples
+end
+
+function merge_ranges(x::Vector{<:Tuple})
+	a = x |> unique |> sort
+	val, rep = vcat(collect.(a)...) |> sort |> rle
+	b = val[rep .== 1]
+	idx = BitArray(eachindex(b) .% 2)
+	tuple.(b[idx], b[.!idx])
+end
+
+function filter_by_length(x::Vector{<:Tuple}, minlen::Int)
+	idx = diff.(x) .< minlen
+	if any(idx)
+		@info "Removing $(sum(idx)) intervals"
+		return x[.!idx]
+	end
+	x
 end
 
 function plot_crosscor_neigh(neighbors::Matrix)
@@ -50,49 +66,21 @@ function plot_crosscor_distant(distant::Matrix)
 	# savefig(plotsdir("crosscor", "figure_3D"), "scripts/figure-3/c-d-clement.jl")
 end
 
-function merge_ranges(x::Vector{<:Tuple})
-	a = x |> unique |> sort
-	val, rep = vcat(collect.(a)...) |> sort |> rle
-	b = val[rep .== 1]
-	idx = BitArray(eachindex(b) .% 2)
-	tuple.(b[idx], b[.!idx])
-end
-
-function filter_by_length(x::Vector{<:Tuple}, minlen::Int)
-	x[diff.(x) .> minlen]
-end
-
 
 #%
-
 tmp = load_data("data-v6.arrow");
 
-pad = 250
+pad = 500
 num_bins = 2
 b1 = 25
 binsize=.5
-thr = 2
 
 m, ranges = multi_psth(tmp, pad, num_bins, b1);
-# m = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(n, ranges)]
 
-m_mad = Array{Array{Float64, 1}, 1}(undef, length(m))
-for i in eachindex(m)
-	m_mad[i] = (m[i] .- median(m[i][1:8])) ./ (mad(m[i][1:8]))
-end
+baseline = getindex.(m, Ref(1:ceil(Int, length(m[1])÷3)))
+m = normalize(m, baseline, :mad)
 
-m_z = Array{Array{Float64, 1}, 1}(undef, length(m))
-for i in eachindex(m)
-	m_z[i] = zscore(m[i], mean(m[i][1:8]), std(m[i][1:8]))
-end
-
-m = m_mad;
-
-# baseline, ranges_b = multi_psth(tmp, 5000, num_bins, b1);
-# baseline = [sum(x) ./ sum([diff.(y) for y in r]) for (x, r) in zip(baseline, ranges_b)]
-# baseline = [x[1:10] for x in m]
-# zscore!.(m, mean.(baseline), std.(baseline))
-
+thr = quantile(drop(vcat(m...)), 0.90)
 active_trials = get_active_from_merged(m, ranges, thr);
 active_ranges = merge_trials(tmp, active_trials);
 
@@ -103,9 +91,8 @@ active_neigh = get_active_couples(neigh, active_ranges);
 
 for (key, val) in active_neigh
 	active_neigh[key] = merge_ranges(val)
-	active_neigh[key] = filter_by_length(val, 100)
+	active_neigh[key] = filter_by_length(val, 160)
 end
-
 neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop;
 
 #% Merge distant active ranges
@@ -113,13 +100,13 @@ dist = couple(tmp, :d);
 active_dist = get_active_couples(dist, active_ranges);
 for (key, val) in active_dist
 	active_dist[key] = merge_ranges(val)
-	active_dist[key] = filter_by_length(val, 100)
+	active_dist[key] = filter_by_length(val, 160)
 end
 distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
 #%
 plot_crosscor_neigh(neighbors)
-savefig(plotsdir("logbook", "04-03", "mad_norm"), "scripts/figure-3/c-d-clement.jl")
+# savefig(plotsdir("logbook", "04-03", "mad_norm"), "scripts/figure-3/c-d-clement.jl")
 
 plot_crosscor_distant(distant)
-savefig(plotsdir("logbook", "04-03", "mad_norm_d"), "scripts/figure-3/c-d-clement.jl")
+# savefig(plotsdir("logbook", "04-03", "mad_norm_d"), "scripts/figure-3/c-d-clement.jl")

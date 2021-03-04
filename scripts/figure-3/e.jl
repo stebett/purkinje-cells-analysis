@@ -30,5 +30,5 @@ ylabel!("Average normalized cross-correlogram")
 xlabel!("Time (ms)")
 #%
 
-savefig(plotsdir("logbook", "04-03", "fig_e_mad"), "scripts/figure-3/e.jl")
+savefig(plotsdir("logbook", "04-03", "fig_e_z"), "scripts/figure-3/e.jl")
 # savefig(plotsdir("crosscor", "figure_3E"), "scripts/figure-3/e.jl")

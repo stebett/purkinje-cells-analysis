@@ -7,15 +7,15 @@ function savefig(fn::AbstractString, source::AbstractString)
     _, ext = splitext(fn)
     ext = chop(ext, head = 1, tail = 0)
     if isempty(ext)
-        ext = "png"
+        ext = ".png"
+		fn = fn * ext
     end
 
-	fn = "$fn.$ext"
 	savefig(fn)
 	@show fn
 	d = Dict()
 	t = tag!(d)["gitcommit"]
-	_ = run(`exiftool -model=$t $fn`)
-	_ = run(`exiftool -source=$source $fn`)
+	_ = run(`exiftool -overwrite_original -model=$t $fn`)
+	_ = run(`exiftool -overwrite_original -source=$source $fn`)
 	nothing
 end
