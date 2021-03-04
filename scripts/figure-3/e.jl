@@ -19,7 +19,7 @@ y = reverse(neighbors_unmod[1:40, :], dims=1) .+ neighbors_unmod[41:end-1, :]
 
 folded_unmod = convolve(y[:], Float64(σ))
 
-function figure_E(x, xs, y; kwargs)
+function figure_E(x, xs, y; kwargs...)
 	plot([2:length(x)+1;], x; c=:red, xlims=(0, 25), label="during modulation (smoothed)", kwargs...)
 	plot!([2:length(y)+1;], y; c=:black, label="during whole task", kwargs...)
 	scatter!(2:length(xs)+1, xs, c=:black, label="modulation")

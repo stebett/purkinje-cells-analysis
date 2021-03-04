@@ -21,6 +21,12 @@ extract_trials	_research/plot-gpfa.jl	/^function extract_trials(groups::GroupedD
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
 figure_A	scripts/figure-3/a.jl	/^function figure_A(b, r, title)$/;"	f
+figure_B	scripts/figure-3/b.jl	/^function figure_B(modulated, unmodulated; kwargs...)$/;"	f
+figure_C	scripts/figure-3/c-d-clement.jl	/^function figure_C(neighbors::Matrix; kwargs...)$/;"	f
+figure_D	scripts/figure-3/c-d-clement.jl	/^function figure_D(distant::Matrix; kwargs...)$/;"	f
+figure_E	scripts/figure-3/e.jl	/^function figure_E(x, xs, y; kwargs)$/;"	f
+figure_F	scripts/figure-3/f-g.jl	/^function figure_F(folded_sim_mean, folded_sim_sem; kwargs...)$/;"	f
+figure_G	scripts/figure-3/f-g.jl	/^function figure_G(folded_diff_mean, folded_diff_sem, kwargs...)$/;"	f
 filterData	_research/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
 filterLandmarks	_research/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
 filter_by_length	scripts/figure-3/c-d-clement.jl	/^function filter_by_length(x::Vector{<:Tuple}, minlen::Int)$/;"	f
@@ -44,9 +50,7 @@ merge_ranges	scripts/figure-3/c-d-clement.jl	/^function merge_ranges(x::Vector{<
 neighbor_correlation	scripts/figure-2/old-crosscor.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
-plot_crosscor_distant	scripts/figure-3/c-d-clement.jl	/^function plot_crosscor_distant(distant::Matrix)$/;"	f
 plot_crosscor_distant	scripts/figure-3/c-d.jl	/^function plot_crosscor_distant(distant::Matrix)$/;"	f
-plot_crosscor_neigh	scripts/figure-3/c-d-clement.jl	/^function plot_crosscor_neigh(neighbors::Matrix)$/;"	f
 plot_crosscor_neigh	scripts/figure-3/c-d.jl	/^function plot_crosscor_neigh(neighbors::Matrix)$/;"	f
 plot_gpfa	_research/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	_research/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f

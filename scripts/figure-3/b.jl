@@ -35,16 +35,16 @@ c₂ = cut(data[data.index .== i₂, :t], data[data.index .== i₂, :cover], aro
 
 unmodulated = crosscor.(c₁, c₂, true,  binsize=0.5) |> mean
 
-m = minimum(modulated)
-modulated[40:41] .= NaN
-unmodulated[40:41] .= NaN
 
 function figure_B(modulated, unmodulated; kwargs...)
-	plot(modulated; c=:orange, labels="during modulation", fill = m,  fillalpha = 0.2, fillcolor=:grey, kwargs...)
-	plot!(unmodulated, c=:black, lw=2, labels="during whole task", α=0.6)
+	m = minimum(modulated)
+	modulated[40:41] .= NaN
+	unmodulated[40:41] .= NaN
+	plot(modulated; c=:orange, labels="during modulation", fill=m,  fillalpha = 0.2, fillcolor=:grey, kwargs...)
+	plot!(unmodulated; c=:black, labels="during whole task", α=0.6, kwargs...)
 	xticks!([1:10:81;],["$i" for i =-20:5:20])
 	xlabel!("Time (ms)")
-	ylabel!("Count")
+	ylabel!("Normalized count")
 end
 #%
 

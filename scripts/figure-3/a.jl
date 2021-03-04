@@ -6,16 +6,18 @@ using Revise
 using Spikes
 using Statistics
 using Plots; gr()
+using ColorSchemes
 #%
 
-function figure_A(b, r, title)
+function figure_A(b, r, title; kwargs...)
 	b = sort_active(hcat(convolve(b, 1.)...), 10)
 
-	p1 = heatmap(b', c=:viridis, cbar=false, title=title)
+	col = cgrad([:white, :black])
+	p1 = heatmap(b'; c=col, cbar=false, title=title, kwargs...)
 	p1 = xticks!([0, 800, 1595], ["-400", "0", "400"])
 	p1 = ylabel!("Trials")
 
-	p2 = plot(r, legend=false)
+	p2 = plot(r; legend=false, c=:black, kwargs...)
 	p2 = ylabel!("Firing rate")
 	p2 = xlabel!("Time (ms)")
 	p2 = xticks!([0, 800, 1595], ["-400", "0", "400"])
