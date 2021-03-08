@@ -104,6 +104,11 @@ git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.1"
 
+[[Cassette]]
+git-tree-sha1 = "9cc225870ec32ce7b9c773d4dcdaef32f622cf89"
+uuid = "7057c7e9-c182-5462-911a-8362d720325c"
+version = "0.3.4"
+
 [[CatIndices]]
 deps = ["CustomUnitRanges", "OffsetArrays"]
 git-tree-sha1 = "a0f80a09780eed9b1d106a1bf62041c2efc995bc"
@@ -778,14 +783,6 @@ git-tree-sha1 = "95a4038d1011dfdbde7cecd2ad0ac411e53ab1bc"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
 version = "0.10.1"
 
-[[PPSeq]]
-deps = ["Distributions", "LinearAlgebra", "PyPlot", "Random", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns"]
-git-tree-sha1 = "f9998d42d67170d13a295e42b01b03355d4259cb"
-repo-rev = "master"
-repo-url = "https://github.com/lindermanlab/PPSeq.jl"
-uuid = "bde08ef1-7bcc-48ee-8e40-33ae55139814"
-version = "0.1.0"
-
 [[PaddedViews]]
 deps = ["OffsetArrays"]
 git-tree-sha1 = "0fa5e78929aebc3f6b56e1a88cf505bb00a354c4"
@@ -996,8 +993,8 @@ uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "0.10.3"
 
 [[Spikes]]
-deps = ["Combinatorics", "DataFrames", "ImageFiltering", "OffsetArrays", "SafeTestsets", "Statistics", "StatsBase"]
-path = "/users/nbc/bettani/.julia/dev/Spikes"
+deps = ["CategoricalArrays", "Combinatorics", "DataAPI", "DataFrames", "ImageFiltering", "OffsetArrays", "SafeTestsets", "Statistics", "StatsBase", "Traceur"]
+path = "/home/ginko/.julia/dev/Spikes/"
 uuid = "a305d8b4-9cce-41f7-8708-a71367dc1260"
 version = "0.1.0"
 
@@ -1078,6 +1075,12 @@ deps = ["Dates", "EzXML", "Mocking", "Pkg", "Printf", "RecipesBase", "Serializat
 git-tree-sha1 = "4ba8a9579a243400db412b50300cd61d7447e583"
 uuid = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 version = "1.5.3"
+
+[[Traceur]]
+deps = ["Cassette", "InteractiveUtils", "Logging", "MacroTools"]
+git-tree-sha1 = "c61e04e7e3592c3dba1a282bab66af79f3f69674"
+uuid = "37b6cedf-1f77-55f8-9503-c64b63398394"
+version = "0.3.1"
 
 [[TranscodingStreams]]
 deps = ["Random", "Test"]
