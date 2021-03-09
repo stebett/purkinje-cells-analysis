@@ -63,17 +63,17 @@ function previousisi(x)
 	y
 end
 
-function get_cell(s::String) 
+function get_cell(df, s::String) 
 	x = split(s, '.')
-	rat = data.rat .== x[1]
-	site = data.site .== x[2]
-	tet = data.tetrode .== x[3]
-	neuron = data.neuron .== replace(x[4], 't'=>"neuron")
-	data[rat .& site .& tet .& neuron, :]
+	rat = df.rat .== x[1]
+	site = df.site .== x[2]
+	tet = df.tetrode .== x[3]
+	neuron = df.neuron .== replace(x[4], 't'=>"neuron")
+	df[rat .& site .& tet .& neuron, :]
 end
 
-function make_couples(s::Vector{<:String})
-	vcat(get_cell(s[1]), get_cell(s[2]))
+function make_couples(df, s::Vector{<:String})
+	vcat(get_cell(df, s[1]), get_cell(df, s[2]))
 end
 
 

@@ -10,6 +10,10 @@
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	/d532b5c4/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
+binisi	src/spline-pipeline.jl	/^binisi(x) = vcat([[1:i;] for i in diff(floor.(x))]...) # TODO check floor$/;"	f
+binisi_0	src/spline-pipeline.jl	/^binisi_0(x) = vcat([[0:i-1;] for i in diff(floor.(x))]...) # TODO check floor$/;"	f
+binisi_inv	src/spline-pipeline.jl	/^binisi_inv(x) = vcat([[i-1:-1:0;] for i in diff(floor.([0; x]))]...) $/;"	f
+ceil	src/spline-pipeline.jl	/^ceil(t::Type, x::Tuple) = ceil.(t, x)$/;"	f
 corr_by_landmark	scripts/figure-2/new-crosscor.jl	/^function corr_by_landmark(landmark::Symbol, neigh, dist)$/;"	f
 correlate	scripts/figure-2/old-crosscor.jl	/^function correlate(convolutions)$/;"	f
 distant_correlation	scripts/figure-2/old-crosscor.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
@@ -20,13 +24,13 @@ extract_index	scripts/io/load-full.jl	/^function extract_index(df::DataFrame, pa
 extract_trials	_research/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
-figure_A	scripts/figure-3/a.jl	/^function figure_A(b, r, title)$/;"	f
+figure_A	scripts/figure-3/a.jl	/^function figure_A(b, r, title; kwargs...)$/;"	f
 figure_B	scripts/figure-3/b.jl	/^function figure_B(modulated, unmodulated; kwargs...)$/;"	f
 figure_C	scripts/figure-3/c-d-clement.jl	/^function figure_C(neighbors::Matrix; kwargs...)$/;"	f
 figure_D	scripts/figure-3/c-d-clement.jl	/^function figure_D(distant::Matrix; kwargs...)$/;"	f
-figure_E	scripts/figure-3/e.jl	/^function figure_E(x, xs, y; kwargs)$/;"	f
+figure_E	scripts/figure-3/e.jl	/^function figure_E(x, xs, y; kwargs...)$/;"	f
 figure_F	scripts/figure-3/f-g.jl	/^function figure_F(folded_sim_mean, folded_sim_sem; kwargs...)$/;"	f
-figure_G	scripts/figure-3/f-g.jl	/^function figure_G(folded_diff_mean, folded_diff_sem, kwargs...)$/;"	f
+figure_G	scripts/figure-3/f-g.jl	/^function figure_G(folded_diff_mean, folded_diff_sem; kwargs...)$/;"	f
 filterData	_research/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
 filterLandmarks	_research/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
 filter_by_length	scripts/figure-3/c-d-clement.jl	/^function filter_by_length(x::Vector{<:Tuple}, minlen::Int)$/;"	f
@@ -38,23 +42,31 @@ fit_thirds	scripts/pca/speed.jl	/^function fit_thirds(st)$/;"	f
 get_active_couples	scripts/figure-3/c-d-clement.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_active_couples	scripts/figure-3/c-d.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
+get_cell	src/spline-pipeline.jl	/^function get_cell(s::String) $/;"	f
 get_trial	_research/single-trials.jl	/^@inline function get_trial(df, n, i, after)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
+gssanalysis	scripts/spline.jl	/^function gssanalysis(cellpair)$/;"	f
 interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
 jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 load_data	src/load-data.jl	/^function load_data(filename)$/;"	f
 load_full	scripts/io/load-full.jl	/^function load_full()$/;"	f
+make_couples	src/spline-pipeline.jl	/^function make_couples(s::Vector{<:String})$/;"	f
 merge	test/cross-corr-plot-test.jl	/^	merge(r, c) = vcat.(r[c]...)$/;"	f	function:test_all_active2
 merge_ranges	scripts/figure-3/c-d-clement.jl	/^function merge_ranges(x::Vector{<:Tuple})$/;"	f
+mkdf	src/spline-pipeline.jl	/^function mkdf(cellpair, tmax = [-600., 600.])$/;"	f
 neighbor_correlation	scripts/figure-2/old-crosscor.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
+norm_len	src/spline-pipeline.jl	/^norm_len(x, f, l) = [f;x;l]$/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
 plot_crosscor_distant	scripts/figure-3/c-d.jl	/^function plot_crosscor_distant(distant::Matrix)$/;"	f
 plot_crosscor_neigh	scripts/figure-3/c-d.jl	/^function plot_crosscor_neigh(neighbors::Matrix)$/;"	f
 plot_gpfa	_research/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	_research/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
 plot_gpfa_speed	_research/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
+plot_quick_prediction	scripts/spline.jl	/^function plot_quick_prediction(x, title="")$/;"	f
+plot_single_result	scripts/spline.jl	/^function plot_single_result(x::NamedTuple)$/;"	f
+previousisi	src/spline-pipeline.jl	/^function previousisi(x)$/;"	f
 pₙ	_research/information.jl	/^function pₙ(x)$/;"	f
 remove_nan	scripts/io/v1-v6.jl	/^function remove_nan(df)$/;"	f
 remove_zerotrials	scripts/io/v1-v6.jl	/^function remove_zerotrials(df)$/;"	f
