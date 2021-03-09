@@ -1,8 +1,8 @@
 using DrWatson
 @quickactivate :ens
 
-using Spikes
 using DataFrames
+using Spikes
 
 import Base.ceil
 
@@ -11,7 +11,12 @@ function mkdf(cellpair, tmax = [-600., 600.])
 
 	st = cut(cellpair[1, :].t, cellpair[1, :].lift, tmax)
 	ext = ceil.(Int, extrema.(st))
+	
 	bins = bin(st, len, 1.)
+	for b in bins
+		b[b .> 1] .= 1
+	end
+
 	st = norm_len.(st, 0, len)
 	isi = binisi.(st)
 	times = [tmax[1]+1:tmax[2];]
@@ -31,8 +36,8 @@ function mkdf(cellpair, tmax = [-600., 600.])
 		df.timeSinceLastSpike = isi[i]
 		df.previousIsi = previousisi(isi[i])
 		df.ntrial = fill(i, size(bins[i]))
-		df.tforw = tforw[i]
 		df.tback = [tback[i][2:end];NaN]
+		df.tforw = tforw[i]
 		df.nearest = min.(tforw[i], [tback[i][2:end];NaN])
 		dfs[i] = df[ext[i][1]:ext[i][2], :]
 	end
@@ -57,7 +62,21 @@ function previousisi(x)
 	end
 	y
 end
-		
+
+function get_cell(s::String) 
+	x = split(s, '.')
+	rat = data.rat .== x[1]
+	site = data.site .== x[2]
+	tet = data.tetrode .== x[3]
+	neuron = data.neuron .== replace(x[4], 't'=>"neuron")
+	data[rat .& site .& tet .& neuron, :]
+end
+
+function make_couples(s::Vector{<:String})
+	vcat(get_cell(s[1]), get_cell(s[2]))
+end
+
+
 binisi(x) = vcat([[1:i;] for i in diff(floor.(x))]...) # TODO check floor
 binisi_inv(x) = vcat([[i-1:-1:0;] for i in diff(floor.([0; x]))]...) 
 binisi_0(x) = vcat([[0:i-1;] for i in diff(floor.(x))]...) # TODO check floor

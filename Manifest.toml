@@ -110,11 +110,6 @@ git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.1"
 
-[[Cassette]]
-git-tree-sha1 = "9cc225870ec32ce7b9c773d4dcdaef32f622cf89"
-uuid = "7057c7e9-c182-5462-911a-8362d720325c"
-version = "0.3.4"
-
 [[CatIndices]]
 deps = ["CustomUnitRanges", "OffsetArrays"]
 git-tree-sha1 = "a0f80a09780eed9b1d106a1bf62041c2efc995bc"
@@ -887,6 +882,12 @@ git-tree-sha1 = "12fbe86da16df6679be7521dfb39fbc861e1dc7b"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 version = "2.4.1"
 
+[[RCall]]
+deps = ["CategoricalArrays", "Conda", "DataFrames", "DataStructures", "Dates", "Libdl", "Missings", "REPL", "Random", "Requires", "StatsModels", "WinReg"]
+git-tree-sha1 = "9b85a9fd61d9ad3986e35da8b6fa7dc6d2354b75"
+uuid = "6f49c342-dc21-5d91-9882-a32aef131414"
+version = "0.13.10"
+
 [[RData]]
 deps = ["CategoricalArrays", "CodecZlib", "DataFrames", "Dates", "FileIO", "Requires", "TimeZones", "Unicode"]
 git-tree-sha1 = "226f296cd7db3145f2d67848598fd13f8ba49d09"
@@ -1017,8 +1018,8 @@ uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "0.10.3"
 
 [[Spikes]]
-deps = ["CategoricalArrays", "Combinatorics", "DataAPI", "DataFrames", "ImageFiltering", "OffsetArrays", "SafeTestsets", "Statistics", "StatsBase", "Traceur"]
-path = "/home/ginko/.julia/dev/Spikes/"
+deps = ["CategoricalArrays", "Combinatorics", "DataAPI", "DataFrames", "ImageFiltering", "OffsetArrays", "SafeTestsets", "Statistics", "StatsBase"]
+path = "/users/nbc/bettani/.julia/dev/Spikes"
 uuid = "a305d8b4-9cce-41f7-8708-a71367dc1260"
 version = "0.1.0"
 
@@ -1100,12 +1101,6 @@ git-tree-sha1 = "4ba8a9579a243400db412b50300cd61d7447e583"
 uuid = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 version = "1.5.3"
 
-[[Traceur]]
-deps = ["Cassette", "InteractiveUtils", "Logging", "MacroTools"]
-git-tree-sha1 = "c61e04e7e3592c3dba1a282bab66af79f3f69674"
-uuid = "37b6cedf-1f77-55f8-9503-c64b63398394"
-version = "0.3.1"
-
 [[TranscodingStreams]]
 deps = ["Random", "Test"]
 git-tree-sha1 = "7c53c35547de1c5b9d46a4797cf6d8253807108c"
@@ -1157,6 +1152,12 @@ deps = ["Colors", "Dates", "Observables", "OrderedCollections"]
 git-tree-sha1 = "fc0feda91b3fef7fe6948ee09bb628f882b49ca4"
 uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
 version = "0.6.2"
+
+[[WinReg]]
+deps = ["Test"]
+git-tree-sha1 = "808380e0a0483e134081cc54150be4177959b5f4"
+uuid = "1b915085-20d7-51cf-bf83-8f477d6f5128"
+version = "0.3.1"
 
 [[WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
