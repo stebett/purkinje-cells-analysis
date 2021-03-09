@@ -29,12 +29,10 @@ function quickPredict(uniformdf, gssResult, variable)
 end
 
 #%
-function gssanalysis(cellpair)
-	d1df = mkdf(sort(cellpair))
-	# d2df = mkdf(sort(cellpair, rev=true))
+function cellanalysis(cellpair)
+	d1df = mkdf(cellpair)
 
 	m1 = R"uniformizedf($d1df)"
-	# m2 = R"uniformizedf($d2df)"
 
 	gsa1S = R"gssanova(event~r.timeSinceLastSpike+time, data=$m1$data,family='binomial')"
 	gsa1C = R"gssanova(event~r.timeSinceLastSpike+time+r.nearest, data=$m1$data,family='binomial')"
@@ -50,6 +48,14 @@ function gssanalysis(cellpair)
 	c_nearest = convert(Dict, R"quickPredict($gsa1C, 'r.nearest')")
 
 	(simple_isi=s_isi, simple_time=s_time, complex_isi=c_isi, complex_time=c_time, complex_nearest=c_nearest)
+end
+
+function gssanalysis(cellpair)
+	idx1 = sort(cellpair)[1, :index]
+	idx2 = sort(cellpair, rev=true)[1, :index]
+
+	d = Dict(idx1=> cellanalysis(sort(cellpair)),
+			 idx2=> cellanalysis(sort(cellpair, rev=true)))
 end
 
 
@@ -74,16 +80,13 @@ end
 
 #%
 
-r = gssanalysis(cellpairs[1])
-
-# results = []
-
-for couple in cellpairs[9:end]
+results_tmp = []
+for couple in cellpairs
 	try
-		push!(results, gssanalysis(couple))
+		push!(results_tmp, gssanalysis(couple))
 	catch BoundsError
 		@warn "gssanalysis failed for the following values"
 		@show couple[:, [:rat, :site, :tetrode, :neuron]]
 	end
-	# 9 is crashing, add try
 end
+results = merge(results_tmp...)
