@@ -52,7 +52,7 @@ function halffit(cellpair)
     c1 = rcopy(R"predictLogProb($gsa1C, $m2$data)")
     c2 = rcopy(R"predictLogProb($gsa2C, $m1$data)")
 
-	return (simple1=s1, simple2=s2, complex1=c1, complex2=c2)
+	return (index=cellpair[1, :].index, simple1=s1, simple2=s2, complex1=c1, complex2=c2)
 end
 
 function quickPredict(uniformdf, gssResult, variable)
