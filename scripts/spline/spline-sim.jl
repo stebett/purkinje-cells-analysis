@@ -37,6 +37,7 @@ df = DataFrame()
 for couple in cellpairs # TODO with all neighbors
 	for c in [sort(couple), sort(couple, rev=true)]
 		@info "Computing couple:" c[:, [:rat, :site, :tetrode, :neuron]]
+		flush(io)
 		try
 			push!(df, halffit(c))
 		catch e
