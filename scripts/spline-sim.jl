@@ -19,4 +19,5 @@ for couple in cellpairs # TODO with all neighbors
 	end
 end
 results = merge(results_tmp...)
-save(datadir("spline", "gssmodels.jld"), "iter2", results)
+@save datadir("spline", "gssmodels.jld2") results
+

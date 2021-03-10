@@ -4,25 +4,25 @@ using DrWatson
 using JLD2 
 using Spikes
 using RCall
+using StatsBase
 
 include(srcdir("spline-plots.jl"))
 
-results = load("data/spline/gssmodels.jld2", "results")
-
-s_isi = results[556][1]
+results_ = load("data/spline/gssmodels.jld2", "results")
 
 function above(x::Dict)
+	y = x[:est_mean] .- x[:est_sd] .> 0
+	indexes = rangeT(y)
+	long_i = indexes[argmax(diff.(indexes))]
+	t = x[:new_x][long_i[1]:long_i[2]]
+	peak_m = t[argmax(x[:est_mean][long_i[1]:long_i[2]])]
+	peak_sd = argmax(x[:est_sd][long_i[1]:long_i[2]])
+	peak_t = extrema(t)
+	(t=peak_t, m=peak_m, sd=peak_sd)
 end
 
-x = s_isi
 
-y = x[:est_mean] .- x[:est_sd] .> 0
-
-
-""" 
-Takes first and last value of `x` of the `true` indices of `y`
-"""
-function rangeT(x::AbstractVector, y::BitArray{1})
+function rangeT(y::BitArray{1})
 	ranges = []
 	find_start = true
 	start = NaN
@@ -30,12 +30,12 @@ function rangeT(x::AbstractVector, y::BitArray{1})
 	for (i, v) in enumerate(y)
 		if find_start
 			if v 
-				start = x[i]
+				start = i
 				find_start = false
 			end
 		else
 			if !v
-				finish = x[i-1]
+				finish = i-1
 				push!(ranges, (start, finish))
 				find_start = true
 			end
@@ -48,6 +48,20 @@ end
 
 
 
+allnewx = [r.complex_nearest[:new_x] for (_, r) in results]
+allestmean = [r.complex_nearest[:est_mean] for (_, r) in results]
+allabove = [above(r.complex_nearest) for (_, r) in results] |> DataFrame
+
+scatter(allabove.m, fill(-1.5, length(allabove.m)), m=:vline, c=:black, label="Peak position")
+plot!(allnewx, allestmean, label ="", xlims=(0, 15), palette=:viridis)
+ylabel!("η")
+xlabel!("Time (ms)")
+title!("Complex models interaction delays")
 
 
-plot_quick_prediction(s_isi)
+k = kde(allabove.m, Normal(0, 0.1))
+plot(k, lw=1.5, l="")
+scatter!(allabove.m, fill(0., length(allabove.m)), m=:vline, c=:black, label="Peak position")
+ylabel!("Density")
+xlabel!("Time (ms)")
+title!("Peak cell interaction delay")
