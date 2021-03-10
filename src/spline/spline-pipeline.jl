@@ -3,6 +3,7 @@ using DrWatson
 
 using DataFrames
 using Spikes
+using RCall
 
 import Base.ceil
 
@@ -83,3 +84,24 @@ binisi_0(x) = vcat([[0:i-1;] for i in diff(floor.(x))]...) # TODO check floor
 
 norm_len(x, f, l) = [f;x;l]
 ceil(t::Type, x::Tuple) = ceil.(t, x)
+
+R"library(gss)"
+R"library(STAR)"
+
+R"""
+uniformizedf <- function(d1df,rnparm=c('timeSinceLastSpike','previousIsi','tback','tforw','nearest')
+)
+{
+  rnparmName= paste('r',rnparm,sep='.')
+  rnfun=lapply(rnparm,function(x) mkM2U(d1df,x))
+  names(rnfun)=rnparmName
+
+  inv.rnfun=lapply(rnfun, function(x) attributes(x)$qFct)
+  res=mapply(function(c,f) f(d1df[[c]]), rnparm,rnfun)
+  colnames(res)=rnparmName
+  m1=cbind(d1df,res)
+#  attr(m1,'rnfun')=rnfun
+#  attr(m1,'inv.rnfun')=inv.rnfun
+  list(data=m1,rnfun=rnfun,inv.rnfun=inv.rnfun)
+}
+"""
