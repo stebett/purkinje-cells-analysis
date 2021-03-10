@@ -43,10 +43,6 @@ function cellanalysis(cellpair)
 	c_time = quickPredict(m1, gsa1C, "time")
 	c_nearest = quickPredict(m1, gsa1C, "r.nearest")
 
-	c_isi = convert(Dict, R"quickPredict($gsa1C, 'r.timeSinceLastSpike')")
-	c_time = convert(Dict, R"quickPredict($gsa1C, 'time')")
-	c_nearest = convert(Dict, R"quickPredict($gsa1C, 'r.nearest')")
-
 	(simple_isi=s_isi, simple_time=s_time, complex_isi=c_isi, complex_time=c_time, complex_nearest=c_nearest)
 end
 
