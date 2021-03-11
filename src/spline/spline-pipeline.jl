@@ -7,48 +7,84 @@ using RCall
 
 import Base.ceil
 
-function mkdf(cellpair, tmax = [-600., 600.])
+function mkdf(cellpair; tmax = [-600., 600.], multi=false)
+	if multi
+		tmax[2] += maximum(cellpair[1, :grasp] .- cellpair[1, :lift])
+	end
 	len = floor(Int, diff(tmax)[1])
-
 	st = cut(cellpair[1, :].t, cellpair[1, :].lift, tmax)
 	ext = ceil.(Int, extrema.(st))
-	
-	bins = bin(st, len, 1.)
-	for b in bins
-		b[b .> 1] .= 1
-	end
+	ntrials = length(st)
 
-	st = norm_len.(st, 0, len)
+	st = norm_len.(st, 0, len) 
+	bins = bin(st, len, 1., binary=true) 
 	isi = binisi.(st)
+	neuron = ones(len)
 	times = [tmax[1]+1:tmax[2];]
+	fixed_times = fixtimes(times, len, ntrials, ext)
 
 	st2 = cut(cellpair[2, :].t, cellpair[2, :].lift, tmax)
 	st2 = norm_len.(st2, 0, len)
 	tforw = binisi_inv.(st2)
+	tforw = vcat(tforw...)
 	tback = binisi_0.(st2)
+	tback = vcat([[tback[i][2:end];NaN] for i in 1:ntrials]...)
+	nearest = min.(tback, tforw)
+	timetoevt = relativetime.(cellpair[1, :lift], 
+							  cellpair[1, :cover], 
+							  cellpair[1, :grasp],
+							 Ref(times), Ref(tmax))
 
-	dfs = Array{DataFrame, 1}(undef, length(st))
-	for i in eachindex(st)
-		df = DataFrame()
-		df.event = bins[i]
-		df.time = times
-		df.neuron = fill(1, size(bins[i]))
-		df.trial = fill(i, size(bins[i]))
-		df.timeSinceLastSpike = isi[i]
-		df.previousIsi = previousisi(isi[i])
-		df.ntrial = fill(i, size(bins[i]))
-		df.tback = [tback[i][2:end];NaN]
-		df.tforw = tforw[i]
-		df.nearest = min.(tforw[i], [tback[i][2:end];NaN])
-		dfs[i] = df[ext[i][1]:ext[i][2], :]
-	end
-	dfs[1]
-	M = vcat(dfs...)
 
-	for n in names(M)
-		filter!(n => x -> !(isnan(x)), M)
+	X = DataFrame()
+
+	X.event              = vcat(bins...)
+	X.times              = fixed_times
+	X.neuron             = repeat(neuron, ntrials)
+	X.trial              = X.ntrial   = [i for i=1:ntrials for l=1:len]
+	X.timeSinceLastSpike = vcat(isi...)
+	X.previousIsi        = vcat([previousisi(isi[i]) for i in 1:ntrials]...)
+	X.tback              = tback
+	X.tforw              = tforw
+	X.nearest            = nearest
+
+	if multi
+		X.timetoevt      = vcat(timetoevt...)
 	end
-	return M
+
+	drop(X)
+end
+
+
+function relativetime(lift, cover, grasp, t, tmax)
+	y = zeros(size(t))
+
+	cl = cover - lift
+	gc = grasp - cover
+	gl = grasp - lift
+
+	# intervals
+	beforelift = t .< 0.
+	liftcover = 0. .<= t .< cl
+	covergrasp = cl .<= t .< gl
+	aftergrasp = t .>= gl
+
+	y[beforelift] = 1 .- t[beforelift] ./ tmax[1]
+	y[liftcover] = 1 .+ t[liftcover] ./ cl
+	y[covergrasp] = 2 .+ (t[covergrasp] .- cl) ./ gc
+	y[aftergrasp] = 3 .+ (t[aftergrasp] .- gl) ./ (tmax[2] .- gl)
+
+	y
+end
+
+function fixtimes(times, len, ntrials, ext)
+	fixed_times = fill(NaN, len*ntrials)
+	legal_ranges = [e[1]:e[2] for e in ext] 
+	for i in 1:ntrials
+		rng = legal_ranges[i] .+ ((i-1)*len+1)
+		fixed_times[rng] = times[legal_ranges[i]] 
+	end
+	fixed_times
 end
 
 function previousisi(x)

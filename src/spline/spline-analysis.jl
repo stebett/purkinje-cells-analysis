@@ -14,6 +14,28 @@ function gssanalysis(cellpair)
 			 idx2 => cellanalysis(sort(cellpair, rev=true)))
 end
 
+function cellanalysis_multi(cellpair)
+	d1df = mkdf(cellpair, multi=true)
+
+	m1 = R"uniformizedf($d1df)"
+m3=uniformizedf(d3df,c('timeSinceLastSpike','nearest'))
+gsaC=gssanova(event~r.timeSinceLastSpike+timetoevt+r.nearest,data=m3$data,family='binomial',subset=timetoevt<4)
+
+m4=uniformizedf(d6df,c('timeSinceLastSpike','nearest'))
+gsaS=gssanova(event~r.timeSinceLastSpike+r.nearest,data=m4$data,family='binomial')
+
+	gsa1S = R"gssanova(event~r.timeSinceLastSpike+timetoevt, data=$m1$data,family='binomial')"
+	gsa1C = R"gssanova(event~r.timeSinceLastSpike+timetoevt+r.nearest, data=$m1$data,family='binomial')"
+
+	s_isi = quickPredict(m1, gsa1S, "r.timeSinceLastSpike")
+	s_time = quickPredict(m1, gsa1S, "time")
+	c_isi = quickPredict(m1, gsa1C, "r.timeSinceLastSpike")
+	c_time = quickPredict(m1, gsa1C, "time")
+	c_nearest = quickPredict(m1, gsa1C, "r.nearest")
+
+	return (simple_isi=s_isi, simple_time=s_time, complex_isi=c_isi, complex_time=c_time, complex_nearest=c_nearest)
+end
+
 function cellanalysis(cellpair)
 	d1df = mkdf(cellpair)
 

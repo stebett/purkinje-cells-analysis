@@ -10,10 +10,13 @@
 !_TAG_PROGRAM_URL	https://ctags.io/	/official site/
 !_TAG_PROGRAM_VERSION	5.9.0	/d532b5c4/
 Sₙ	_research/information.jl	/^Sₙ(x) = -sum(pₙ(x) .* log2.(pₙ(x)))$/;"	f
-binisi	src/spline-pipeline.jl	/^binisi(x) = vcat([[1:i;] for i in diff(floor.(x))]...) # TODO check floor$/;"	f
-binisi_0	src/spline-pipeline.jl	/^binisi_0(x) = vcat([[0:i-1;] for i in diff(floor.(x))]...) # TODO check floor$/;"	f
-binisi_inv	src/spline-pipeline.jl	/^binisi_inv(x) = vcat([[i-1:-1:0;] for i in diff(floor.([0; x]))]...) $/;"	f
-ceil	src/spline-pipeline.jl	/^ceil(t::Type, x::Tuple) = ceil.(t, x)$/;"	f
+above	src/spline/spline-utils.jl	/^function above(x::Dict)$/;"	f
+all_ranges_above	src/spline/spline-utils.jl	/^function all_ranges_above(x::Dict)$/;"	f
+binisi	src/spline/spline-pipeline.jl	/^binisi(x) = vcat([[1:i;] for i in diff(floor.(x))]...) # TODO check floor$/;"	f
+binisi_0	src/spline/spline-pipeline.jl	/^binisi_0(x) = vcat([[0:i-1;] for i in diff(floor.(x))]...) # TODO check floor$/;"	f
+binisi_inv	src/spline/spline-pipeline.jl	/^binisi_inv(x) = vcat([[i-1:-1:0;] for i in diff(floor.([0; x]))]...) $/;"	f
+ceil	src/spline/spline-pipeline.jl	/^ceil(t::Type, x::Tuple) = ceil.(t, x)$/;"	f
+cellanalysis	src/spline/spline-analysis.jl	/^function cellanalysis(cellpair)$/;"	f
 corr_by_landmark	scripts/figure-2/new-crosscor.jl	/^function corr_by_landmark(landmark::Symbol, neigh, dist)$/;"	f
 correlate	scripts/figure-2/old-crosscor.jl	/^function correlate(convolutions)$/;"	f
 distant_correlation	scripts/figure-2/old-crosscor.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
@@ -42,32 +45,35 @@ fit_thirds	scripts/pca/speed.jl	/^function fit_thirds(st)$/;"	f
 get_active_couples	scripts/figure-3/c-d-clement.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_active_couples	scripts/figure-3/c-d.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
-get_cell	src/spline-pipeline.jl	/^function get_cell(s::String) $/;"	f
+get_cell	src/spline/spline-pipeline.jl	/^function get_cell(df, s::String) $/;"	f
 get_trial	_research/single-trials.jl	/^@inline function get_trial(df, n, i, after)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n)$/;"	f
 get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
-gssanalysis	scripts/spline.jl	/^function gssanalysis(cellpair)$/;"	f
+gssanalysis	src/spline/spline-analysis.jl	/^function gssanalysis(cellpair)$/;"	f
+halffit	src/spline/spline-analysis.jl	/^function halffit(cellpair)$/;"	f
 interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
 jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 load_data	src/load-data.jl	/^function load_data(filename)$/;"	f
 load_full	scripts/io/load-full.jl	/^function load_full()$/;"	f
-make_couples	src/spline-pipeline.jl	/^function make_couples(s::Vector{<:String})$/;"	f
+make_couples	src/spline/spline-pipeline.jl	/^function make_couples(df, s::Vector{<:String})$/;"	f
 merge	test/cross-corr-plot-test.jl	/^	merge(r, c) = vcat.(r[c]...)$/;"	f	function:test_all_active2
 merge_ranges	scripts/figure-3/c-d-clement.jl	/^function merge_ranges(x::Vector{<:Tuple})$/;"	f
-mkdf	src/spline-pipeline.jl	/^function mkdf(cellpair, tmax = [-600., 600.])$/;"	f
+mkdf	src/spline/spline-pipeline.jl	/^function mkdf(cellpair, tmax = [-600., 600.])$/;"	f
 neighbor_correlation	scripts/figure-2/old-crosscor.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
-norm_len	src/spline-pipeline.jl	/^norm_len(x, f, l) = [f;x;l]$/;"	f
+norm_len	src/spline/spline-pipeline.jl	/^norm_len(x, f, l) = [f;x;l]$/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
 plot_crosscor_distant	scripts/figure-3/c-d.jl	/^function plot_crosscor_distant(distant::Matrix)$/;"	f
 plot_crosscor_neigh	scripts/figure-3/c-d.jl	/^function plot_crosscor_neigh(neighbors::Matrix)$/;"	f
 plot_gpfa	_research/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	_research/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
 plot_gpfa_speed	_research/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
-plot_quick_prediction	scripts/spline.jl	/^function plot_quick_prediction(x, title="")$/;"	f
-plot_single_result	scripts/spline.jl	/^function plot_single_result(x::NamedTuple)$/;"	f
-previousisi	src/spline-pipeline.jl	/^function previousisi(x)$/;"	f
+plot_quick_prediction	src/spline/spline-plots.jl	/^function plot_quick_prediction(x, title="")$/;"	f
+plot_single_result	src/spline/spline-plots.jl	/^function plot_single_result(x::NamedTuple)$/;"	f
+previousisi	src/spline/spline-pipeline.jl	/^function previousisi(x)$/;"	f
 pₙ	_research/information.jl	/^function pₙ(x)$/;"	f
+quickPredict	src/spline/spline-analysis.jl	/^function quickPredict(uniformdf, gssResult, variable)$/;"	f
+rangeT	src/spline/spline-utils.jl	/^function rangeT(y::BitArray{1})$/;"	f
 remove_nan	scripts/io/v1-v6.jl	/^function remove_nan(df)$/;"	f
 remove_zerotrials	scripts/io/v1-v6.jl	/^function remove_zerotrials(df)$/;"	f
 save_trials	scripts/io/save-trials.jl	/^function save_trials(trials)$/;"	f
