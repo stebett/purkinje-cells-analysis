@@ -7,6 +7,50 @@ using RCall
 
 import Base.ceil
 
+function mkdf_old(cellpair, tmax = [-600., 600.])
+	len = floor(Int, diff(tmax)[1])
+
+	st = cut(cellpair[1, :].t, cellpair[1, :].lift, tmax)
+	ext = ceil.(Int, extrema.(st))
+	
+	bins = bin(st, len, 1.)
+	for b in bins
+		b[b .> 1] .= 1
+	end
+
+	st = norm_len.(st, 0, len)
+	isi = binisi.(st)
+	times = [tmax[1]+1:tmax[2];]
+
+	st2 = cut(cellpair[2, :].t, cellpair[2, :].lift, tmax)
+	st2 = norm_len.(st2, 0, len)
+	tforw = binisi_inv.(st2)
+	tback = binisi_0.(st2)
+
+	dfs = Array{DataFrame, 1}(undef, length(st))
+	for i in eachindex(st)
+		df = DataFrame()
+		df.event = bins[i]
+		df.time = times
+		df.neuron = fill(1, size(bins[i]))
+		df.trial = fill(i, size(bins[i]))
+		df.timeSinceLastSpike = isi[i]
+		df.previousIsi = previousisi(isi[i])
+		df.ntrial = fill(i, size(bins[i]))
+		df.tback = [tback[i][2:end];NaN]
+		df.tforw = tforw[i]
+		df.nearest = min.(tforw[i], [tback[i][2:end];NaN])
+		dfs[i] = df[ext[i][1]:ext[i][2], :]
+	end
+	dfs[1]
+	M = vcat(dfs...)
+
+	for n in names(M)
+		filter!(n => x -> !(isnan(x)), M)
+	end
+	return M
+end
+
 function mkdf(cellpair; tmax = [-600., 600.], multi=false)
 	if multi
 		tmax[2] += maximum(cellpair[1, :grasp] .- cellpair[1, :lift])
@@ -19,9 +63,9 @@ function mkdf(cellpair; tmax = [-600., 600.], multi=false)
 	st = norm_len.(st, 0, len) 
 	bins = bin(st, len, 1., binary=true) 
 	isi = binisi.(st)
-	neuron = ones(len)
-	times = [tmax[1]+1:tmax[2];]
-	fixed_times = fixtimes(times, len, ntrials, ext)
+	neuron = ones(Int, len)
+	time = [tmax[1]+1:tmax[2];]
+	fixed_times = fixtimes(time, len, ntrials, ext)
 
 	st2 = cut(cellpair[2, :].t, cellpair[2, :].lift, tmax)
 	st2 = norm_len.(st2, 0, len)
@@ -33,13 +77,12 @@ function mkdf(cellpair; tmax = [-600., 600.], multi=false)
 	timetoevt = relativetime.(cellpair[1, :lift], 
 							  cellpair[1, :cover], 
 							  cellpair[1, :grasp],
-							 Ref(times), Ref(tmax))
-
+							 Ref(time), Ref(tmax))
 
 	X = DataFrame()
 
 	X.event              = vcat(bins...)
-	X.times              = fixed_times
+	X.time              = fixed_times
 	X.neuron             = repeat(neuron, ntrials)
 	X.trial              = X.ntrial   = [i for i=1:ntrials for l=1:len]
 	X.timeSinceLastSpike = vcat(isi...)

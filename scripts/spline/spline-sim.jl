@@ -26,6 +26,34 @@ for couple in cellpairs # TODO with all neighbors
 end
 @save datadir("spline", "simple-complex.jld2") merge(tmp...)
 
+#% Simple vs complex multi
+io = open(datadir("logs", "multi-psth-spline.txt"), "w+")
+logger = SimpleLogger(io)
+global_logger(logger)
+
+tmp = []
+for couple in cellpairs # TODO with all neighbors
+	try
+		@info "Computing couple:" c[:, [:rat, :site, :tetrode, :neuron]]; flush(io)
+		push!(tmp, gssanalysis(couple, multi=true))
+	catch e
+		@warn "Exception occurred:\n$e"
+	end
+	@info "Success!"
+end
+@info "End of simulation"; flush(io)
+filename = datadir("spline", "simple-complex-multi.jld2")
+result_multi = merge(tmp...)
+try 
+	@save filename result_multi
+	@info "Successfully saved results at $filename"
+catch e
+	@warn "Exception occurred during save:\n$e"
+end
+flush(io)
+close(io)
+
+
 #% Likelihood simulation
 io = open(datadir("logs", "likelihood.txt"), "w+")
 logger = SimpleLogger(io)
@@ -50,3 +78,4 @@ end
 flush(io)
 safesave(datadir("spline", "likelihood.csv"), df)
 close(io)
+
