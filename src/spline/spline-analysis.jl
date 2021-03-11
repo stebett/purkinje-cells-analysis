@@ -55,6 +55,32 @@ function cellanalysis_single(cellpair)
 	return (simple_isi=s_isi, simple_time=s_time, complex_isi=c_isi, complex_time=c_time, complex_nearest=c_nearest)
 end
 
+function cellanalysis_simple_single(cellpair)
+	d1df = mkdf(cellpair)
+
+	m1 = R"uniformizedf($d1df)"
+
+	gsaS = R"gssanova(event~r.timeSinceLastSpike+time, data=$m1$data,family='binomial')"
+
+	s_isi = quickPredict(m1, gsa1S, "r.timeSinceLastSpike")
+	s_time = quickPredict(m1, gsa1S, "time")
+
+	return (simple_isi=s_isi, simple_time=s_time) 
+end
+
+function cellanalysis_simple_multi(cellpair)
+	d1df = mkdf(cellpair, multi=true)
+
+	m1 = R"uniformizedf($d1df)"
+
+	gsaS = R"gssanova(event~r.timeSinceLastSpike+timetoevt, data=$m1$data,family='binomial')"
+
+	s_isi = quickPredict(m1, gsa1S, "r.timeSinceLastSpike")
+	s_time = quickPredict(m1, gsa1S, "timetoevt")
+
+	return (simple_isi=s_isi, simple_time=s_time) 
+end
+
 function halffit(cellpair)
 	df = mkdf(cellpair)
 
