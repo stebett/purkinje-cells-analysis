@@ -50,3 +50,15 @@ ylabel!("% of pairs with significant interactions")
 xlabel!("Time (ms)")
 title!("Ranges of significant\ncell interaction delays")
 # savefig(plotsdir("logbook", "interaction_ranges"), "scripts/spline.jl")
+
+#% Figure 5A
+df = load(datadir("spline", "likelihood.csv")) |> DataFrame
+
+transform!(df, [:simple1, :simple2, :complex1, :complex2] => 
+		   ((s1, s2, c1, c2) -> (s1 .+ s2) .< (c1 .+ c2)) => :c_better)
+
+bar([sum(df.c_better), sum(.!df.c_better)])
+ylabel!("Counts")
+xticks!([1, 2], ["Complex model", "Simple model"])
+title!("Best model")
+savefig(plotsdir("logbook", "11-03", "best-model"), "scripts/spline/figure-5.jl")
