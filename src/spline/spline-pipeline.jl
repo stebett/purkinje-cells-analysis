@@ -124,8 +124,7 @@ R"library(gss)"
 R"library(STAR)"
 
 R"""
-uniformizedf <- function(d1df,rnparm=c('timeSinceLastSpike','previousIsi','tback','tforw','nearest')
-)
+uniformizedf <- function(d1df,rnparm=c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))
 {
   rnparmName= paste('r',rnparm,sep='.')
   rnfun=lapply(rnparm,function(x) mkM2U(d1df,x))
