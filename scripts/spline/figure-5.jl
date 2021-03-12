@@ -70,7 +70,7 @@ savefig(plotsdir("logbook", "11-03", "best-model"), "scripts/spline/figure-5.jl"
 for (k, v) in result_multi
 	p1 = plot_quick_prediction(v.simple_time)
 	p2 = plot_quick_prediction(results[k].simple_time)
-	plot(p1, p2, size=(900, 900))
+	plot(p1, p2, size=(1400, 900))
 	savefig("plots/logbook/12-03/psth-multi-vs-single/$k")
 end
 
