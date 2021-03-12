@@ -8,7 +8,7 @@ function plot_quick_prediction(x, title="")
 	plot(x[:est_mean], ribbon=x[:est_sd])
 	interval = 1:length(x[:new_x])÷10:length(x[:new_x])
 	if x[:include] == "timetoevt"
-		xticks!(searchsortedfirst.(Ref(nex), [1, 2, 3]), ["lift", "cover", "grasp"])
+		xticks!(searchsortedfirst.(Ref(nex), [2, 3, 4]), ["lift", "cover", "grasp"])
 	else
 		xticks!(interval, ["$(round(x[:new_x][i], digits=2))" for i in interval])
 	end

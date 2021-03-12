@@ -7,12 +7,13 @@ using Dates
 
 include(srcdir("spline", "spline-analysis.jl"))
 
-function datagen(p)
-	filename = datadir("spline", p[:psth] *"-"* p[:cells] *".jld2")
+function main(p)
+	analysisname = p[:psth] *"-"* p[:cells]
+	filename = datadir("spline",  "$analysisname.jld2")
 	splinedatadir = datadir("spline-data.jld2")
 	multi = p[:psth] == "multi" ? true : false
 
-	io = open("logs/$filname.log", "w+")
+	io = open(datadir("spline", "logs", "$analysisname.log"), "w+")
 	logger = SimpleLogger(io)
 	global_logger(logger)
 	@info "Simulation of $(Dates.format(now(), "dd-mm-YYYY at HH:MM"))"
@@ -22,7 +23,7 @@ function datagen(p)
 	data = all(isa.(data, DataFrame)) ? [sort.(data); sort.(data, rev=true)] : data;
 
 	@info "Starting simulation"; flush(io)
-	fitcell_log_save.(data, p, multi, io)
+	fitcell_log_save.(data, filename, multi)
 
 	@info "End of simulation"; flush(io); close(io)
 end
@@ -30,7 +31,7 @@ end
 
 
 
-function fitcell_log_save(x, fn, multi, io) 
+function fitcell_log_save(x, fn, multi) 
 	try
 		idx = x.index |> string
 		tic = Dates.format(now(), "HH:MM")
@@ -49,14 +50,9 @@ r2 = fitcell(allcells[1], multi=false)
 r3 = fitcell(allcellpairs[1], multi=true)
 r4 = fitcell(allcellpairs[1], multi=false)
 
+# simul
 params = Dict(:psth => ["multi", "lift"],
 			  :cells => ["all", "neigh", "dist"]) |> dict_list
 
-data, fn, multi = datagen(params[1]);
-fitcell_log_save.(data[1:2], fn, multi)
 
-data, fn, multi = datagen(params[2]);
-fitcell_log_save.(data[1:2], fn, multi)
-
-data, fn, multi = datagen(params[3]);
-fitcell_log_save(data[1], fn, multi)
+main.(params)
