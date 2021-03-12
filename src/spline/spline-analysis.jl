@@ -62,8 +62,8 @@ function cellanalysis_simple_single(cellpair)
 
 	gsaS = R"gssanova(event~r.timeSinceLastSpike+time, data=$m1$data,family='binomial')"
 
-	s_isi = quickPredict(m1, gsa1S, "r.timeSinceLastSpike")
-	s_time = quickPredict(m1, gsa1S, "time")
+	s_isi = quickPredict(m1, gsaS, "r.timeSinceLastSpike")
+	s_time = quickPredict(m1, gsaS, "time")
 
 	return (simple_isi=s_isi, simple_time=s_time) 
 end
@@ -75,8 +75,8 @@ function cellanalysis_simple_multi(cellpair)
 
 	gsaS = R"gssanova(event~r.timeSinceLastSpike+timetoevt, data=$m1$data,family='binomial')"
 
-	s_isi = quickPredict(m1, gsa1S, "r.timeSinceLastSpike")
-	s_time = quickPredict(m1, gsa1S, "timetoevt")
+	s_isi = quickPredict(m1, gsaS, "r.timeSinceLastSpike")
+	s_time = quickPredict(m1, gsaS, "timetoevt")
 
 	return (simple_isi=s_isi, simple_time=s_time) 
 end
