@@ -11,60 +11,82 @@ include(srcdir("spline", "spline-analysis.jl"))
 # iterate data
 # if eltype(data) <: DataFrame; iterate sorted too
 # 	analyise
-# 	save in bson
+# 	save in jld
 # aggregate
 # save
 
+# non rifare single analysis quando fai quelle complesse!
 
-allcells = eachrow(load_data("data-v6.arrow"));
-@load (datadir("cellpairs-v2.jl2")) allcellpairs
-@load (datadir("cellpairs-v1.jld2")) cellpairs 
+params = Dict(:psth => ["multi", "lift"],
+			  :cells => ["all", "neigh", "dist"]) |> dict_list
 
-# TODO output is now a dict
-# arguments
-analaysisname = nothing
-data = nothing
-multi = nothing
+
 
 # start of function
-io = open("logs/$filname.log", "w+")
-logger = SimpleLogger(io)
-global_logger(logger)
 
-filename = datadir("spline", "$analysisname.jld2")
+function datagen(p)
+	filename = datadir("spline", p[:psth] *"-"* p[:cells] *".jld2")
+	splinedatadir = datadir("spline-data.jld2")
+	multi = p[:psth] == "multi" ? true : false
 
-if all(isa.(data, DataFrame))
-	data = [sort.(data); sort.(data, rev=true)]
-end;
+	# io = open("logs/$filname.log", "w+")
+	# logger = SimpleLogger(io)
+	# global_logger(logger)
+	@info "Simulation of $(Dates.format(now(), "dd-mm-YYYY at HH:MM"))"
 
-@info "Simulation of $(Dates.format(now(), "dd-mm-YYYY at HH:MM"))"; flush(io)
+	@info "Loading dataset from $splinedatadir), $(p[:cells]) cells"
+	data = load(splinedatadir, p[:cells]);
 
-function main(p)
+	@info "Generating reversed data couples"
+	data = all(isa.(data, DataFrame)) ? [sort.(data); sort.(data, rev=true)] : data;
+	data, filename, multi
+end
+ 
+@info "Starting simulation"; flush(io)
+fitcell_log_save.(data, p)
+@info "End of simulation"; flush(io); close(io)
+
+
+
+function fitcell_log_save(x, fn, multi) #TODO add io
 	try
-		@info "Computing cell(s): " p[x].index
-		@info "Time: $(Dates.format(now(), "HH:MM"))" #flush(io)
-		t = @elapsed r = fitcell(p[x], multi=true)
-		@info "Successfully fitted in $(round(t, digits=4)) seconds"
+		idx = x.index |> string
+		tic = Dates.format(now(), "HH:MM")
+
+		@info "Computing cell(s): $idx\nTime: $tic"
+		save(fn, idx=fitcell(x, multi=multi))
+
+		@info "Successfully fitted!"; # flush(io) 
+		
 	catch e
 		@warn "Exception occurred:\n$e"
+
 	end
 end
-@info "End of simulation"; flush(io)
-filename = datadir("spline", "simple-complex-multi.jld2")
-result_multi = merge(tmp...)
-tag!(results_multi)
-try 
-	@save filename result_multi
-	@info "Successfully saved results at $filename"
-catch e
-	@warn "Exception occurred during save:\n$e"
-end
-flush(io)
-close(io)
+
 
 # tests
 r1 = fitcell(allcells[1], multi=true)
 r2 = fitcell(allcells[1], multi=false)
 r3 = fitcell(allcellpairs[1], multi=true)
 r4 = fitcell(allcellpairs[1], multi=false)
+
+data, fn, multi = datagen(params[1]);
+fitcell_log_save(data[1], fn, multi)
+
+data, fn, multi = datagen(params[2]);
+fitcell_log_save(data[2], fn, multi)
+
+data, fn, multi = datagen(params[3]);
+fitcell_log_save(data[1], fn, multi)
+
+data, fn, multi = datagen(params[4]);
+fitcell_log_save(data[2], fn, multi)
+
+data, fn, multi = datagen(params[5]);
+fitcell_log_save(data[1], fn, multi)
+
+data, fn, multi = datagen(params[6]);
+fitcell_log_save(data[1], fn, multi)
+
 

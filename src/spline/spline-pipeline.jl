@@ -148,7 +148,6 @@ end
 function fixtimes(times, len, ntrials, ext)
 	fixed_times = fill(NaN, len*ntrials)
 	legal_ranges = [e[1]:e[2] .- 1 for e in ext] 
-	@infiltrate
 	for i in 1:ntrials
 		rng = legal_ranges[i] .+ ((i-1)*len)
 		fixed_times[rng] = times[legal_ranges[i]] 

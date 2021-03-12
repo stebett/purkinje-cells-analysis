@@ -22,7 +22,7 @@ end
 
 function fitcell(cellpair::DataFrame; multi)
 	timevar = multi ? "timetoevt" : "time"
-	d = fitcell(cellpair[1, :]; multi)
+	d = Dict()
 
 	df = mkdf(cellpair, multi=multi)
 	df_u = R"uniformizedf($df, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
