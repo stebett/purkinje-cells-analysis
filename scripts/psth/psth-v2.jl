@@ -15,7 +15,6 @@ b1 = 30
 n, r = section_trial(data, pad, num_bins, b1);
 
 ordered_n = sort_peaks(drop(hcat([mean(i) for i in n]...)))
-Xm = drop([mean(i) for i in n])
 
 l = size(ordered_n, 1)
 low, high = -3, 3

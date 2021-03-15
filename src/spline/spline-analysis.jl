@@ -36,8 +36,8 @@ function fitcell(cellpair::DataFrame; multi)
 end
 
 
-function halffit(cellpair)
-	df = mkdf(cellpair)
+function halffit(cellpair; multi)
+	df = mkdf(cellpair, multi=multi)
 
 	idx = df.trial |> unique |> shuffle
 	half = maximum(idx) ÷ 2
@@ -45,7 +45,7 @@ function halffit(cellpair)
 	df2 = df[in.(df.ntrial, Ref(idx[half+2:end])), :]
 	
 	m1 = R"uniformizedf($df1, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
-	m1 = R"uniformizedf($df2, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
+	m2 = R"uniformizedf($df2, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
 
 	gsa1S = R"gssanova(event~r.timeSinceLastSpike+time, data=$m1$data,family='binomial')"
 	gsa2S = R"gssanova(event~r.timeSinceLastSpike+time, data=$m2$data,family='binomial')"
