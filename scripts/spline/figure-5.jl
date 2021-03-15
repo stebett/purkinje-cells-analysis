@@ -18,16 +18,6 @@ multi_dist = load(datadir("spline",  "multi-dist.jld2"));
 multi_neigh = load(datadir("spline", "multi-neigh.jld2"));
 
 #%
-function combine_analysis(data)
-	df = [above(r[:c_nearest]) for (_, r) in data] |> DataFrame 
-	df.idx = [k for (k, _) in data]
-	df.x = [r[:c_nearest][:new_x] for (_, r) in data]
-	df.mean = [r[:c_nearest][:est_mean] for (_, r) in data]
-	df.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in data]
-	dropmissing!(df)
-	filter!(x->isless(0, x.m), df)
-	df
-end
 
 df_n = combine_analysis(multi_neigh)
 df_d = combine_analysis(multi_dist)

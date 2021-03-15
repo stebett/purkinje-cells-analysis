@@ -1,3 +1,22 @@
+function combine_analysis(data)
+	df = [above(r[:c_nearest]) for (_, r) in data] |> DataFrame 
+	df.idx = [k for (k, _) in data]
+	df.x = [r[:c_nearest][:new_x] for (_, r) in data]
+	df.mean = [r[:c_nearest][:est_mean] for (_, r) in data]
+	df.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in data]
+	dropmissing!(df)
+	filter!(x->isless(0, x.m), df)
+	df
+end
+
+function combine_simple_analysis(data)
+	df = DataFrame()
+	df.idx = [k for (k, _) in data]
+	df.x = [r[:s_time][:new_x] for (_, r) in data]
+	df.mean = [r[:s_time][:est_mean] for (_, r) in data]
+	df
+end
+
 
 function above(x::Dict)
 	y = x[:est_mean] .- x[:est_sd] .> 0

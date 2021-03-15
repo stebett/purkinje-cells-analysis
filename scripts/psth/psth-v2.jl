@@ -5,16 +5,17 @@ using Spikes
 using Statistics
 using Plots; gr()
 
-data = load_data("data-v5.arrow");
+data = load_data("data-v6.arrow");
 
 #%
-pad = 2500
+pad = 600
 num_bins = 12
-b1 = 25
+b1 = 30
 
 n, r = section_trial(data, pad, num_bins, b1);
 
 ordered_n = sort_peaks(drop(hcat([mean(i) for i in n]...)))
+Xm = drop([mean(i) for i in n])
 
 l = size(ordered_n, 1)
 low, high = -3, 3
