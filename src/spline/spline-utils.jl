@@ -2,6 +2,9 @@
 function above(x::Dict)
 	y = x[:est_mean] .- x[:est_sd] .> 0
 	indexes = rangeT(y)
+	if length(indexes) < 1
+		return (t=missing, m=missing, sd=missing)
+	end
 	long_i = indexes[argmax(diff.(indexes))]
 	t = x[:new_x][long_i[1]:long_i[2]]
 	peak_m = t[argmax(x[:est_mean][long_i[1]:long_i[2]])]

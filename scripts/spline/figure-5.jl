@@ -4,52 +4,85 @@ using DrWatson
 using JLD2 
 using Spikes
 using KernelDensity
+using Distributions
+using Measures
 using StatsBase
 
 include(srcdir("spline", "spline-plots.jl"))
 include(srcdir("spline", "spline-analysis.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
-@load datadir("spline", "simple-complex.jld2") results
+# lift_all = load(datadir("spline",    "lift-all.jld2"));
+# lift_dist = load(datadir("spline",   "lift-dist.jld2"));
+# lift_neigh = load(datadir("spline",  "lift-neigh.jld2"));
+# multi_all = load(datadir("spline",   "multi-all.jld2"));
+multi_dist = load(datadir("spline",  "multi-dist.jld2"));
+multi_neigh = load(datadir("spline", "multi-neigh.jld2"));
 
 #%
-allnewx = [r.complex_nearest[:new_x] for (_, r) in results]
-allestmean = [r.complex_nearest[:est_mean] for (_, r) in results]
-allabove = [above(r.complex_nearest) for (_, r) in results] |> DataFrame
+df_n = [above(r[:c_nearest]) for (_, r) in multi_neigh] |> DataFrame 
+df_n.idx = [k for (k, _) in multi_neigh]
+df_n.x = [r[:c_nearest][:new_x] for (_, r) in multi_neigh]
+df_n.mean = [r[:c_nearest][:est_mean] for (_, r) in multi_neigh]
+df_n.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in multi_neigh]
+dropmissing!(df_n)
+filter!(x->isless(0, x.m), df_n)
+
+
+#%
+#%
+df_d = [above(r[:c_nearest]) for (_, r) in multi_dist] |> DataFrame 
+df_d.idx = [k for (k, _) in multi_dist]
+df_d.x = [r[:c_nearest][:new_x] for (_, r) in multi_dist]
+df_d.mean = [r[:c_nearest][:est_mean] for (_, r) in multi_dist]
+df_d.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in multi_dist]
+dropmissing!(df_d)
+filter!(x->isless(0, x.m), df_d)
 
 #% All interactions
-scatter(allabove.m, fill(-1.5, length(allabove.m)), m=:vline, c=:black, label="Peak position")
-plot!(allnewx, allestmean, label ="", xlims=(0, 15), palette=:viridis)
-ylabel!("η")
-xlabel!("Time (ms)")
-title!("Complex models interaction delays")
-# savefig(plotsdir("logbook", "all_interactions"), "scripts/spline.jl")
-
-#% Figure 5B
-k = kde(allabove.m, Normal(0, 0.1))
-plot(k, lw=1.5, l="")
-scatter!(allabove.m, fill(0., length(allabove.m)), m=:vline, c=:black, label="Peak position")
-ylabel!("Density")
-xlabel!("Time (ms)")
-title!("Peak cell interaction delay")
-# savefig(plotsdir("logbook", "peak_interactions"), "scripts/spline.jl")
-
-#% Figure 5C
-allranges = vcat([all_ranges_above(r.complex_nearest) for (_, r) in results]...)
-binsize = 0.0001
-tmax = 50.
-counts = zeros(Int(tmax/binsize))
-timerange = 0:binsize:tmax-binsize
-for (i, v) in enumerate(timerange)
-	counts[i] = sum([r[1] .< v .< r[2] for r in allranges]) 
+function all_interactions(df)
+	scatter(df.m, fill(-1.5, size(df, 1)), m=:vline, c=:black, label="Peak position")
+	plot!(df.x, df.mean, label ="", xlims=(0, 100))
+	ylabel!("η")
+	xlabel!("Time (ms)")
+	title!("Complex models interaction delays")
 end
 
-counts_perc = counts ./ length(results) .* 100.
-plot(timerange, counts_perc)
-ylabel!("% of pairs with significant interactions")
-xlabel!("Time (ms)")
-title!("Ranges of significant\ncell interaction delays")
-# savefig(plotsdir("logbook", "interaction_ranges"), "scripts/spline.jl")
+for row in eachrow(df_d)
+	plot(row.x, row.mean)
+	savefig(plotsdir("logbook", "15-03", "dist-complex-model", "$(row.idx)"))
+end
+
+all_interactions(df_n)
+all_interactions(df_d)
+
+#% Figure 5B
+function figure_5B(df)
+	k = kde(df.m, Normal(0, 0.2))
+	plot(k, lw=1.5, lab="", xlims=(0, 30), ylims=(0, 1))
+	scatter!(df.m, fill(0., size(df, 1)), m=:vline, c=:black, label="Peak position")
+	ylabel!("Density")
+	xlabel!("Time (ms)")
+	title!("Peak cell interaction delay")
+end
+
+#% Figure 5C
+function figure_5C(df)
+	binsize = 0.001
+	tmax = 50.
+	counts = zeros(Int(tmax/binsize))
+	timerange = 0:binsize:tmax-binsize
+	for (i, v) in enumerate(timerange)
+		counts[i] = sum([r[1] .< v .< r[2] for r in vcat(df.ranges...)]) 
+	end
+
+	counts_perc = counts ./ size(df, 1) .* 100.
+	plot(timerange, counts_perc, ylims=(0, 100), lab="")
+	ylabel!("% of pairs with significant interactions")
+	xlabel!("Time (ms)")
+	title!("Ranges of significant\ncell interaction delays")
+end
+
 
 #% Figure 5A
 df = load(datadir("spline", "likelihood.csv")) |> DataFrame
@@ -57,21 +90,18 @@ df = load(datadir("spline", "likelihood.csv")) |> DataFrame
 transform!(df, [:simple1, :simple2, :complex1, :complex2] => 
 		   ((s1, s2, c1, c2) -> (s1 .+ s2) .< (c1 .+ c2)) => :c_better)
 
-bar([sum(df.c_better), sum(.!df.c_better)])
+A = bar([sum(df.c_better), sum(.!df.c_better)], lab="")
 ylabel!("Counts")
-xticks!([1, 2], ["Complex model", "Simple model"])
-title!("Best model")
-savefig(plotsdir("logbook", "11-03", "best-model"), "scripts/spline/figure-5.jl")
+xticks!([1, 2], ["Complex", "Simple"])
+title!("Pairs of neighboring cells\n\nBest model")
 
-#% PSTH multi vs single
+D = plot(framestyle=:none)
+title!("Pairs of distant cells\n\nBest model")
 
-@load datadir("spline", "simple-complex-multi.jld2") result_multi
+B = figure_5B(df_n)
+E = figure_5B(df_d)
+C = figure_5C(df_n)
+F = figure_5C(df_d)
+F5 = plot(A, D, B, E, C, F, size=(1200, 1600), layout=(3, 2), margin=7mm)
 
-for (k, v) in result_multi
-	p1 = plot_quick_prediction(v.simple_time)
-	p2 = plot_quick_prediction(results[k].simple_time)
-	plot(p1, p2, size=(1400, 900))
-	savefig("plots/logbook/12-03/psth-multi-vs-single/$k")
-end
-
-
+savefig(plotsdir("logbook", "15-03", "figure-5-cleandf"), "scripts/spline/figure-5.jl")

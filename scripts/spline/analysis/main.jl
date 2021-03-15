@@ -29,8 +29,6 @@ function main(p)
 end
  
 
-
-
 function fitcell_log_save(x, fn, multi) 
 	try
 		idx = x.index |> string
@@ -43,12 +41,6 @@ function fitcell_log_save(x, fn, multi)
 		@warn "Exception occurred:\n$e"
 	end
 end
-
-# tests
-r1 = fitcell(allcells[1], multi=true)
-r2 = fitcell(allcells[1], multi=false)
-r3 = fitcell(allcellpairs[1], multi=true)
-r4 = fitcell(allcellpairs[1], multi=false)
 
 # simul
 params = Dict(:psth => ["multi", "lift"],
