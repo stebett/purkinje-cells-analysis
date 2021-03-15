@@ -12,32 +12,28 @@ include(srcdir("spline", "spline-plots.jl"))
 include(srcdir("spline", "spline-analysis.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
-# lift_all = load(datadir("spline",    "lift-all.jld2"));
-# lift_dist = load(datadir("spline",   "lift-dist.jld2"));
-# lift_neigh = load(datadir("spline",  "lift-neigh.jld2"));
-# multi_all = load(datadir("spline",   "multi-all.jld2"));
+lift_dist = load(datadir("spline",   "lift-dist.jld2"));
+lift_neigh = load(datadir("spline",  "lift-neigh.jld2"));
 multi_dist = load(datadir("spline",  "multi-dist.jld2"));
 multi_neigh = load(datadir("spline", "multi-neigh.jld2"));
 
 #%
-df_n = [above(r[:c_nearest]) for (_, r) in multi_neigh] |> DataFrame 
-df_n.idx = [k for (k, _) in multi_neigh]
-df_n.x = [r[:c_nearest][:new_x] for (_, r) in multi_neigh]
-df_n.mean = [r[:c_nearest][:est_mean] for (_, r) in multi_neigh]
-df_n.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in multi_neigh]
-dropmissing!(df_n)
-filter!(x->isless(0, x.m), df_n)
+function combine_analysis(data)
+	df = [above(r[:c_nearest]) for (_, r) in data] |> DataFrame 
+	df.idx = [k for (k, _) in data]
+	df.x = [r[:c_nearest][:new_x] for (_, r) in data]
+	df.mean = [r[:c_nearest][:est_mean] for (_, r) in data]
+	df.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in data]
+	dropmissing!(df)
+	filter!(x->isless(0, x.m), df)
+	df
+end
 
+df_n = combine_analysis(multi_neigh)
+df_d = combine_analysis(multi_dist)
+df_n_lift = combine_analysis(lift_neigh)
+df_d_lift = combine_analysis(lift_dist)
 
-#%
-#%
-df_d = [above(r[:c_nearest]) for (_, r) in multi_dist] |> DataFrame 
-df_d.idx = [k for (k, _) in multi_dist]
-df_d.x = [r[:c_nearest][:new_x] for (_, r) in multi_dist]
-df_d.mean = [r[:c_nearest][:est_mean] for (_, r) in multi_dist]
-df_d.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in multi_dist]
-dropmissing!(df_d)
-filter!(x->isless(0, x.m), df_d)
 
 #% All interactions
 function all_interactions(df)
