@@ -5,6 +5,7 @@ using JLD2
 using Clustering
 using PyCall
 using StatsBase
+using MultivariateStats
 using Plots
 
 include(srcdir("spline", "spline-plots.jl"))

@@ -29,7 +29,7 @@ function likelihood_analysis(p)
 		tic = Dates.format(now(), "HH:MM")
 		@info "Computing cell(s): $idx\nTime: $tic"; flush(io)
 		try
-			push!(df, halffit(x, multi=false))
+			push!(df, halffit(x, reference=:lift))
 		catch e
 			@warn "Exception occurred:\n$e"
 		end

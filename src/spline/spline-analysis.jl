@@ -6,11 +6,11 @@ using Random
 
 include(srcdir("spline", "spline-pipeline.jl"))
 
-function fitcell(cell::DataFrameRow; multi)
-	timevar = multi ? "timetoevt" : "time"
+function fitcell(cell::DataFrameRow; reference)
+	timevar = reference == :multi ? "timetoevt" : "time"
 	d = Dict()
 
-	df = mkdf(cell, multi=multi)
+	df = mkdf(cell, reference=reference)
 	df_u = R"uniformizedf($df, c('timeSinceLastSpike', 'previousIsi'))"
 
 	formula = "event ~ r.timeSinceLastSpike + $timevar"
@@ -20,11 +20,11 @@ function fitcell(cell::DataFrameRow; multi)
 	d
 end
 
-function fitcell(cellpair::DataFrame; multi)
-	timevar = multi ? "timetoevt" : "time"
+function fitcell(cellpair::DataFrame; reference)
+	timevar = reference == :multi ? "timetoevt" : "time"
 	d = Dict()
 
-	df = mkdf(cellpair, multi=multi)
+	df = mkdf(cellpair, reference=reference)
 	df_u = R"uniformizedf($df, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
 
 	formula = "event ~ r.timeSinceLastSpike + $timevar + r.nearest"
@@ -36,8 +36,8 @@ function fitcell(cellpair::DataFrame; multi)
 end
 
 
-function halffit(cellpair; multi)
-	df = mkdf(cellpair, multi=multi)
+function halffit(cellpair; reference)
+	df = mkdf(cellpair, reference=reference)
 
 	idx = df.trial |> unique |> shuffle
 	half = maximum(idx) ÷ 2

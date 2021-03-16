@@ -29,5 +29,4 @@ xaxis!("Landmarks")
 yaxis!("Neuron #")
 vline!([l÷2-num_bins, l÷2, l÷2+num_bins], line = (0.2, :dash, 0.6, :white), legend=false)
 
-
 # savefig(plotsdir("psth", "multi-psth-agg"), "scripts/psth/multi-psth.jl")
