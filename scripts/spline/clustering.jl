@@ -1,10 +1,12 @@
 using DrWatson
 @quickactivate :ens
 
+using DataFrames
 using JLD2 
 using Clustering
 using PyCall
 using StatsBase
+using Spikes
 using MultivariateStats
 using Plots
 
@@ -15,6 +17,7 @@ pymetrics = pyimport("tslearn.metrics")
 
 multi_all = load(datadir("spline", "multi-all.jld2"));
 lift_all = load(datadir("spline", "lift-all.jld2"));
+
 #%
 function plot_kmeans(data::Matrix, n::Int, center::Bool)
 	a = kmeans_assignments(data, n)
@@ -100,23 +103,26 @@ function hclust_assignements(D, n)
 	cutree(H, k=n)
 end
 #%
+
 data = load_data("data-v6.arrow");
 data = data[in.(data.index, Ref(parse.(Int, df.idx))), :];
-pad = 150
+pad = 600
 num_bins = 12
-b1 = 5
-σ = 5.
-xn, _ = section_trial(data, pad, num_bins, b1);
+b1 = 30
+xn, _ = multi_psth(data, pad, num_bins, b1);
+baseline = getindex.(xn, Ref(1:ceil(Int, length(xn[1])÷3)))
+n = normalize(xn, baseline, :mad)
 
-Xm = hcat(Spikes.convolve([mean(i) for i in xn], σ)...)
+
+Xm = hcat(n...)
 todrop = drop(Xm, index=true)
+Xm = Xm[:, .!todrop]
 
 #%
 df = combine_simple_analysis(multi_all)
-dfm = Spikes.convolve([mean(i) for i in xn][.!todrop], σ) 
+dfm = [mean(i) for i in xn][.!todrop]
 
 X = hcat(zscore.(getindex.(df.mean, Ref(timerange)))...)
-Xm = Xm[:, .!todrop]
 
 D = pymetrics.cdist_dtw(X')
 Dm = pymetrics.cdist_dtw(Xm')
