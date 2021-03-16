@@ -71,17 +71,24 @@ end
 
 
 #% Figure 5A
-df = load(datadir("spline", "likelihood.csv")) |> DataFrame
-
-transform!(df, [:simple1, :simple2, :complex1, :complex2] => 
+ll_n = load(datadir("spline", "neigh-likelihood.csv")) |> DataFrame
+transform!(ll_n, [:simple1, :simple2, :complex1, :complex2] => 
 		   ((s1, s2, c1, c2) -> (s1 .+ s2) .< (c1 .+ c2)) => :c_better)
 
-A = bar([sum(df.c_better), sum(.!df.c_better)], lab="")
+
+A = bar([sum(ll_n.c_better), sum(.!ll_n.c_better)], lab="")
 ylabel!("Counts")
 xticks!([1, 2], ["Complex", "Simple"])
 title!("Pairs of neighboring cells\n\nBest model")
 
-D = plot(framestyle=:none)
+#% Figure 5A
+ll_d = load(datadir("spline", "dist-likelihood.csv")) |> DataFrame
+transform!(ll_d, [:simple1, :simple2, :complex1, :complex2] => 
+		   ((s1, s2, c1, c2) -> (s1 .+ s2) .< (c1 .+ c2)) => :c_better)
+
+D = bar([sum(ll_d.c_better), sum(.!ll_d.c_better)], lab="")
+ylabel!("Counts")
+xticks!([1, 2], ["Complex", "Simple"])
 title!("Pairs of distant cells\n\nBest model")
 
 B = figure_5B(df_n)
@@ -90,4 +97,4 @@ C = figure_5C(df_n)
 F = figure_5C(df_d)
 F5 = plot(A, D, B, E, C, F, size=(1200, 1600), layout=(3, 2), margin=7mm)
 
-savefig(plotsdir("logbook", "15-03", "figure-5-cleandf"), "scripts/spline/figure-5.jl")
+savefig(plotsdir("logbook", "16-03", "figure-5-complete"), "scripts/spline/figure-5.jl")

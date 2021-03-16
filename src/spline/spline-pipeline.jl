@@ -14,7 +14,6 @@ function mkdf(cellpair::DataFrame; tmax = [-600., 600.], multi)
 	len = floor(Int, diff(tmax)[1])
 	st = cut(cellpair[1, :].t, cellpair[1, :].lift, tmax)
 	ext = ceil.(Int, extrema.(st))
-	@assert all([e[1] > 1 for e in ext]) # TODO remove
 	ntrials = length(st)
 
 	st = norm_len.(st, 0, len) 
@@ -41,7 +40,7 @@ function mkdf(cellpair::DataFrame; tmax = [-600., 600.], multi)
 	X.event              = vcat(bins...)
 	X.time               = fixed_times
 	X.neuron             = repeat(neuron, ntrials)
-	X.trial              = X.ntrial   = [i for i=1:ntrials for l=1:len]
+	X.trial              = X.ntrial = [i for i=1:ntrials for l=1:len]
 	X.timeSinceLastSpike = vcat(isi...)
 	X.previousIsi        = vcat([previousisi(isi[i]) for i in 1:ntrials]...)
 	X.tback              = tback
