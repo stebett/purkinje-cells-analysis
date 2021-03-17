@@ -11,7 +11,7 @@ end
 
 function combine_simple_analysis(data)
 	df = DataFrame()
-	df.idx = [k for (k, _) in data]
+	df.idx = [parse(Int, k) for (k, _) in data]
 	df.x = [r[:s_time][:new_x] for (_, r) in data]
 	df.mean = [r[:s_time][:est_mean] for (_, r) in data]
 	df
@@ -58,5 +58,10 @@ function rangeT(y::BitArray{1})
 		end
 	end
 	ranges
+end
+
+function minmax_scale(x::Vector)
+	min, max = extrema(x)
+	@. (x - min) / (max-min)
 end
 
