@@ -1,3 +1,5 @@
+using DataFrames
+
 function combine_analysis(data)
 	df = [above(r[:c_nearest]) for (_, r) in data] |> DataFrame 
 	df.idx = [k for (k, _) in data]
