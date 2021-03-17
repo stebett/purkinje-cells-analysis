@@ -33,6 +33,7 @@ xm = normalize(xm, baseline, :mad)
 todrop = drop(xm, index=true)
 
 xm = xm[.!todrop]
+Xm = hcat(xm...)
 Xm = hcat(minmax_scale.(xm)...)
 
 df_spline = df_spline[.!todrop, :]
@@ -40,9 +41,13 @@ Xs = getindex.(df_spline.mean, Ref(60:length(df_spline.mean[1])-60))
 Xs = minmax_scale.(Xs)
 Xs = hcat(Xs...)
 
+D = pymetrics.cdist_dtw(Xs', global_constraint="itakura", itakura_max_slope=2.)
+R = hclust(D)
+heatmap(Xs[:, R.order[34:42]]')
+Dm = pymetrics.cdist_dtw(Xm')
 
-M = fit(PCA, Xm, maxoutdim=20)
-P = MultivariateStats.transform(M, Xm)
+M = fit(PCA, Xm′, maxoutdim=20)
+P = MultivariateStats.transform(M, Xm′)
 
 
 function minmax_scale(x::Vector)
@@ -58,7 +63,7 @@ for n in 2:10
 	print("mean for $n clusters: $ms\n")
 end
 
-n = 5
+n = 6
 R = kmeans(P, n, maxiter=200, display=:none)
 a = assignments(R)
 scatter(P[1, :], P[2, :], zcolor=a)
@@ -79,14 +84,29 @@ end
 p3 = plot(p..., size=(700, 700))
 
 p = map(1:n) do i
-	heatmap(sort_active(Xs[:, a .== i], 60)', lab="")
+	heatmap(sort_peaks(Xs[:, a .== i])', lab="")
 	title!("Cluster $i")
 end
 p4 = plot(p..., size=(1200, 700))
 xlabel!("Timestep")
 ylabel!("Neuron")
 
+p = map(1:n) do i
+	heatmap(sort_active(Xm′[:, a .== i], 10)', lab="")
+	title!("Cluster $i")
+end
+p4 = plot(p..., size=(1200, 700))
+xlabel!("Timestep")
+ylabel!("Neuron")
 
 plot(p1, p2, p3, p4, size=(1920, 1280))
 
 savefig(plotsdir("logbook", "4clusters_heatmaps_mpsth"))
+
+p=[]
+for (i, j) in combinations([1:4;], 2)
+	push!(p, scatter(P[i, :], P[j, :], zcolor=a, colorbar=false, ms=6, bcolor=a))
+	@show i, j
+end
+plot(p..., size=(1400, 1400))
+
