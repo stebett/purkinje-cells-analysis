@@ -3,10 +3,6 @@ using DrWatson
 
 using JLD2 
 
-function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Array{Int, 1}
-	c[2:end-1] |> x->split(x, ", ") |> x->convert.(String, x) |> x->parse.(Int, x)
-end
-
 include(srcdir("spline", "spline-plots.jl"))
 include(srcdir("spline", "spline-analysis.jl"))
 include(srcdir("spline", "spline-utils.jl"))

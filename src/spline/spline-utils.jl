@@ -67,3 +67,7 @@ function minmax_scale(x::Vector)
 	@. (x - min) / (max-min)
 end
 
+function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Array{Int, 1}
+	c[2:end-1] |> x->split(x, ", ") |> x->convert.(String, x) |> x->parse.(Int, x)
+end
+

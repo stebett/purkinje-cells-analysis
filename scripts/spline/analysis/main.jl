@@ -4,7 +4,6 @@ using DrWatson
 using JLD2 
 using Logging
 using Dates
-using Spikes
 
 include(srcdir("spline", "spline-analysis.jl"))
 
@@ -21,7 +20,6 @@ function main(p)
 	@info "Loading dataset from $splinedatadir), $(p[:cells]) cells"
 	data = load(splinedatadir, p[:cells]);
 	data = all(isa.(data, DataFrame)) ? [sort.(data); sort.(data, rev=true)] : data;
-	refevt = get_active_events(vcat(data...))
 
 	@info "Starting simulation"; flush(io)
 	fitcell_log_save.(data, filename, p[:reference])
