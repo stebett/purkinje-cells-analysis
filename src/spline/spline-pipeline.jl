@@ -8,16 +8,16 @@ using RCall
 import Base.ceil
 
 function mkdf(cellpair::DataFrame; tmax = [-600., 600.], reference=:lift)
+	landmark = :lift
 	if reference == :multi
 		tmax[2] += maximum(cellpair[1, :grasp] .- cellpair[1, :lift])
-		reference = :lift
 	elseif reference == :best
 		idx = get_active_events(cellpair)
-		reference = [:lift, :cover, :grasp][idx[1]]
+		landmark = [:lift, :cover, :grasp][idx[1]]
 	end
 
 	len = floor(Int, diff(tmax)[1])
-	st = cut(cellpair[1, :t], cellpair[1, reference], tmax)
+	st = cut(cellpair[1, :t], cellpair[1, landmark], tmax)
 	ext = ceil.(Int, extrema.(st))
 	ntrials = length(st)
 
@@ -28,7 +28,7 @@ function mkdf(cellpair::DataFrame; tmax = [-600., 600.], reference=:lift)
 	time = [tmax[1]+1:tmax[2];]
 	fixed_times = fixtimes(time, len, ntrials, ext)
 
-	st2 = cut(cellpair[2, :].t, cellpair[2, reference], tmax)
+	st2 = cut(cellpair[2, :].t, cellpair[2, landmark], tmax)
 	st2 = norm_len.(st2, 0, len)
 	tforw = binisi_inv.(st2) |> x->vcat(x...)
 	tback = corrected_tback(st2)
@@ -55,16 +55,16 @@ function mkdf(cellpair::DataFrame; tmax = [-600., 600.], reference=:lift)
 end
 
 function mkdf(cell::DataFrameRow; tmax = [-600., 600.], reference=:lift)
+	landmark = :lift
 	if reference == :multi
 		tmax[2] += maximum(cell[:grasp] .- cell[:lift])
-		reference = :lift
 	elseif reference == :best
 		idx = get_active_events(cellpair)
-		reference = [:lift, :cover, :grasp][idx[1]]
+		landmark = [:lift, :cover, :grasp][idx[1]]
 	end
 
 	len = floor(Int, diff(tmax)[1])
-	st = cut(cell[:t], cell[reference], tmax)
+	st = cut(cell[:t], cell[landmark], tmax)
 	ext = ceil.(Int, extrema.(st))
 	ntrials = length(st)
 

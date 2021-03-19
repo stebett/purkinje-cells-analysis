@@ -4,7 +4,9 @@ args <- commandArgs(trailingOnly = TRUE)
 
 load(args[1])
 
-gsaS = gssanova(event ~ r.timeSinceLastSpike + time, data=df_neigh[[1]]$data,family='binomial')
-# gsaC = gssanova(event ~ r.timeSinceLastSpike + timetoevt + r.nearest, data=df$data,family='binomial')
+result_multi_neigh = sapply(multi_dist[[1:3]], function(x)
+  c(S = gssanova(event ~ r.timeSinceLastSpike + time, data=x$data,family='binomial'),
+    C = gssanova(event ~ r.timeSinceLastSpike + timetoevt + r.nearest, data=x$data,family='binomial'))
+)
 
-save(c(S=gsaS, C=gsaC), file=args[2])
+save(result_multi_neigh, file=args[2])
