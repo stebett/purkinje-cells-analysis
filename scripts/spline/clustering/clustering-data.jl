@@ -19,12 +19,18 @@ sort!(dfₘ, :index);
 @assert dfₛ.idx == dfₘ.index
 
 xₘ = multi_psth(dfₘ, 600, 12, 30, true);
-xₛ = map(row->row.mean[1. .< row.x .< 6.], eachrow(dfₛ));
+xₛ = map(row->row.mean[1. .< row.x .< 5.], eachrow(dfₛ));
 xₛ = map(row->row[1:minimum(length.(xₛ))], xₛ);
 
 todrop = drop(xₘ, index=true);
 xₘ = xₘ[.!todrop];
 xₛ = xₛ[.!todrop];
+
+new_idx = sum(abs.(Xm) .> 3, dims=1)[:] .> 0
+
+xₘ = xₘ[new_idx];
+xₛ = xₛ[new_idx];
+
 
 Xₘ = hcat(minmax_scale.(xₘ)...) |> transpose
 Xₛ = hcat(minmax_scale.(xₛ)...) |> transpose
