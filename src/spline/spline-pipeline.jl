@@ -95,7 +95,11 @@ end
 
 
 function quickPredict(uniformdf, gssResult, variable)
-	x = convert(Dict{Symbol, Any}, R"quickPredict($gssResult, $variable)")
+	R"""
+	obj = $gssResult
+	class(obj)  <- 'ssanova'
+	"""
+	x = convert(Dict{Symbol, Any}, R"quickPredict(obj, $variable)")
 	if isnothing(rcopy(R"$uniformdf$inv.rnfun[[$variable]]"))
 		x[:new_x] = x[:xx]
 	else
