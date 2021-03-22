@@ -8,56 +8,35 @@ using Plots
 data = load_data("data-v6.arrow");
 
 
+around = [-200., 200.]
+binsize = 5.
 # Responses given stimuli
-r_s1 = cut(data.t, data.lift, [-30., 30.]) |> x->bin(x, 60, 1., binary=true)  |> x->BitArray.(x) 
-r_s2 = cut(data.t, data.cover, [-30., 30.]) |> x->bin(x, 60, 1., binary=true) |> x->BitArray.(x) 
-r_s3 = cut(data.t, data.grasp, [-30., 30.]) |> x->bin(x, 60, 1., binary=true) |> x->BitArray.(x) 
 
+r₁ = cut(data.t, data.lift, around) |> x->bin(x, Int(diff(around)[1]), binsize, binary=true)  |> x->BitArray.(x) 
+m = length(r₁)
+p₁ = mean.(r₁)
+ind_p₁ = [pₖ^sum(rₖ) * (1-pₖ)^sum(.!rₖ) for (rₖ, pₖ) in zip(r₁, p₁)] |> x->log.(x) |> sum
+dep_p₁ = [count(x->x==r₁[i], r₁) / m for i in 1:m] |> x->log.(x) |> sum
 
-# Distribution of spikes
-d1 = sum(r_s1) / length(r_s1)
-d2 = sum(r_s2) / length(r_s2)
-d3 = sum(r_s3) / length(r_s3)
+r₂ = cut(data.t, data.cover, around) |> x->bin(x, Int(diff(around)[1]), binsize, binary=true)  |> x->BitArray.(x) 
+p₂ = mean.(r₂)
+ind_p₂ = [pₖ^sum(rₖ) * (1-pₖ)^sum(.!rₖ) for (rₖ, pₖ) in zip(r₂, p₂)] |> x->log.(x) |> sum
+dep_p₂ = [count(x->x==r₂[i], r₂) / m for i in 1:m] |> x->log.(x) |> sum
 
-# P of individual spikes
-pr_s1 = map(r_s1) do rᵢ
-	p1 = prod(d1[rᵢ])
-	p1 = p1 == 1. ? 0. : p1
-	p0 = prod((1 .- d1)[.!rᵢ])
-	p1 + p0
-end
+r₃ = cut(data.t, data.grasp, around) |> x->bin(x, Int(diff(around)[1]), binsize, binary=true)  |> x->BitArray.(x) 
+p₃ = mean.(r₃)
+ind_p₃ = [pₖ^sum(rₖ) * (1-pₖ)^sum(.!rₖ) for (rₖ, pₖ) in zip(r₃, p₃)] |> x->log.(x) |> sum
+dep_p₃ = [count(x->x==r₃[i], r₃) / m for i in 1:m] |> x->log.(x) |> sum
 
-pr_s2 = map(r_s2) do rᵢ
-	p1 = prod(d2[rᵢ])
-	p1 = p1 == 1. ? 0. : p1
-	p0 = prod((1 .- d2)[.!rᵢ])
-	p1 + p0
-end
+b₁ = @. dep_p₁ / (dep_p₁ +  dep_p₂ +  dep_p₃) 
+b₂ = @. dep_p₂ / (dep_p₁ +  dep_p₂ +  dep_p₃) 
+b₃ = @. dep_p₃ / (dep_p₁ +  dep_p₂ +  dep_p₃) 
 
-pr_s3 = map(r_s3) do rᵢ
-	p1 = prod(d3[rᵢ])
-	p1 = p1 == 1. ? 0. : p1
-	p0 = prod((1 .- d3)[.!rᵢ])
-	p1 + p0
-end
+b_ind₁ = @. ind_p₁ / (ind_p₁ +  ind_p₂ +  ind_p₃) 
+b_ind₂ = @. ind_p₂ / (ind_p₁ +  ind_p₂ +  ind_p₃) 
+b_ind₃ = @. ind_p₃ / (ind_p₁ +  ind_p₂ +  ind_p₃) 
 
+r = [r₁; r₂; r₃]
+joint = [sum(i in rᵢ for i in r)/length(r) for rᵢ in [r₁, r₂, r₃]]
 
-
-b_ind1 = d1 ./ (d1 + d2 + d3)
-b_ind2 = d2 ./ (d1 + d2 + d3)
-b_ind3 = d3 ./ (d1 + d2 + d3)
-
-groupedbar([b1 b2 b3],
-        bar_position = :stack,
-        label=["s1" "s2" "s3"],
-		size=(1400, 600))
-
-
-ind = h1 .* h2 .* h3 ./ sum(h1 .* h2 .* h3)
-
-j = sum([(x1 .& x2).*(x2 .& x3).*h3 for (x1, x2, x3) in zip(r1, r2, r3)])
-j = j / sum(j)
-
-bar(ind)
-bar(j)
-
+sum(joint .* log2.([b₁, b₂, b₃] ./ [b_ind₁, b_ind₂, b_ind₃]))
