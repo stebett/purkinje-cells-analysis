@@ -33,11 +33,11 @@ end
 
 multi_dist = produce_data("dist");
 @rput multi_dist;
-R"save(multi_dist, file='scripts/spline/bioclust/data/multi-dist.RData')"
+R"save(multi_dist, file='data/spline/cluster-input/multi-dist.RData')"
 
 multi_neigh = produce_data("neigh");
 @rput multi_neigh;
-R"save(multi_neigh, file='scripts/spline/bioclust/data/multi-neigh.RData')"
+R"save(multi_neigh, file='data/spline/cluster-input/multi-neigh.RData')"
 
 #% Half neigh
 neigh = load(datadir("spline-data.jld2"), "neigh");
@@ -64,4 +64,31 @@ foreach(good_idx) do i
 	end
 end;
 @rput df_half;
-R"save(df_half, file='scripts/spline/bioclust/data/multi-half.RData')"
+R"save(df_half, file='data/spline/cluster-input/multi-half-neigh.RData')"
+
+#% Half dist
+dist = load(datadir("spline-data.jld2"), "dist");
+dist_all = [sort.(dist); sort.(dist, rev=true)];
+dist_idx = [d.index for d in dist_all]
+
+multi_dist = load(datadir("spline",  "multi-dist.jld2"));
+good_idx = parse.(Array{Int, 1}, keys(multi_dist))
+
+df_half_dist = Dict()
+foreach(good_idx) do i
+	try
+		target = dist_all[[d == i for d in dist_idx]][1];
+		df = mkdf(target, reference=:multi)
+		idx = df.trial |> unique |> shuffle
+		half = maximum(idx) ÷ 2
+		df1 = df[in.(df.ntrial, Ref(idx[1:half+1])), :]
+		df2 = df[in.(df.ntrial, Ref(idx[half+2:end])), :]
+		m1 = R"uniformizedf($df1, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
+		m2 = R"uniformizedf($df2, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))"
+		df_half_dist[i] = Dict("m1"=>m1, "m2"=>m2)
+	catch e
+		@show e
+	end
+end;
+@rput df_half_dist;
+R"save(df_half_dist, file='data/spline/cluster-input/multi-half-dist.RData')"
