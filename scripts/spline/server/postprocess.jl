@@ -2,14 +2,16 @@ using DrWatson
 @quickactivate :ens
 
 using JLD2 
+using CSV
+using Arrow
 
 include(srcdir("spline", "spline-plots.jl"))
 include(srcdir("spline", "spline-analysis.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
 R"""
-load('data/spline/cluster-results/neigh/out/multi-neigh-res.RData')
-load('data/spline/cluster-results/neigh/in/multi-neigh.RData')
+load('data/analyses/spline/batch-4-cluster/neigh/out/multi-neigh-res.RData')
+load('data/analyses/spline/batch-4-cluster/neigh/in/multi-neigh.RData')
 res = result_multi_neigh
 res_clean=apply(res,2,function(x) {S=x[1:27];C=x[28:54];names(S)=sub('S\\.','',names(S));names(C)=sub('C\\.','',names(C));list(C=C,S=S)})
 """;
@@ -19,27 +21,23 @@ d = Dict()
 for i in col_names
 	d[i] = Dict("C" => R"res_clean[[$i]][['C']]", "S" => R"res_clean[[$i]][['S']]")
 end;
-
 r_neigh = Dict()
 for i in col_names
 	r_neigh[i] = Dict(
-	:s_isi => quickPredict(R"multi_neigh[$i]", d[i]["S"], "r.timeSinceLastSpike"),
-	:s_time => quickPredict(R"multi_neigh[$i]", d[i]["S"], "timetoevt"),
-	:c_isi => quickPredict(R"multi_neigh[$i]", d[i]["C"], "r.timeSinceLastSpike"),
-	:c_time => quickPredict(R"multi_neigh[$i]", d[i]["C"], "timetoevt"),
-	:c_nearest => quickPredict(R"multi_neigh[$i]", d[i]["C"], "r.nearest"))
+					  :s_isi     => quickPredict(R"multi_neigh[[$i]]", d[i]["S"], "r.timeSinceLastSpike"),
+					  :s_time    => quickPredict(R"multi_neigh[[$i]]", d[i]["S"], "timetoevt"),
+					  :c_isi     => quickPredict(R"multi_neigh[[$i]]", d[i]["C"], "r.timeSinceLastSpike"),
+					  :c_time    => quickPredict(R"multi_neigh[[$i]]", d[i]["C"], "timetoevt"),
+					  :c_nearest => quickPredict(R"multi_neigh[[$i]]", d[i]["C"], "r.nearest"))
 end
-
-neigh_combined = combine_analysis(r_neigh)
 
 #%
 R"""
-load('data/spline/cluster-results/dist/out/multi-dist-res.RData')
-load('data/spline/cluster-results/dist/in/multi-dist.RData')
+load('data/analyses/spline/batch-4-cluster/dist/out/multi-dist-res.RData')
+load('data/analyses/spline/batch-4-cluster/dist/in/multi-dist.RData')
 res = result_multi_dist
 res_clean=apply(res,2,function(x) {S=x[1:27];C=x[28:54];names(S)=sub('S\\.','',names(S));names(C)=sub('C\\.','',names(C));list(C=C,S=S)})
 """;
-
 col_names = rcopy(R"colnames(result_multi_dist)")
 d = Dict()
 for i in col_names
@@ -49,19 +47,17 @@ end;
 r_dist = Dict()
 for i in col_names
 	r_dist[i] = Dict(
-	:s_isi     => quickPredict(R"multi_dist[$i]", d[i]["S"], "r.timeSinceLastSpike"),
-	:s_time    => quickPredict(R"multi_dist[$i]", d[i]["S"], "timetoevt"),
-	:c_isi     => quickPredict(R"multi_dist[$i]", d[i]["C"], "r.timeSinceLastSpike"),
-	:c_time    => quickPredict(R"multi_dist[$i]", d[i]["C"], "timetoevt"),
-	:c_nearest => quickPredict(R"multi_dist[$i]", d[i]["C"], "r.nearest"))
+					  :s_isi     => quickPredict(R"multi_dist[[$i]]", d[i]["S"], "r.timeSinceLastSpike"),
+					  :s_time    => quickPredict(R"multi_dist[[$i]]", d[i]["S"], "timetoevt"),
+					  :c_isi     => quickPredict(R"multi_dist[[$i]]", d[i]["C"], "r.timeSinceLastSpike"),
+					  :c_time    => quickPredict(R"multi_dist[[$i]]", d[i]["C"], "timetoevt"),
+					  :c_nearest => quickPredict(R"multi_dist[[$i]]", d[i]["C"], "r.nearest"))
 end
-
-dist_combined = combine_analysis(r_dist)
 
 #%
 R"""
-load('data/spline/cluster-results/half-neigh/out/multi-half-neigh-res.RData')
-load('data/spline/cluster-results/half-neigh/in/multi-half-neigh.RData')
+load('data/analyses/spline/batch-4-cluster/half-neigh/out/multi-half-neigh-res.RData')
+load('data/analyses/spline/batch-4-cluster/half-neigh/in/multi-half-neigh.RData')
 res = result_multi_half_neigh
 res_clean=apply(res,2,function(x) {gsa1S=x[1:27];gsa2S=x[28:54];gsa1C=x[55:81];gsa2C=x[82:108];names(gsa1S)=sub('gsa1S\\.','',names(gsa1S));names(gsa2S)=sub('gsa2S\\.','',names(gsa2S));;names(gsa1C)=sub('gsa1C\\.','',names(gsa1C));names(gsa2C)=sub('gsa2C\\.','',names(gsa2C));list(gsa1S=gsa1S,gsa2S=gsa2S,gsa1C=gsa1C,gsa2C=gsa2C)})
 """;
@@ -89,9 +85,10 @@ for (k, v) in r_half
 end
 
 #%
-save(datadir("analyses", "spline", "batch-4-cluster", "multi-neigh.jld2"), r_neigh)
-save(datadir("analyses", "spline", "batch-4-cluster", "multi-neigh-combined.csv"), neigh_combined)
-save(datadir("analyses", "spline", "batch-4-cluster", "multi-dist.jld2"), r_dist)
-save(datadir("analyses", "spline", "batch-4-cluster", "multi-dist-combined.csv"), dist_combined)
-save(datadir("analyses", "spline", "batch-4-cluster", "likelihood-neigh.csv"), ll_n)
+save(datadir("analyses/spline/batch-4-cluster/postprocessed",
+			 "multi-neigh.jld2"), r_neigh)
+save(datadir("analyses/spline/batch-4-cluster/postprocessed",
+			 "multi-dist.jld2"), r_dist)
+save(datadir("analyses/spline/batch-4-cluster/postprocessed",
+			 "likelihood-neigh.csv"), ll_n)
 
