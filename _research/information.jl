@@ -1,23 +1,14 @@
 using DrWatson
 @quickactivate :ens
 
+using DataFrames
 using Statistics
 using StatsPlots
 using Spikes
 using Plots
-data = load_data("data-v6.arrow");
-
-around = [-50., 50.]
-binsize = 1.
 
 
-idxs = [g.index for g in groupby(data, [:rat, :site, :tetrode])]
-neigh = data[in.(data.index, Ref(idxs[argmax(length.(idxs))])), :];
-
-dist = data[in.(data.index, Ref(rand(1:size(data, 1), 4))), :];
-
-
-
+#%
 function get_p(df, landmark, around, binsize)
 	r = cut(df[:, :t], df[:, landmark], around) |> x->bin(x, Int(diff(around)[1]), binsize, binary=true)  |> x->BitArray.(x) 
 	m = length(r)
@@ -46,4 +37,21 @@ function cost(df, around, binsize)
 	sum(joint .* log2.([b₁, b₂, b₃] ./ [b_ind₁, b_ind₂, b_ind₃]))
 end
 
+#%
+data = load_data("data-v6.arrow");
 
+
+neighs = couple(data, :n)
+dist = couple(data, :d)
+
+around = [-50., 50.]
+binsize = 1.
+
+
+n_cost = map(neighs) do n
+	cost(data[in.(data.index, Ref(n)), :], around, binsize)
+end
+
+d_cost = map(dist) do d
+	cost(data[in.(data.index, Ref(d)), :], around, binsize)
+end
