@@ -33,11 +33,11 @@ end
 
 multi_dist = produce_data("dist");
 @rput multi_dist;
-R"save(multi_dist, file='data/spline/cluster-input/multi-dist.RData')"
+R"save(multi_dist, file='data/analyses/spline/cluster-input/multi-dist.RData')"
 
 multi_neigh = produce_data("neigh");
 @rput multi_neigh;
-R"save(multi_neigh, file='data/spline/cluster-input/multi-neigh.RData')"
+R"save(multi_neigh, file='data/analyses/spline/cluster-input/multi-neigh.RData')"
 
 #% Half neigh
 neigh = load(datadir("spline-data.jld2"), "neigh");
@@ -64,7 +64,7 @@ foreach(good_idx) do i
 	end
 end;
 @rput df_half;
-R"save(df_half, file='data/spline/cluster-input/multi-half-neigh.RData')"
+R"save(df_half, file='data/analyses/spline/cluster-input/multi-half-neigh.RData')"
 
 #% Half dist
 dist = load(datadir("spline-data.jld2"), "dist");
@@ -91,4 +91,4 @@ foreach(good_idx) do i
 	end
 end;
 @rput df_half_dist;
-R"save(df_half_dist, file='data/spline/cluster-input/multi-half-dist.RData')"
+R"save(df_half_dist, file='data/analyses/spline/cluster-input/multi-half-dist.RData')"

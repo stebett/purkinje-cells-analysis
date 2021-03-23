@@ -89,9 +89,9 @@ for (k, v) in r_half
 end
 
 #%
-save(datadir("spline", "batch-4-cluster", "multi-neigh.jld2"), r_neigh)
-save(datadir("spline", "batch-4-cluster", "multi-neigh-combined.csv"), neigh_combined)
-save(datadir("spline", "batch-4-cluster", "multi-dist.jld2"), r_dist)
-save(datadir("spline", "batch-4-cluster", "multi-dist-combined.csv"), dist_combined)
-save(datadir("spline", "batch-4-cluster", "likelihood-neigh.csv"), ll_n)
+save(datadir("analyses", "spline", "batch-4-cluster", "multi-neigh.jld2"), r_neigh)
+save(datadir("analyses", "spline", "batch-4-cluster", "multi-neigh-combined.csv"), neigh_combined)
+save(datadir("analyses", "spline", "batch-4-cluster", "multi-dist.jld2"), r_dist)
+save(datadir("analyses", "spline", "batch-4-cluster", "multi-dist-combined.csv"), dist_combined)
+save(datadir("analyses", "spline", "batch-4-cluster", "likelihood-neigh.csv"), ll_n)
 

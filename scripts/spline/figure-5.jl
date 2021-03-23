@@ -10,6 +10,10 @@ using StatsBase
 
 include(srcdir("spline", "spline-plots.jl"))
 
+df_n = load(datadir("spline", "batch-4-cluster", "multi-neigh-combined.csv"))
+df_d = load(datadir("spline", "batch-4-cluster", "multi-dist-combined.csv"))
+ll_n = load(datadir("spline", "batch-4-cluster", "likelihood-neigh.csv"))
+
 #% Figure 5A
 A = bar([sum(ll_n.c_better), sum(.!ll_n.c_better)], lab="")
 ylabel!("Counts")
