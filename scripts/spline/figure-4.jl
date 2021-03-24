@@ -3,7 +3,6 @@ using DrWatson
 
 using JLD2 
 using Spikes
-using KernelDensity
 using StatsBase
 using RCall
 
@@ -13,7 +12,7 @@ include(srcdir("spline", "spline-utils.jl"))
 data = load_data("data-v6.arrow");
 #%
 idx = 455
-spiketrain = cut(data[data.index .== idx, :t][1], data[data.index .== idx, :lift][1][2], [-300., 300.]) |> x->binary_bin(x, 600, 1.)
+spiketrain = cut(find(data, idx, :t)[1], find(data, idx, :lift)[1][2], [-300., 300.]) |> x->binary_bin(x, 600, 1.)
 
 R"""
 library(STAR)
@@ -27,18 +26,29 @@ function (m2uSelf)
 }
 
 load('data/analyses/spline/batch-4-cluster/neigh/in/multi-neigh.RData')
-load('data/analyses/spline/batch-4-cluster/neigh/out/multi-neigh-res.RData')"
+load('data/analyses/spline/batch-4-cluster/neigh/out/multi-neigh-res.RData')
 res = result_multi_neigh
 res_clean=apply(res,2,function(x) {S=x[1:27];C=x[28:54];names(S)=sub('S\\.','',names(S));names(C)=sub('C\\.','',names(C));list(C=C,S=S)})
 
 Id=function(x,...) return(x)
-
 
 m1 = multi_neigh[[2]]
 gsa = res_clean[[2]][["C"]]
 class(gsa) <- "ssanova"
 mf=list(r.timeSinceLastSpike=m1$rnfun$r.timeSinceLastSpike,time=Id)
 simf=mkSimFct(gsa,mf,m1$data,with(m1$data,time[event==1]))
+
+tmax=600
+wtmax=150
+shuffle=FALSE
+alpha=1
+Id=function(x,...) return(x)
+
+tmax1=data.frame(start=-tmax,end=tmax)
+
+ simf=thinProcess(gsa,mf,
+   trueData=subset(m1$data,time>tmax1$start&time<tmax1$end),
+   formerSpikes=with(m1$data,time[event==1]))
 
 lfun=lapply(m1$rnfun[['r.timeSinceLastSpike']], mkSelf)
 thinProcess(c1, lfun, $spiketrain, -300)
