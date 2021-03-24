@@ -82,9 +82,6 @@ for (k, v) in r_half
 	push!(ll_n, (k, (v["s1"] + v["s2"]) < (v["c1"] + v["c2"])))
 end
 
-ll_n.index = parse.(Tuple{Int, Int}, ll_n.index)
-ll_n.c_better = BitArray(ll_n.c_better)
-
 #%
 R"""
 load('data/analyses/spline/batch-4-cluster/half-dist/out/multi-half-dist-res.RData')
@@ -116,8 +113,6 @@ ll_d = DataFrame((index=String[], c_better=Bool[]))
 for (k, v) in r_half_dist
 	push!(ll_d, (k, (v["s1"] + v["s2"]) < (v["c1"] + v["c2"])))
 end
-
-ll_d.index = parse.(Tuple{Int, Int}, ll_d.index)
 
 #%
 save(datadir("analyses/spline/batch-4-cluster/postprocessed",

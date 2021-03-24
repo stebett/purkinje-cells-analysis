@@ -11,36 +11,6 @@ using Statistics
 include(srcdir("spline", "spline-plots.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
-function extract(data)
-	df = DataFrame()
-	for (k, r) in data
-		R = r[:c_nearest]
-		x = R[:new_x]
-		sd = R[:est_sd]
-		mean = R[:est_mean]
-
-		act = (mean .+ sd) .> 0
-		indexes = rangeT(act)
-		if isempty(indexes)
-			break
-		end
-
-		act_times = map(indexes) do (i, j); x[i], x[j]; end
-		longest = diff.(act_times) |> argmax
-		longest_i = UnitRange(indexes[longest]...)
-		t = x[longest_i]
-		peak = t[argmax(mean[longest_i] .+ sd[longest_i])]
-
-		push!(df, (index=parse.(Array{Int, 1}, k), 
-				   peak=peak,
-				   x=x,
-				   mean=mean,
-				   sd=sd,
-				   ranges=all_ranges_above(R)))
-	end
-	df
-end
-
 r_neigh = load(datadir("analyses/spline/batch-4-cluster/postprocessed", "multi-neigh.jld2"))
 r_dist = load(datadir("analyses/spline/batch-4-cluster/postprocessed", "multi-dist.jld2"))
 
@@ -48,7 +18,6 @@ ll_n = CSV.read(datadir("analyses/spline/batch-4-cluster/postprocessed",
 						"likelihood-neigh.csv"), types=[Array{Int, 1}, Bool]) |> DataFrame
 ll_d = CSV.read(datadir("analyses/spline/batch-4-cluster/postprocessed",
 						"likelihood-dist.csv"), types=[Array{Int, 1}, Bool]) |> DataFrame
-
 
 df_n = extract(r_neigh)
 df_d = extract(r_dist)

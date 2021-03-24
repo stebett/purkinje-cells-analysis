@@ -1,13 +1,32 @@
 using DataFrames
 
-function combine_analysis(data)
-	df = [above(r[:c_nearest]) for (_, r) in data] |> DataFrame 
-	df.idx = [k for (k, _) in data]
-	df.x = [r[:c_nearest][:new_x] for (_, r) in data]
-	df.mean = [r[:c_nearest][:est_mean] for (_, r) in data]
-	df.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in data]
-	dropmissing!(df)
-	# filter!(x->isless(0, x.m), df)
+function extract(data)
+	df = DataFrame()
+	for (k, r) in data
+		R = r[:c_nearest]
+		x = R[:new_x]
+		sd = R[:est_sd]
+		mean = R[:est_mean]
+
+		act = (mean .+ sd) .> 0
+		indexes = rangeT(act)
+		if isempty(indexes)
+			break
+		end
+
+		act_times = map(indexes) do (i, j); x[i], x[j]; end
+		longest = diff.(act_times) |> argmax
+		longest_i = UnitRange(indexes[longest]...)
+		t = x[longest_i]
+		peak = t[argmax(mean[longest_i] .+ sd[longest_i])]
+
+		push!(df, (index=parse.(Array{Int, 1}, k), 
+				   peak=peak,
+				   x=x,
+				   mean=mean,
+				   sd=sd,
+				   ranges=all_ranges_above(R)))
+	end
 	df
 end
 
@@ -19,20 +38,6 @@ function combine_simple_analysis(data)
 	df
 end
 
-
-function above(x::Dict)
-	y = x[:est_mean] .- x[:est_sd] .> 0.
-	indexes = rangeT(y)
-	if length(indexes) < 1
-		return (t=missing, m=missing, sd=missing)
-	end
-	long_i = indexes[argmax(diff.(indexes))]
-	t = x[:new_x][long_i[1]:long_i[2]]
-	peak_m = t[argmax(x[:est_mean][long_i[1]:long_i[2]])]
-	peak_sd = argmax(x[:est_sd][long_i[1]:long_i[2]])
-	peak_t = extrema(t)
-	(t=peak_t, m=peak_m, sd=peak_sd)
-end
 
 function all_ranges_above(x::Dict)
 	y = x[:est_mean] .- x[:est_sd] .> 0
