@@ -42,22 +42,25 @@ function all_ranges_above(x::Dict)
 
 function rangeT(y::BitArray{1})
 	ranges = []
-	find_start = true
+	start_found = false
 	start = NaN
 	finish = NaN
 	for (i, v) in enumerate(y)
-		if find_start
+		if !start_found
 			if v 
 				start = i
-				find_start = false
+				start_found = true
 			end
 		else
 			if !v
 				finish = i-1
 				push!(ranges, (start, finish))
-				find_start = true
+				start_found = false
 			end
 		end
+	end
+	if start_found # In case last(y) == true
+		push!(ranges, (start, lastindex(y)))
 	end
 	ranges
 end
@@ -71,3 +74,6 @@ function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Array{Int, 1}
 	c[2:end-1] |> x->split(x, ", ") |> x->convert.(String, x) |> x->parse.(Int, x)
 end
 
+function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Tuple{Int, Int}
+	c[2:end-1] |> x->split(x, ", ") |> x->convert.(String, x) |> x->parse.(Int, x) |> Tuple	
+end

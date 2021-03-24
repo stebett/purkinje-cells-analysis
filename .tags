@@ -25,6 +25,7 @@ distant_correlation	scripts/correlations/old-crosscor.jl	/^function distant_corr
 ens	src/ens.jl	/^ module ens$/;"	n
 equalize_landmarks	scripts/io/v1-v6.jl	/^function equalize_landmarks(df, idx) #TODO don't think it works if lift is smaller$/;"	f
 extract	scripts/spline/figure-5.jl	/^function extract(data)$/;"	f
+extract	scripts/spline/inspect-dist.jl	/^function extract(data)$/;"	f
 extract_index	scripts/io/fix-full-data-index.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
 extract_index	scripts/io/load-full.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
 extract_trials	_research/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
@@ -42,6 +43,8 @@ figure_G	scripts/crosscorr/f-g.jl	/^function figure_G(folded_diff_mean, folded_d
 filterData	_research/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
 filterLandmarks	_research/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
 filter_by_length	scripts/crosscorr/c-d-clement.jl	/^function filter_by_length(x::Vector{<:Tuple}, minlen::Int)$/;"	f
+find	src/find.jl	/^function find(df::DataFrame, index::Int, column=Colon())$/;"	f
+find	src/find.jl	/^function find(df::DataFrame, index::Vector, column=Colon())$/;"	f
 find_broken_landmarks	scripts/io/fix-landmarks.jl	/^function find_broken_landmarks(data)$/;"	f
 find_broken_landmarks	scripts/io/v1-v6.jl	/^function find_broken_landmarks(data)$/;"	f
 fit_fourths	scripts/pca/speed.jl	/^function fit_fourths(st)$/;"	f

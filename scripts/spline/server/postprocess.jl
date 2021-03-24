@@ -56,11 +56,11 @@ end
 R"""
 load('data/analyses/spline/batch-4-cluster/half-neigh/out/multi-half-neigh-res.RData')
 load('data/analyses/spline/batch-4-cluster/half-neigh/in/multi-half-neigh.RData')
-res = result_multi_half_neigh
+res = result_multi_half
 res_clean=apply(res,2,function(x) {gsa1S=x[1:27];gsa2S=x[28:54];gsa1C=x[55:81];gsa2C=x[82:108];names(gsa1S)=sub('gsa1S\\.','',names(gsa1S));names(gsa2S)=sub('gsa2S\\.','',names(gsa2S));;names(gsa1C)=sub('gsa1C\\.','',names(gsa1C));names(gsa2C)=sub('gsa2C\\.','',names(gsa2C));list(gsa1S=gsa1S,gsa2S=gsa2S,gsa1C=gsa1C,gsa2C=gsa2C)})
 """;
 
-col_names = rcopy(R"colnames(result_multi_half_neigh)")
+col_names = rcopy(R"colnames(result_multi_half)")
 d = Dict()
 for i in col_names
 	d[i] = Dict(:gsa1C => R"res_clean[[$i]][['gsa1C']]",
@@ -77,10 +77,13 @@ for i in col_names
 					 "c2" => predictLogProb(d[i][:gsa2C], R"df_half[[$i]]$m1$data"))
 end
 
-ll_n = DataFrame((index=String[], c_better=Bool[])) #TODO index as array
+ll_n = DataFrame((index=String[], c_better=Bool[]))
 for (k, v) in r_half
 	push!(ll_n, (k, (v["s1"] + v["s2"]) < (v["c1"] + v["c2"])))
 end
+
+ll_n.index = parse.(Tuple{Int, Int}, ll_n.index)
+ll_n.c_better = BitArray(ll_n.c_better)
 
 #%
 R"""
@@ -109,10 +112,12 @@ for i in col_names
 end
 
 #%
-ll_d = DataFrame((index=String[], c_better=Bool[])) #TODO index as array
+ll_d = DataFrame((index=String[], c_better=Bool[]))
 for (k, v) in r_half_dist
 	push!(ll_d, (k, (v["s1"] + v["s2"]) < (v["c1"] + v["c2"])))
 end
+
+ll_d.index = parse.(Tuple{Int, Int}, ll_d.index)
 
 #%
 save(datadir("analyses/spline/batch-4-cluster/postprocessed",

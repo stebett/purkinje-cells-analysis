@@ -9,6 +9,8 @@ using DataFrames
 include(srcdir("spline", "spline-analysis.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
+# TODO take only 1 couple, add options to select before producing
+
 function produce_data(name::String, reference)
 	data = load(datadir("processed", "spline-data.jld2"), name);
 	data = [sort.(data); sort.(data, rev=true)];
