@@ -7,7 +7,7 @@ function combine_analysis(data)
 	df.mean = [r[:c_nearest][:est_mean] for (_, r) in data]
 	df.ranges = [all_ranges_above(r[:c_nearest]) for (_, r) in data]
 	dropmissing!(df)
-	filter!(x->isless(0, x.m), df)
+	# filter!(x->isless(0, x.m), df)
 	df
 end
 
@@ -21,7 +21,7 @@ end
 
 
 function above(x::Dict)
-	y = x[:est_mean] .- x[:est_sd] .> 0
+	y = x[:est_mean] .- x[:est_sd] .> 0.
 	indexes = rangeT(y)
 	if length(indexes) < 1
 		return (t=missing, m=missing, sd=missing)

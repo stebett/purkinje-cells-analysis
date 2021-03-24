@@ -100,9 +100,6 @@ function quickPredict(uniformdf, gssResult, variable)
 	class(obj)  <- 'ssanova'
 	"""
 	x = convert(Dict{Symbol, Any}, R"quickPredict(obj, $variable)")
-	if variable == "r.nearest"
-		@infiltrate
-	end
 	if isnothing(rcopy(R"$uniformdf$inv.rnfun[[$variable]]"))
 		x[:new_x] = x[:xx]
 	else
