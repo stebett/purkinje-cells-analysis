@@ -9,18 +9,16 @@ using DataFrames
 include(srcdir("spline", "spline-analysis.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
-name="dist"
-#% Dist
-
-function produce_data(name::String)
-	data = load(datadir("spline-data.jld2"), name);
+function produce_data(name::String, reference)
+	data = load(datadir("processed", "spline-data.jld2"), name);
 	data = [sort.(data); sort.(data, rev=true)];
 	idx = [d.index for d in data]
-	good_idx = parse.(Array{Int, 1}, keys(load(datadir("spline",  "multi-$name.jld2"))))
+	good_idx = parse.(Array{Int, 1}, keys(load(datadir("analyses", "spline", "batch-2",  "multi-$name.jld2"))))
 	m = Dict()
 	foreach(good_idx) do i
+		@show [d==i for d in idx]
 		target = data[[d == i for d in idx]][1];
-		tmp = mkdf(target, reference=:multi)
+		tmp = mkdf(target, reference=reference)
 		try
 			m[i] = R"uniformizedf($tmp, c('timeSinceLastSpike','previousIsi','tback','tforw','nearest'))" 
 		catch e
@@ -31,13 +29,21 @@ function produce_data(name::String)
 	m
 end
 
-multi_dist = produce_data("dist");
+multi_dist = produce_data("dist", :multi);
 @rput multi_dist;
 R"save(multi_dist, file='data/analyses/spline/cluster-input/multi-dist.RData')"
 
-multi_neigh = produce_data("neigh");
+multi_neigh = produce_data("neigh", :multi);
 @rput multi_neigh;
 R"save(multi_neigh, file='data/analyses/spline/cluster-input/multi-neigh.RData')"
+
+best_dist = produce_data("dist", :best);
+@rput best_dist;
+R"save(best_dist, file='data/analyses/spline/cluster-input/best-dist.RData')"
+
+best_neigh = produce_data("neigh", :best);
+@rput best_neigh;
+R"save(best_neigh, file='data/analyses/spline/cluster-input/best-neigh.RData')"
 
 #% Half neigh
 neigh = load(datadir("spline-data.jld2"), "neigh");

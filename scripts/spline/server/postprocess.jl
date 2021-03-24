@@ -77,7 +77,7 @@ for i in col_names
 					 "c2" => predictLogProb(d[i][:gsa2C], R"df_half[[$i]]$m1$data"))
 end
 
-ll_n = DataFrame((index=String[], c_better=Bool[]))
+ll_n = DataFrame((index=String[], c_better=Bool[])) #TODO index as array
 for (k, v) in r_half
 	push!(ll_n, (k, (v["s1"] + v["s2"]) < (v["c1"] + v["c2"])))
 end
@@ -109,7 +109,7 @@ for i in col_names
 end
 
 #%
-ll_d = DataFrame((index=String[], c_better=Bool[]))
+ll_d = DataFrame((index=String[], c_better=Bool[])) #TODO index as array
 for (k, v) in r_half_dist
 	push!(ll_d, (k, (v["s1"] + v["s2"]) < (v["c1"] + v["c2"])))
 end
