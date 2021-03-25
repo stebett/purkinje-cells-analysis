@@ -1,60 +1,47 @@
 using DrWatson
 @quickactivate :ens
 
-using LsqFit
-using Spikes
 using Distributions
 using Plots
-using DataFrames
 using GLM
 
 include(srcdir("spline", "spline-pipeline.jl"))
 data = load_data("data-v6.arrow");
 
-tmax = [-600., 600.]
-len = floor(Int, diff(tmax)[1])
-
-st = cut(find(data, 30, :t), find(data, 30, :lift), tmax)
-ext = ceil.(Int, extrema.(st))
-st = cut(find(data, 31, :t), find(data, 31, :lift), tmax)
-
-st = norm_len.(st, 0, len) 
-isi = binisi.(st)
-
-st2 = norm_len.(st2, 0, len)
-tforw = binisi_inv.(st2) |> x->vcat(x...)
-tback = corrected_tback(st2)
-
-isi = vcat(isi...)
-nearest = min.(tback, tforw)
-
-ntrials = length(st)
-time = [tmax[1]+1:tmax[2];]
-fixed_times = fixtimes(time, len, ntrials, ext)
-
-## Simulate some data for a dummy GLM 
-a = DataFrame(X=fixed_times,
-			  Y=isi,
-			 Z=nearest)
-
-
-### Fit Poisson GLM
-r = GLM.fit(GeneralizedLinearModel,
-			@formula(Y ~ X + Z),
-			a,
-			Poisson(),
-			LogLink())
-
-p = predict(r, a[:, [:X, :Z]])
-plot(p)
-
-function model(x, p)
-	@. p[2]*exp(-x*p[1])+ p[3]*exp(-x*p[4])
+function couple_sign(data, idx)
+	df = find(data, idx) |> mkdf
+	r = glm( @formula(event ~ nearest + previousIsi + timeSinceLastSpike + time),
+				df,
+				Poisson(),
+				LogLink(), rtol=0.2)
+	coeftable(r).cols[4][2]
 end
 
-p0 = [0.5, 0.5, 0.5, 0.5 ]
-fitted = curve_fit(model, a.X, a.Y, p0)
-coef(fitted)
 
-plot(model(a.X, coef(fitted)))
+neigh = couple(data, :n)
+dist = couple(data, :d)
 
+n_sig = map(neigh) do n
+	try
+		couple_sign(data, n)
+	catch e
+		@warn e
+	end
+end
+n_sig = n_sig[.!isnothing.(n_sig)]
+
+d_sig = map(dist) do d
+	try
+		couple_sign(data, d)
+	catch e
+		@warn e
+	end
+end
+d_sig = d_sig[.!isnothing.(d_sig)]
+
+mean(n_sig)
+mean(n_sig)
+std(d_sig)
+std(d_sig)
+sum(n_sig .< 0.001)
+sum(d_sig .< 0.001)
