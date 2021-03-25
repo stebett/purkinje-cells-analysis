@@ -5,7 +5,7 @@ using DataStructures
 using JSON3
 
 
-json_string = read(datadir("full_data.json"));
+json_string = read(datadir("processed", "data-full.json"));
 json_obj = JSON3.read(json_string);
 
 function nodouble(x)
@@ -89,8 +89,9 @@ function extract_index(df::DataFrame, path::String, name::String)::Int
 	idx[1]
 end
 
-data_full = load_full()
+data = load_data("data-v3.arrow");
+data_full = load_full();
 data_full["index"] = extract_index.(Ref(data), data_full.path, data_full.name)
-sort!(data_full, [:index])
+sort!(data_full, [:index]);
 
 export data_full

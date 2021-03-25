@@ -6,15 +6,6 @@ using Spikes
 using Statistics
 using Plots
 using StatsBase
-import StatsBase: sem
-
-function sem(x::Matrix; dims=2)
-	r = zeros(size(x, dims % 2 + 1)) 
-	for i in 1 : length(r)
-		r[i] = sem(x[i, :])
-	end
-	r
-end
 
 function get_active_couples(couples, ranges)
 	active_couples = Dict()

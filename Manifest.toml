@@ -1244,7 +1244,7 @@ version = "0.8.0"
 
 [[Spikes]]
 deps = ["CategoricalArrays", "Combinatorics", "DataAPI", "DataFrames", "ImageFiltering", "OffsetArrays", "SafeTestsets", "Statistics", "StatsBase"]
-path = "/home/ginko/.julia/dev/Spikes"
+path = "/users/nbc/bettani/.julia/dev/Spikes"
 uuid = "a305d8b4-9cce-41f7-8708-a71367dc1260"
 version = "0.1.0"
 

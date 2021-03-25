@@ -5,7 +5,7 @@ using Arrow
 using DataFrames
 
 function load_data(filename)
-	data = Arrow.Table(datadir(filename)) |> DataFrame;
+	data = Arrow.Table(datadir("processed", filename)) |> DataFrame;
 	data.rat = convert(Array{String, 1}, data.rat);
 	data.site = convert(Array{String, 1}, data.site);
 	data.tetrode = convert(Array{String, 1}, data.tetrode);

@@ -3,6 +3,7 @@
 using DrWatson
 include(srcdir("load-data.jl"))
 include(srcdir("savefig.jl"))
-export load_data, savefig
+include(srcdir("find.jl"))
+export load_data, savefig, find
  
  end

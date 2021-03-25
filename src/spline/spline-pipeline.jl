@@ -108,6 +108,14 @@ function quickPredict(uniformdf, gssResult, variable)
 	x
 end
 
+function predictLogProb(gssResult, uniformdf)
+	R"""
+	obj = $gssResult
+	class(obj)  <- 'ssanova'
+	"""
+	rcopy(R"predictLogProb(obj, $uniformdf)")
+end
+
 R"library(gss)"
 R"library(STAR)"
 
