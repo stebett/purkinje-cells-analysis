@@ -7,50 +7,34 @@ using RCall
 
 import Base.ceil
 
-function mkdf(cellpair::DataFrame; tmax = [-600., 600.], reference=:lift)
-	landmark = :lift
-	if reference == :multi
-		tmax[2] += maximum(cellpair[1, :grasp] .- cellpair[1, :lift])
-	elseif reference == :best
-		idx = get_active_events(cellpair)
-		landmark = [:lift, :cover, :grasp][idx[1]]
-	end
+function mkdf(cellpair::DataFrame; tmax = [-600., 600.], pad=100., reference=:lift, landmark=:lift)
+	tmax[2] += reference == :multi ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
+	landmark = reference == :best ? [:lift, :cover, :grasp][get_active_events(cellpair)[1]] : :lift
 
-	len = floor(Int, diff(tmax)[1])
-	st = cut(cellpair[1, :t], cellpair[1, landmark], tmax)
-	ext = ceil.(Int, extrema.(st))
-	ntrials = length(st)
+	tpadded = tmax .+ [-pad, pad]
+	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
 
-	st = norm_len.(st, 0, len) 
-	bins = bin(st, len, 1., binary=true) 
-	isi = binisi.(st)
-	neuron = ones(Int, len)
-	time = [tmax[1]+1:tmax[2];]
-	fixed_times = fixtimes(time, len, ntrials, ext)
+	st = cut(cellpair[1, :t], cellpair[1, landmark], tpadded)
+	bins = bin.(st, t₁, t₂, 1., binary=false)
+	isi = binisi.(st, t₁, t₂)
 
-	st2 = cut(cellpair[2, :].t, cellpair[2, landmark], tmax)
-	st2 = norm_len.(st2, 0, len)
-	tforw = binisi_inv.(st2) |> x->vcat(x...)
-	tback = corrected_tback(st2)
+	time = collect(tmax[1] : tmax[2] - 1)
+	trials = [fill(i, length(time)) for i in eachindex(st)]
+
+	st₂ = cut(cellpair[2, :t], cellpair[2, landmark], tpadded)
+	tback = binisi.(st₂, t₁, t₂)
+	tforw = binisi_r.(st₂, t₁, t₂)
 	nearest = min.(tback, tforw)
+
 	timetoevt = relativetime(cellpair, time, tmax)
 
-	X = DataFrame()
-
+	X                    = DataFrame()
 	X.event              = vcat(bins...)
-	X.time               = fixed_times
-	X.neuron             = repeat(neuron, ntrials)
-	X.trial              = X.ntrial = [i for i=1:ntrials for l=1:len]
+	X.time               = repeat(time, length(st))
+	X.trial              = vcat(trials...)
 	X.timeSinceLastSpike = vcat(isi...)
-	X.previousIsi        = vcat([previousisi(isi[i]) for i in 1:ntrials]...)
-	X.tback              = tback
-	X.tforw              = tforw
-	X.nearest            = nearest
-
-	if reference == :multi
-		X.timetoevt      = vcat(timetoevt...)
-	end
-
+	X.nearest            = vcat(nearest...)
+	X.timetoevt          = vcat(timetoevt...)
 	drop(X)
 end
 
@@ -135,9 +119,3 @@ uniformizedf <- function(d1df,rnparm)
   list(data=m1,rnfun=rnfun,inv.rnfun=inv.rnfun)
 }
 """
-
-function make_couples(df, s::Vector{<:String})
-	vcat(get_cell(df, s[1]), get_cell(df, s[2]))
-end
-
-

@@ -14,7 +14,7 @@ data = load_data("data-v6.arrow");
 
 function couple_sign(data, idx)
 	df = find(data, idx) |> mkdf
-	r = glm(@formula(event ~ nearest + previousIsi + time),
+	r = glm(@formula(event ~ nearest + timeSinceLastSpike + time),
 				df,
 				Poisson(),
 				LogLink())
@@ -22,23 +22,26 @@ function couple_sign(data, idx)
 end
 
 function correct_df(data, idx)
+	t1 = cut(find(data, idx[1]).t, find(data,idx[1]).lift, [-600., 1200.])
+	t2 = cut(find(data, idx[2]).t, find(data,idx[2]).lift, [-600., 1200.])
+	b1 = bin.(t1, 1800, 1.)
+	b2 = bin.(t2, 1800, 1.)
+	i1 = sum.(b1) .> 2
+	i2 = sum.(b2) .> 2
+
 	df = find(data, idx) |> mkdf
 	groups = groupby(df, :trial)
-	groups_new = map(groups) do g
-		if sum(g.event) > 3
-			@show sum(g.event)
-			g
-		end
-	end
+
+	combine(groups[i1 .& i2], :)
 end
 
 function likelihoodtest(data, idx)
 	df = find(data, idx) |> mkdf
-	nullmodel = glm( @formula(event ~ previousIsi + time),
+	nullmodel = glm( @formula(event ~ timeSinceLastSpike + time),
 				df,
 				Poisson(),
 				LogLink())
-	testmodel = glm( @formula(event ~ nearest + previousIsi + time),
+	testmodel = glm( @formula(event ~ nearest + timeSinceLastSpike + time),
 				df,
 				Poisson(),
 				LogLink())
@@ -89,7 +92,7 @@ findall(n_sig .< 0.01)
 findall(nl .< 0.01)
 
 findall(d_sig .< 0.01)
-outliers = findall(dl .< 0.01)
+outliers = findall(dl .< 0.001)
 
 active_cells = get_active_cells(data, threshold=4)
 modulation = get_modulation(data)
@@ -126,4 +129,4 @@ for i in dist[outliers]
 end
 
 
-correct_df(find
+correct_df(data, dist[out1])
