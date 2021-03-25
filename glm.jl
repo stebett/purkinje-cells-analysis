@@ -4,7 +4,6 @@ using DrWatson
 using Distributions
 using Plots
 using GLM
-using SmoothingSplines
 
 include(srcdir("spline", "spline-pipeline.jl"))
 data = load_data("data-v6.arrow");
@@ -46,12 +45,3 @@ std(d_sig)
 std(d_sig)
 sum(n_sig .< 0.001)
 sum(d_sig .< 0.001)
-
-#%
-
-idx = neigh[1]
-df = find(data, idx) |> mkdf
-
-spl = fit(SmoothingSpline, df.timeSinceLastSpike, df.nearest, 4.)
-Ypred = predict(spl, [1:20.;])
-plot(Ypred)

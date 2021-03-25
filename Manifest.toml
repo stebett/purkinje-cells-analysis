@@ -1223,6 +1223,12 @@ git-tree-sha1 = "ee010d8f103468309b8afac4abb9be2e18ff1182"
 uuid = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
 version = "0.3.2"
 
+[[SmoothingSplines]]
+deps = ["LinearAlgebra", "Random", "Reexport", "StatsBase", "Test"]
+git-tree-sha1 = "9e47150ea38107ba762fb26bd5c2a000b27ecf94"
+uuid = "102930c3-cf33-599f-b3b1-9a29a5acab30"
+version = "0.2.1"
+
 [[Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
