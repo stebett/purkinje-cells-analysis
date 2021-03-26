@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate :ens
+@quickactivate "ens"
 
 using DataFrames
 using Spikes
@@ -38,42 +38,27 @@ function mkdf(cellpair::DataFrame; tmax = [-600., 600.], pad=100., reference=:li
 	drop(X)
 end
 
-function mkdf(cell::DataFrameRow; tmax = [-600., 600.], reference=:lift)
-	landmark = :lift
-	if reference == :multi
-		tmax[2] += maximum(cell[:grasp] .- cell[:lift])
-	elseif reference == :best
-		idx = get_active_events(cellpair)
-		landmark = [:lift, :cover, :grasp][idx[1]]
-	end
+function mkdf(cell::DataFrameRow; tmax = [-600., 600.], pad=150., reference=:lift, landmark=:lift)
+	tmax[2] += reference == :multi ? maximum(cell[:grasp] .- cell[:lift]) : 0.
+	landmark = reference == :best ? [:lift, :cover, :grasp][get_active_events(cell)[1]] : :lift
 
-	len = floor(Int, diff(tmax)[1])
-	st = cut(cell[:t], cell[landmark], tmax)
-	ext = ceil.(Int, extrema.(st))
-	ntrials = length(st)
+	tpadded = tmax .+ [-pad, pad]
+	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
 
-	st = norm_len.(st, 0, len) 
-	bins = bin(st, len, 1., binary=true) 
-	isi = binisi.(st)
-	neuron = ones(Int, len)
-	time = [tmax[1]+1:tmax[2];]
-	fixed_times = fixtimes(time, len, ntrials, ext)
+	st = cut(cell[:t], cell[landmark], tpadded)
+	bins = bin.(st, t₁, t₂, 1., binary=false)
+	isi = binisi.(st, t₁, t₂)
 
+	time = collect(tmax[1] : tmax[2] - 1)
+	trials = [fill(i, length(time)) for i in eachindex(st)]
 	timetoevt = relativetime(cell, time, tmax)
 
-	X = DataFrame()
-
+	X                    = DataFrame()
 	X.event              = vcat(bins...)
-	X.time               = fixed_times
-	X.neuron             = repeat(neuron, ntrials)
-	X.trial              = X.ntrial   = [i for i=1:ntrials for l=1:len]
+	X.time               = repeat(time, length(st))
+	X.trial              = vcat(trials...)
 	X.timeSinceLastSpike = vcat(isi...)
-	X.previousIsi        = vcat([previousisi(isi[i]) for i in 1:ntrials]...)
-
-	if reference == :multi
-		X.timetoevt      = vcat(timetoevt...)
-	end
-
+	X.timetoevt          = vcat(timetoevt...)
 	drop(X)
 end
 
@@ -119,3 +104,35 @@ uniformizedf <- function(d1df,rnparm)
   list(data=m1,rnfun=rnfun,inv.rnfun=inv.rnfun)
 }
 """
+function relativetime(lift, cover, grasp, t, tmax)
+	y = zeros(size(t))
+
+	cl = cover - lift
+	gc = grasp - cover
+	gl = grasp - lift
+
+	# intervals
+	beforelift = t .< 0.
+	liftcover = 0. .<= t .< cl
+	covergrasp = cl .<= t .< gl
+	aftergrasp = t .>= gl
+
+	y[beforelift] = 2 .- t[beforelift] ./ tmax[1] * 2 
+	y[liftcover] = 2 .+ t[liftcover] ./ cl
+	y[covergrasp] = 3 .+ (t[covergrasp] .- cl) ./ gc
+	y[aftergrasp] = 4 .+ (t[aftergrasp] .- gl) ./ (tmax[2] .- gl) * 2
+
+	y
+end
+
+relativetime(cellpair::DataFrame, time, tmax) = relativetime.(cellpair[1, :lift], 
+															  cellpair[1, :cover], 
+															  cellpair[1, :grasp],
+															  Ref(time), 
+															  Ref(tmax))
+
+relativetime(cell::DataFrameRow, time, tmax) = relativetime.(cell[:lift], 
+															 cell[:cover], 
+															 cell[:grasp],
+															 Ref(time), 
+															 Ref(tmax))

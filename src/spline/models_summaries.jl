@@ -1,6 +1,6 @@
 using DataFrames
 
-function extract(data)
+function summarize_complex_model(data)
 	df = DataFrame()
 	for (k, r) in data
 		R = r[:c_nearest]
@@ -25,12 +25,12 @@ function extract(data)
 				   x=x,
 				   mean=mean,
 				   sd=sd,
-				   ranges=all_ranges_above(R)))
+				   ranges=[(x[i[1]], x[i[2]]) for i in indexes]))
 	end
 	df
 end
 
-function combine_simple_analysis(data)
+function summarize_simple_model(data)
 	df = DataFrame()
 	df.idx = [parse(Int, k) for (k, _) in data]
 	df.x = [r[:s_time][:new_x] for (_, r) in data]
@@ -38,12 +38,6 @@ function combine_simple_analysis(data)
 	df
 end
 
-
-function all_ranges_above(x::Dict)
-	y = x[:est_mean] .- x[:est_sd] .> 0
-	indexes = rangeT(y)
-	[(x[:new_x][i[1]], x[:new_x][i[2]]) for i in indexes]
- end
 
 function rangeT(y::BitArray{1})
 	ranges = []
@@ -70,15 +64,3 @@ function rangeT(y::BitArray{1})
 	ranges
 end
 
-function minmax_scale(x::Vector)
-	min, max = extrema(x)
-	@. (x - min) / (max-min)
-end
-
-function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Array{Int, 1}
-	c[2:end-1] |> x->split(x, ", ") |> x->convert.(String, x) |> x->parse.(Int, x)
-end
-
-function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Tuple{Int, Int}
-	c[2:end-1] |> x->split(x, ", ") |> x->convert.(String, x) |> x->parse.(Int, x) |> Tuple	
-end

@@ -1,10 +1,10 @@
 using DrWatson
-@quickactivate :ens
+@quickactivate "ens"
 
 using RCall
 using Random
 
-include(srcdir("spline", "spline-pipeline.jl"))
+include(srcdir("spline", "mkdf.jl"))
 
 function fitcell(cell::DataFrameRow; reference)
 	timevar = reference == :multi ? "timetoevt" : "time"

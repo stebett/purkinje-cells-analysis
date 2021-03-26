@@ -9,11 +9,11 @@ using GLM
 using SmoothingSplines
 using StatsPlots
 
-include(srcdir("spline", "spline-pipeline.jl"))
+include(srcdir("spline", "mkdf.jl"))
 data = load_data("data-v6.arrow");
 
 function couple_sign(data, idx)
-	df = find(data, idx) |> mkdf
+	df = correct_df(data, idx) |> correct_df
 	r = glm(@formula(event ~ nearest + timeSinceLastSpike + time),
 				df,
 				Poisson(),
@@ -28,24 +28,35 @@ function correct_df(data, idx)
 	b2 = bin.(t2, 1800, 1.)
 	i1 = sum.(b1) .> 2
 	i2 = sum.(b2) .> 2
-
 	df = find(data, idx) |> mkdf
 	groups = groupby(df, :trial)
-
 	combine(groups[i1 .& i2], :)
 end
 
 function likelihoodtest(data, idx)
-	df = find(data, idx) |> mkdf
+	df = find(data, idx) |> mkdf |> x->round.(x)
 	nullmodel = glm( @formula(event ~ timeSinceLastSpike + time),
 				df,
 				Poisson(),
 				LogLink())
-	testmodel = glm( @formula(event ~ nearest + timeSinceLastSpike + time),
+	testmodel = glm( @formula(event ~ timeSinceLastSpike + time + nearest),
 				df,
 				Poisson(),
 				LogLink())
-	lrtest(nullmodel, testmodel).pval[2]
+	lrtest(nullmodel, testmodel)
+end
+
+function likelihoodtest_corrected(data, idx)
+	df = correct_df(data, idx) 
+	nullmodel = glm( @formula(event ~ timeSinceLastSpike + time),
+				df,
+				Poisson(),
+				LogLink())
+	testmodel = glm( @formula(event ~ timeSinceLastSpike + time + nearest),
+				df,
+				Poisson(),
+				LogLink())
+	lrtest(nullmodel, testmodel)
 end
 
 
@@ -56,7 +67,7 @@ n_sig = map(neigh) do n
 	try
 		couple_sign(data, n)
 	catch e
-		@warn e
+		NaN
 	end
 end
 
@@ -64,7 +75,7 @@ d_sig = map(dist) do d
 	try
 		couple_sign(data, d)
 	catch e
-		@warn e
+		NaN
 	end
 end
 
@@ -73,25 +84,22 @@ nl = map(neigh) do n
 	try
 		likelihoodtest(data, n)
 	catch e
-		@warn e
+		NaN
 	end
 end
-nl
 
 dl = map(dist) do n
 	try
 		likelihoodtest(data, n)
 	catch e
-		@warn e
 		NaN
 	end
 end
-dl = dl[.!isnothing.(dl)]
 
-findall(n_sig .< 0.01)
-findall(nl .< 0.01)
+findall(n_sig .< 0.001)
+findall(nl .< 0.001)
 
-findall(d_sig .< 0.01)
+findall(d_sig .< 0.001)
 outliers = findall(dl .< 0.001)
 
 active_cells = get_active_cells(data, threshold=4)
@@ -103,8 +111,8 @@ for i in dist[outliers]
 	cc = crosscor.(t1, t2, true, binsize=1.0)
 	cc_m = mean(drop(cc))
 	cc_sem = sem.(drop(cc))
-	b1 = bin(t1, 1800, 1.)
-	b2 = bin(t2, 1800, 1.)
+	b1 = bin.(t1, 1800, 1.)
+	b2 = bin.(t2, 1800, 1.)
 	p1 = heatmap(hcat(b1...)', colorbar=false, color=cgrad([:white, :black]))
 	xticks!(collect(0:300:1800), string.(-600:300:1200))
 	mod = active_cells[i[1]] ? "Modulated" : "Unmodulated"
@@ -125,7 +133,7 @@ for i in dist[outliers]
 	ylabel!("norm crosscor")
 	xlabel!("time")
 	p = plot(p1, p3, p2, size=(1000, 1000))
-	savefig(plotsdir("logbook", "25-03", "$i"))
+	savefig(plotsdir("logbook", "26-03", "$i"))
 end
 
 
