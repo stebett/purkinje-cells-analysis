@@ -7,59 +7,58 @@ using RCall
 
 import Base.ceil
 
-function mkdf(cellpair::DataFrame; tmax = [-600., 600.], pad=100., reference=:lift, landmark=:lift)
+function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift, minspikes=2, roundX=true)
 	tmax[2] += reference == :multi ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
 	landmark = reference == :best ? [:lift, :cover, :grasp][get_active_events(cellpair)[1]] : :lift
 
 	tpadded = tmax .+ [-pad, pad]
 	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
+	T = collect(tmax[1] : tmax[2] - 1)
 
 	st = cut(cellpair[1, :t], cellpair[1, landmark], tpadded)
-	bins = bin.(st, t₁, t₂, 1., binary=false)
-	isi = binisi.(st, t₁, t₂)
-
-	time = collect(tmax[1] : tmax[2] - 1)
-	trials = [fill(i, length(time)) for i in eachindex(st)]
-
 	st₂ = cut(cellpair[2, :t], cellpair[2, landmark], tpadded)
-	tback = binisi.(st₂, t₁, t₂)
-	tforw = binisi_r.(st₂, t₁, t₂)
-	nearest = min.(tback, tforw)
+	valid = (length.(st) .>= minspikes) .& (length.(st₂) .>= minspikes)
+	st, st₂ = st[valid], st₂[valid]
 
-	timetoevt = relativetime(cellpair, time, tmax)
+	isi = binisi.(st₂, t₁, t₂)
+	isi_r = binisi_r.(st₂, t₁, t₂)
 
 	X                    = DataFrame()
-	X.event              = vcat(bins...)
-	X.time               = repeat(time, length(st))
-	X.trial              = vcat(trials...)
-	X.timeSinceLastSpike = vcat(isi...)
-	X.nearest            = vcat(nearest...)
-	X.timetoevt          = vcat(timetoevt...)
-	drop(X)
+	X.time               = T                                      |> x->repeat(x, length(st))
+	X.timetoevt          = relativetime(cellpair, T, tmax, valid) |> x->vcat(x...)
+	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
+	X.event              = bin.(st, t₁, t₂, 1., binary=true)      |> x->vcat(x...)
+	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
+	X.previousIsi 	     = lastisi.(st, t₁, t₂, 0, t₂ + pad)      |> x->vcat(x...)
+	X.nearest            = min.(isi, isi_r)                       |> x->vcat(x...)
+
+	drop!(X)
+	X = roundX ? round.(X) : X
 end
 
-function mkdf(cell::DataFrameRow; tmax = [-600., 600.], pad=150., reference=:lift, landmark=:lift)
+function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift, minspikes=2, roundX=true)
+	T = collect(tmax[1] : tmax[2] - 1)
 	tmax[2] += reference == :multi ? maximum(cell[:grasp] .- cell[:lift]) : 0.
 	landmark = reference == :best ? [:lift, :cover, :grasp][get_active_events(cell)[1]] : :lift
 
 	tpadded = tmax .+ [-pad, pad]
 	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
+	T = collect(tmax[1] : tmax[2] - 1)
 
 	st = cut(cell[:t], cell[landmark], tpadded)
-	bins = bin.(st, t₁, t₂, 1., binary=false)
-	isi = binisi.(st, t₁, t₂)
-
-	time = collect(tmax[1] : tmax[2] - 1)
-	trials = [fill(i, length(time)) for i in eachindex(st)]
-	timetoevt = relativetime(cell, time, tmax)
+	valid = length.(st) .>= minspikes
+	st = st[valid]
 
 	X                    = DataFrame()
-	X.event              = vcat(bins...)
-	X.time               = repeat(time, length(st))
-	X.trial              = vcat(trials...)
-	X.timeSinceLastSpike = vcat(isi...)
-	X.timetoevt          = vcat(timetoevt...)
-	drop(X)
+	X.time               = T                                      |> x->repeat(x, length(st))
+	X.timetoevt          = relativetime(cellpair, T, tmax, valid) |> x->vcat(x...)
+	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
+	X.event              = bin.(st, t₁, t₂, 1., binary=true)      |> x->vcat(x...)
+	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
+	X.previousIsi 	     = lastisi.(st, t₁, t₂, tpadded...)       |> x->vcat(x...)
+
+	drop!(X)
+	X = roundX ? round.(X) : X
 end
 
 
@@ -125,11 +124,11 @@ function relativetime(lift, cover, grasp, t, tmax)
 	y
 end
 
-relativetime(cellpair::DataFrame, time, tmax) = relativetime.(cellpair[1, :lift], 
-															  cellpair[1, :cover], 
-															  cellpair[1, :grasp],
-															  Ref(time), 
-															  Ref(tmax))
+relativetime(cellpair::DataFrame, time, tmax, valid) = relativetime.(cellpair[1, :lift][valid], 
+																	 cellpair[1, :cover][valid], 
+																	 cellpair[1, :grasp][valid],
+																	 Ref(time), 
+																	 Ref(tmax))
 
 relativetime(cell::DataFrameRow, time, tmax) = relativetime.(cell[:lift], 
 															 cell[:cover], 

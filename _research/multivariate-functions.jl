@@ -11,9 +11,14 @@ using StatsPlots
 
 include(srcdir("spline", "mkdf.jl"))
 data = load_data("data-v6.arrow");
+active_cells = get_active_cells(data, threshold=4)
+# data = vcat([modulated ? find(data, idx) : DataFrame() for (idx, modulated) in active_cells]...)
+
+neigh = couple(data, :n)
+dist = couple(data, :d)
 
 function couple_sign(data, idx)
-	df = correct_df(data, idx) |> correct_df
+	df = find(data, idx) |> mkdf
 	r = glm(@formula(event ~ nearest + timeSinceLastSpike + time),
 				df,
 				Poisson(),
@@ -21,17 +26,6 @@ function couple_sign(data, idx)
 	coeftable(r).cols[4][2]
 end
 
-function correct_df(data, idx)
-	t1 = cut(find(data, idx[1]).t, find(data,idx[1]).lift, [-600., 1200.])
-	t2 = cut(find(data, idx[2]).t, find(data,idx[2]).lift, [-600., 1200.])
-	b1 = bin.(t1, 1800, 1.)
-	b2 = bin.(t2, 1800, 1.)
-	i1 = sum.(b1) .> 2
-	i2 = sum.(b2) .> 2
-	df = find(data, idx) |> mkdf
-	groups = groupby(df, :trial)
-	combine(groups[i1 .& i2], :)
-end
 
 function likelihoodtest(data, idx)
 	df = find(data, idx) |> mkdf |> x->round.(x)
@@ -46,22 +40,8 @@ function likelihoodtest(data, idx)
 	lrtest(nullmodel, testmodel)
 end
 
-function likelihoodtest_corrected(data, idx)
-	df = correct_df(data, idx) 
-	nullmodel = glm( @formula(event ~ timeSinceLastSpike + time),
-				df,
-				Poisson(),
-				LogLink())
-	testmodel = glm( @formula(event ~ timeSinceLastSpike + time + nearest),
-				df,
-				Poisson(),
-				LogLink())
-	lrtest(nullmodel, testmodel)
-end
 
 
-neigh = couple(data, :n)
-dist = couple(data, :d)
 
 n_sig = map(neigh) do n
 	try
@@ -88,21 +68,21 @@ nl = map(neigh) do n
 	end
 end
 
-dl = map(dist) do n
+dl = map(dist) do d
 	try
-		likelihoodtest(data, n)
+		likelihoodtest(data, d)
 	catch e
 		NaN
 	end
 end
 
-findall(n_sig .< 0.001)
-findall(nl .< 0.001)
+p = 0.001
+findall(n_sig .< p)
+findall(nl .< p)
 
-findall(d_sig .< 0.001)
-outliers = findall(dl .< 0.001)
+findall(d_sig .< p)
+outliers = findall(dl .< p)
 
-active_cells = get_active_cells(data, threshold=4)
 modulation = get_modulation(data)
 
 for i in dist[outliers]
