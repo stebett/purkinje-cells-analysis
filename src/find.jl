@@ -1,5 +1,7 @@
+using DataFrames
+
 function find(df::DataFrame, index::Int, column=Colon())
-	df[df.index .== index, column]
+	@view df[findall(df.index .== index)[1], column]
 end
 
 function find(df::DataFrame, index::Vector, column=Colon())

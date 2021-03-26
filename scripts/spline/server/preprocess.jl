@@ -15,7 +15,7 @@ function produce_data(name::String, reference)
 	data = load(datadir("processed", "spline-data.jld2"), name);
 	data = [sort.(data); sort.(data, rev=true)];
 	idx = [d.index for d in data]
-	good_idx = parse.(Array{Int, 1}, keys(load(datadir("analyses", "spline", "batch-2",  "multi-$name.jld2"))))
+	good_idx = parse.(Array{Int, 1}, keys(load(datadir("analyses", "spline", "batch-2", "multi-$name.jld2"))))
 	m = Dict()
 	foreach(good_idx) do i
 		try

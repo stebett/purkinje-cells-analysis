@@ -3,9 +3,7 @@ using DrWatson
 
 using DataFrames
 using Spikes
-using RCall
-
-import Base.ceil
+# using RCall
 
 function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift, minspikes=2, roundX=true)
 	tmax[2] += reference == :multi ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
@@ -51,7 +49,7 @@ function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift,
 
 	X                    = DataFrame()
 	X.time               = T                                      |> x->repeat(x, length(st))
-	X.timetoevt          = relativetime(cellpair, T, tmax, valid) |> x->vcat(x...)
+	X.timetoevt          = relativetime(cell, T, tmax, valid)     |> x->vcat(x...)
 	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
 	X.event              = bin.(st, t₁, t₂, 1., binary=true)      |> x->vcat(x...)
 	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
@@ -62,47 +60,47 @@ function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift,
 end
 
 
-function quickPredict(uniformdf, gssResult, variable)
-	R"""
-	obj = $gssResult
-	class(obj)  <- 'ssanova'
-	"""
-	x = convert(Dict{Symbol, Any}, R"quickPredict(obj, $variable)")
-	if isnothing(rcopy(R"$uniformdf$inv.rnfun[[$variable]]"))
-		x[:new_x] = x[:xx]
-	else
-		x[:new_x] = rcopy(R"$uniformdf$inv.rnfun[[$variable]]($(x[:xx]))")
-	end
-	x
-end
+# function quickPredict(uniformdf, gssResult, variable)
+# 	R"""
+# 	obj = $gssResult
+# 	class(obj)  <- 'ssanova'
+# 	"""
+# 	x = convert(Dict{Symbol, Any}, R"quickPredict(obj, $variable)")
+# 	if isnothing(rcopy(R"$uniformdf$inv.rnfun[[$variable]]"))
+# 		x[:new_x] = x[:xx]
+# 	else
+# 		x[:new_x] = rcopy(R"$uniformdf$inv.rnfun[[$variable]]($(x[:xx]))")
+# 	end
+# 	x
+# end
 
-function predictLogProb(gssResult, uniformdf)
-	R"""
-	obj = $gssResult
-	class(obj)  <- 'ssanova'
-	"""
-	rcopy(R"predictLogProb(obj, $uniformdf)")
-end
+# function predictLogProb(gssResult, uniformdf)
+# 	R"""
+# 	obj = $gssResult
+# 	class(obj)  <- 'ssanova'
+# 	"""
+# 	rcopy(R"predictLogProb(obj, $uniformdf)")
+# end
 
-R"library(gss)"
-R"library(STAR)"
+# R"library(gss)"
+# R"library(STAR)"
 
-R"""
-uniformizedf <- function(d1df,rnparm)
-{
-  rnparmName= paste('r',rnparm,sep='.')
-  rnfun=lapply(rnparm,function(x) mkM2U(d1df,x))
-  names(rnfun)=rnparmName
+# R"""
+# uniformizedf <- function(d1df,rnparm)
+# {
+#   rnparmName= paste('r',rnparm,sep='.')
+#   rnfun=lapply(rnparm,function(x) mkM2U(d1df,x))
+#   names(rnfun)=rnparmName
 
-  inv.rnfun=lapply(rnfun, function(x) attributes(x)$qFct)
-  res=mapply(function(c,f) f(d1df[[c]]), rnparm,rnfun)
-  colnames(res)=rnparmName
-  m1=cbind(d1df,res)
-#  attr(m1,'rnfun')=rnfun
-#  attr(m1,'inv.rnfun')=inv.rnfun
-  list(data=m1,rnfun=rnfun,inv.rnfun=inv.rnfun)
-}
-"""
+#   inv.rnfun=lapply(rnfun, function(x) attributes(x)$qFct)
+#   res=mapply(function(c,f) f(d1df[[c]]), rnparm,rnfun)
+#   colnames(res)=rnparmName
+#   m1=cbind(d1df,res)
+# #  attr(m1,'rnfun')=rnfun
+# #  attr(m1,'inv.rnfun')=inv.rnfun
+#   list(data=m1,rnfun=rnfun,inv.rnfun=inv.rnfun)
+# }
+# """
 function relativetime(lift, cover, grasp, t, tmax)
 	y = zeros(size(t))
 
@@ -124,14 +122,16 @@ function relativetime(lift, cover, grasp, t, tmax)
 	y
 end
 
-relativetime(cellpair::DataFrame, time, tmax, valid) = relativetime.(cellpair[1, :lift][valid], 
-																	 cellpair[1, :cover][valid], 
-																	 cellpair[1, :grasp][valid],
-																	 Ref(time), 
-																	 Ref(tmax))
+function relativetime(cellpair::DataFrame, time, tmax, valid)
+	relativetime.(cellpair[1, :lift][valid], 
+				  cellpair[1, :cover][valid], 
+				  cellpair[1, :grasp][valid],
+				  Ref(time), Ref(tmax))
+end
 
-relativetime(cell::DataFrameRow, time, tmax) = relativetime.(cell[:lift], 
-															 cell[:cover], 
-															 cell[:grasp],
-															 Ref(time), 
-															 Ref(tmax))
+function relativetime(cell::T, time, tmax, valid)  where T <: DataFrameRow 
+	relativetime.(cell[:lift][valid],
+				  cell[:cover][valid],
+				  cell[:grasp][valid],
+				  Ref(time), Ref(tmax))
+end

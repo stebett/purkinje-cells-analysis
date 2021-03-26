@@ -11,6 +11,7 @@ using StatsPlots
 
 include(srcdir("spline", "mkdf.jl"))
 data = load_data("data-v6.arrow");
+
 active_cells = get_active_cells(data, threshold=4)
 # data = vcat([modulated ? find(data, idx) : DataFrame() for (idx, modulated) in active_cells]...)
 
@@ -19,7 +20,7 @@ dist = couple(data, :d)
 
 function couple_sign(data, idx)
 	df = find(data, idx) |> mkdf
-	r = glm(@formula(event ~ nearest + timeSinceLastSpike + time),
+	r = glm(@formula(event ~ nearest + previousIsi + timeSinceLastSpike + time),
 				df,
 				Poisson(),
 				LogLink())
@@ -28,12 +29,12 @@ end
 
 
 function likelihoodtest(data, idx)
-	df = find(data, idx) |> mkdf |> x->round.(x)
-	nullmodel = glm( @formula(event ~ timeSinceLastSpike + time),
+	df = find(data, idx) |> mkdf 
+	nullmodel = glm(@formula(event ~ timeSinceLastSpike + time + nearest),
 				df,
 				Poisson(),
 				LogLink())
-	testmodel = glm( @formula(event ~ timeSinceLastSpike + time + nearest),
+	testmodel = glm(@formula(event ~ previousIsi +  timeSinceLastSpike + time + nearest),
 				df,
 				Poisson(),
 				LogLink())

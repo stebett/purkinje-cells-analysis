@@ -5,7 +5,7 @@ using JLD2
 using Logging
 using Dates
 
-include(srcdir("spline", "spline-analysis.jl"))
+include(srcdir("spline", "fit.jl"))
 
 function main(p)
 	analysisname = string(p[:reference]) *"-"* p[:cells]
