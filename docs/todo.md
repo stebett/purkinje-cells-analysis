@@ -11,3 +11,13 @@
 # TODO
 
 - [ ] estimate information carryied by synchrony in sleep vs movement
+
+- [ ] refractor spline pipeline
+- [x] violin plots for event vs nearest
+- [ ] categorical scatterplots (collapse nearest onto timeforspike with mean and std)
+- [ ] try out non-parametric kernel regression, MARS, simple anova
+- [ ] use query.jl
+- [x] rewrite crosscor
+- [ ] implement a clustering pipeline with statsplots for plotting
+- [ ] make notebooks with analyses and write stuff, and use them for daily reports
+

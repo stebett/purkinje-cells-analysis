@@ -4,14 +4,13 @@ using DrWatson
 using Distributions
 using Plots
 using GLM
-using SmoothingSplines
 
 include(srcdir("spline", "spline-pipeline.jl"))
 data = load_data("data-v6.arrow");
 
 function couple_sign(data, idx)
 	df = find(data, idx) |> mkdf
-	r = glm( @formula(event ~ nearest + previousIsi + timeSinceLastSpike + time),
+	r = glm( @formula(timeSinceLastSpike ~ nearest + previousIsi + time),
 				df,
 				Poisson(),
 				LogLink(), rtol=0.2)
@@ -49,9 +48,9 @@ sum(d_sig .< 0.001)
 
 #%
 
-idx = neigh[1]
-df = find(data, idx) |> mkdf
+linreg = glm(@formula(timeSinceLastSpike ~ time + nearest + previousIsi), df, Poisson(), LogLink())
+GLM.predict(linreg, df[df.trial .== 1, :]) |> plot
+plot!(df[df.trial .== 1, :timeSinceLastSpike])
 
-spl = fit(SmoothingSpline, df.timeSinceLastSpike, df.nearest, 4.)
-Ypred = predict(spl, [1:20.;])
-plot(Ypred)
+
+#%
