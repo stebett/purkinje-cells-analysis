@@ -1248,12 +1248,6 @@ version = "1.0.8"
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
-[[SafeTestsets]]
-deps = ["Test"]
-git-tree-sha1 = "36ebc5622c82eb9324005cc75e7e2cc51181d181"
-uuid = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
-version = "0.0.1"
-
 [[Scratch]]
 deps = ["Dates"]
 git-tree-sha1 = "ad4b278adb62d185bbcb6864dc24959ab0627bf6"
@@ -1310,8 +1304,10 @@ uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "0.10.3"
 
 [[Spikes]]
-deps = ["CategoricalArrays", "Combinatorics", "DSP", "DataAPI", "DataFrames", "Debugger", "ImageFiltering", "Measurements", "Measures", "OffsetArrays", "SafeTestsets", "Statistics", "StatsBase"]
-path = "/home/ginko/.julia/dev/Spikes"
+deps = ["CategoricalArrays", "Combinatorics", "DataFrames", "ImageFiltering", "Measurements", "OffsetArrays", "Statistics", "StatsBase"]
+git-tree-sha1 = "60d7c4796137a66d36d7af9d1bc99a38a5f3a02f"
+repo-rev = "master"
+repo-url = "/home/ginko/.julia/dev/Spikes"
 uuid = "a305d8b4-9cce-41f7-8708-a71367dc1260"
 version = "0.1.0"
 

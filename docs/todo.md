@@ -20,4 +20,5 @@
 - [x] rewrite crosscor
 - [ ] implement a clustering pipeline with statsplots for plotting
 - [ ] make notebooks with analyses and write stuff, and use them for daily reports
-
+- [ ] bootstraping 
+- [ ] move python notebooks away, use that dir for julia notebooks

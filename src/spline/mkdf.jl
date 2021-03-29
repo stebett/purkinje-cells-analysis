@@ -25,7 +25,7 @@ function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift
 	X.time               = T                                      |> x->repeat(x, length(st))
 	X.timetoevt          = relativetime(cellpair, T, tmax, valid) |> x->vcat(x...)
 	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
-	X.event              = bin.(st, t₁, t₂, 1., binary=true)      |> x->vcat(x...)
+	X.event              = bin.(st, t₁, t₂, binsize=1., binary=true)      |> x->vcat(x...)
 	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
 	X.previousIsi 	     = lastisi.(st, t₁, t₂, 0, t₂ + pad)      |> x->vcat(x...)
 	X.nearest            = min.(isi, isi_r)                       |> x->vcat(x...)
@@ -51,7 +51,7 @@ function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift,
 	X.time               = T                                      |> x->repeat(x, length(st))
 	X.timetoevt          = relativetime(cell, T, tmax, valid)     |> x->vcat(x...)
 	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
-	X.event              = bin.(st, t₁, t₂, 1., binary=true)      |> x->vcat(x...)
+	X.event              = bin.(st, t₁, t₂, binsize=1., binary=true)      |> x->vcat(x...)
 	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
 	X.previousIsi 	     = lastisi.(st, t₁, t₂, tpadded...)       |> x->vcat(x...)
 
