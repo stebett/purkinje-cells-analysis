@@ -1,5 +1,5 @@
 initialDir	= 	/kingdoms/nbc/workspace14/CETO05/bettani/
-executable 	= 	condor.sh
+executable 	= 	analyse.R
 error 		= 	out/dist.err
 log 		= 	out/dist.log
 nice_user 	= 	True
@@ -7,5 +7,5 @@ nice_user 	= 	True
 request_cpus	=	5
 request_memory	=	2048
 
-arguments = $(filename) out/$(filename)
+arguments = $(filename) out/data/$(filename)
 queue filename matching files in/r.config/*

@@ -22,7 +22,7 @@ uniformize <- function(file){
 
 	uniformized_df = list(inv.rnfun=inv.rnfun, rnfun=rnfun, data=data)
 
-	save(file=uniformpath, uniformized_df)
+	save(file=uniformpath, uniformized_df, version=2)
 }
 
 uniformize.ignore.errors <- function(file){

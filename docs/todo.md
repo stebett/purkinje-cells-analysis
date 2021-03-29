@@ -12,7 +12,7 @@
 
 - [ ] estimate information carryied by synchrony in sleep vs movement
 
-- [ ] refractor spline pipeline
+- [x] refractor spline pipeline
 - [x] violin plots for event vs nearest
 - [ ] categorical scatterplots (collapse nearest onto timeforspike with mean and std)
 - [ ] try out non-parametric kernel regression, MARS, simple anova
