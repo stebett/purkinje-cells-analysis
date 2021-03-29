@@ -7,8 +7,6 @@ using DataFrames
 
 includet(srcdir("spline", "mkdf.jl"))
 
-
-
 function preprocess(data, p; path)
 	indexes = load(path * "indexes.jld2", string(p[:group]))
 	foreach(indexes) do i

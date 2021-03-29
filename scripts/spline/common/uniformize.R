@@ -1,7 +1,6 @@
 library(STAR)
 
 infiles <- list.files(path="~/ens/data/analyses/spline/cluster-inputs-2/r.config/", pattern=".R", full.names=T, all.files=T)
-infiles <- list.files(path="~/ens/data/analyses/spline/cluster-inputs-2/prova/", pattern=".R", full.names=T, all.files=T)
 
 uniformize <- function(file){
 	source(file)
@@ -27,7 +26,7 @@ uniformize <- function(file){
 }
 
 uniformize.ignore.errors <- function(file){
-	return(tryCatch(uniformize(file), error=file.remove(file)))
+	return(tryCatch(uniformize(file), error=function(e) file.remove(file)))
 }
 
 lapply(infiles , uniformize.ignore.errors)
