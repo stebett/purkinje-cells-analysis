@@ -8,6 +8,14 @@ using Plots; gr()
 using Statistics
 using GLM
 
+
+function deviation(x::Vector, y::Vector{<:Vector{<:Real}})
+	a = cumsum(length.(y))
+	b = pushfirst!(a[1:end-1] .+ 1, 1)
+	c = UnitRange.(b, a) 
+	[std(x[r]) for r in c]
+end
+
 data = load_data("data-v5.arrow");
 
 tmp = data;

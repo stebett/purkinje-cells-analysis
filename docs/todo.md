@@ -12,13 +12,22 @@
 
 - [ ] estimate information carryied by synchrony in sleep vs movement
 
+- [x] move python notebooks away, use that dir for julia notebooks
+
 - [x] refractor spline pipeline
+
 - [x] violin plots for event vs nearest
 - [ ] categorical scatterplots (collapse nearest onto timeforspike with mean and std)
 - [ ] try out non-parametric kernel regression, MARS, simple anova
-- [ ] use query.jl
+
+- [ ] implement a clustering pipeline with statsplots for plotting (or gadfly or makie)
+
 - [x] rewrite crosscor
-- [ ] implement a clustering pipeline with statsplots for plotting
+- [ ] try out makie, maybe redoing crosscor pipeline
+
+- [ ] maybe make a SpikeTrain class, (ponder the benefits)
+
+- [ ] remove all dataframes dependencies from spikes
+- [ ] use dataframesmeta.jl
 - [ ] make notebooks with analyses and write stuff, and use them for daily reports
 - [ ] bootstraping 
-- [ ] move python notebooks away, use that dir for julia notebooks
