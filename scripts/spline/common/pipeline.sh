@@ -14,12 +14,13 @@ mkdir "$inpath/uniformized"
 mkdir "$inpath/in"
 mkdir "$inpath/out"
 
+chmod a+x $inpath/analysis.sh
+cp "/home/ginko/ens/scripts/spline/common/analysis*" $inpath
+
 julia  "/home/ginko/ens/scripts/spline/common/preprocess.jl" $inpath
 Rscript "/home/ginko/ens/scripts/spline/common/preprocess.R" $inpath
 
-cp "/home/ginko/ens/scripts/spline/common/analysis*" $inpath
 
-chmod a+x $inpath/analysis.sh
 
 # ssh bettani@jord "cd /kingdoms/nbc/workspace14/CETO05/ && rm -r bettani"
 scp -r $inpath bettani@jord:/kingdoms/nbc/workspace14/CETO05/bettani 
