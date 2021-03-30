@@ -1,6 +1,8 @@
 library(STAR)
 
-infiles <- list.files(path="~/ens/data/analyses/spline/cluster-inputs-2/r.config/", pattern=".R", full.names=T, all.files=T)
+args <- commandArgs(trailingOnly = TRUE)
+path = paste(args[1], "r.config/", sep="/")
+infiles <- list.files(path=path, pattern=".R", full.names=T, all.files=T)
 
 uniformize <- function(file){
 	source(file)

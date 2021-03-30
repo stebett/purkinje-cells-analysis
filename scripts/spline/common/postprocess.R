@@ -1,5 +1,9 @@
 library(STAR)
 
+args <- commandArgs(trailingOnly = TRUE)
+inpath = paste(args[1], "out", "data", sep="/")
+outpath = paste(args[1], "results", "postprocessed.RData", sep="/")
+
 read_rdata <- function(file) {
 	r_data <- load(file)
 	x <- get(r_data)
@@ -41,10 +45,9 @@ predict.one.result <- function(file) {
 	return(res)
 	}
 
-inpath = "~/ens/data/analyses/spline/batch-5/out/data"
 infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
 
 predictions = lapply(infiles, predict.one.result)
 
 outpath = "~/ens/data/analyses/spline/batch-5/results/postprocessed.RData"
-save(processed, file=outpath)
+save(predictions, file=outpath)

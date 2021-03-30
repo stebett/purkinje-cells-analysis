@@ -10,8 +10,9 @@ using Arrow
 
 include(srcdir("spline", "models_summaries.jl"))
 
-inpath = "/home/ginko/ens/data/analyses/spline/batch-5/results/postprocessed.RData"
-outpath = "/home/ginko/ens/data/analyses/spline/batch-5/results/result.arrow"
+
+inpath = "$(ARG[1])/results/postprocessed.RData"
+outpath = "$(ARG[1])/results/result.arrow"
 
 
 data = RData.load(inpath)["predictions"]
@@ -37,5 +38,4 @@ for row in data
 	end
 end
 
-outpath = "/home/ginko/ens/data/analyses/spline/batch-5/results/result.arrow"
 result = Arrow.Table(outpath) |> DataFrame

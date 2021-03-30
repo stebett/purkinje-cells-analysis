@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 
-Rscript analyse.R $1 $2
+Rscript analysis.R $1 $2
