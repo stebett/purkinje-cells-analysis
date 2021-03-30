@@ -10,16 +10,16 @@ using Measurements
 using RCall
 
 
-include(srcdir("spline", "spline-plots.jl"))
+include(srcdir("spline", "plots.jl"))
 include(srcdir("spline", "spline-utils.jl"))
 
-r_neigh = load(datadir("analyses/spline/batch-4-cluster/postprocessed", "multi-neigh.jld2"))
-r_dist = load(datadir("analyses/spline/batch-4-cluster/postprocessed", "multi-dist.jld2"))
+r_neigh = load(datadir("analyses/spline/batch-4/postprocessed", "multi-neigh.jld2"))
+r_dist = load(datadir("analyses/spline/batch-4/postprocessed", "multi-dist.jld2"))
 
-ll_n = CSV.read(datadir("analyses/spline/batch-4-cluster/postprocessed",
-						"likelihood-neigh.csv"), types=[Array{Int, 1}, Bool]) |> DataFrame
-ll_d = CSV.read(datadir("analyses/spline/batch-4-cluster/postprocessed",
-						"likelihood-dist.csv"), types=[Array{Int, 1}, Bool]) |> DataFrame
+ll_n = CSV.read(datadir("analyses/spline/batch-4/postprocessed", "likelihood-neigh.csv"), 
+				types=[Array{Int, 1}, Bool], DataFrame)
+ll_d = CSV.read(datadir("analyses/spline/batch-4/postprocessed", "likelihood-dist.csv"),
+				types=[Array{Int, 1}, Bool]) |> DataFrame
 
 df_n = extract(r_neigh)
 df_d = extract(r_dist)
@@ -64,61 +64,5 @@ for i in d_better.index
 	ylabel!("eta")
 	xlabel!("time")
 	p = plot(p1, p3, p2, p4, size=(1000, 1000))
-	savefig(plotsdir("logbook", "24-03", "dist-inspection", "$i"))
+	# savefig(plotsdir("logbook", "24-03", "dist-inspection", "$i"))
 end
-
-
-index = "[593, 590]"
-gss = d[index]["C"]
-@rput gss
-R"""
-require(STAR)
-class(gss) <- "ssanova"
-
-inv = multi_dist[[$index]]$inv.rnfun
-plot.gss(gss, parm='r.nearest', inv.rnfun=inv)
-"""
-
-R"""
-#compute a smooth fit from a gssanova output
-qp.gss <- function(gsa,parm,inv.rnfun)
-  {
-    qpgss=quickPredict(gsa,parm)
-    if(!is.null(inv.rnfun[[parm]]))
-      {
-        qpgss$newx=inv.rnfun[[parm]](qpgss$xx)
-        qpgss$ticks=pretty(qpgss$xx)
-        qpgss$labels=inv.rnfun[[parm]](qpgss$ticks)
-      }
-    qpgss
-  }
-
-#plot a smooth fit (pre-computed by qp.gss)
-plot.qp.gss <- function(qpgsa,uniform=FALSE,...)
-  {
-    if(!is.null(qpgsa$newx))
-      {
-        if(uniform==FALSE)
-          {
-            qpgsa$xx=qpgsa$newx
-            plot(qpgsa,...)
-          } else {
-            plot(qpgsa,axes=FALSE,...)
-            axis(2)
-            box()
-            axis(1,at=qpgsa$ticks,labels=formatC(qpgsa$labels,2))
-          }
-      } else {
-        plot(qpgsa,...)
-      }
-    abline(h=0)
-  }
-
-#plot a smooth fit on gssanova result (uses qp.gss to predict and plot.qp.gss to plot)
-plot.gss <- function(gsa,parm='r.nearest',inv.rnfun=NULL,uniform=FALSE,...)
-  {
-    qpgss=qp.gss(gsa,parm,inv.rnfun)
-    plot.qp.gss(qpgss,uniform,...)
-    invisible(qpgss)
-  }
-"""

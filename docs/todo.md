@@ -15,6 +15,7 @@
 - [x] move python notebooks away, use that dir for julia notebooks
 
 - [x] refractor spline pipeline
+- [ ] make output go in tmp directory, reduce mess with paths
 
 - [x] violin plots for event vs nearest
 - [ ] categorical scatterplots (collapse nearest onto timeforspike with mean and std)

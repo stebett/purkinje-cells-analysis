@@ -1,6 +1,7 @@
 module ens
  
 using DrWatson
+using DataFrames
 
 include(srcdir("couple.jl"))
 include(srcdir("load-data.jl"))
