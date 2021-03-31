@@ -1,7 +1,7 @@
 library(STAR)
 
 args <- commandArgs(trailingOnly = TRUE)
-path = paste(args[1], "r.config/", sep="/")
+path = paste(args[1], "in", "r.config/", sep="/")
 infiles <- list.files(path=path, pattern=".R", full.names=T, all.files=T)
 
 uniformize <- function(file){

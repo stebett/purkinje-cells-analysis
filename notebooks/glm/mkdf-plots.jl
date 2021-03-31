@@ -37,4 +37,4 @@ cticks(ctg::CategoricalArray) = (1:length(levels(ctg)), levels(ctg));
 xlabel!("isi");
 ylabel!("nearest")
 
-weave("/home/ginko/ens/notebooks/glm/mkdf-plots.jl")
+# weave("/home/ginko/ens/notebooks/glm/mkdf-plots.jl")

@@ -5,7 +5,7 @@ log 		= 	out/analysis.log
 nice_user 	= 	True
 
 request_cpus	=	1
-request_memory	=	1024
+request_memory	=	1536
 
 concurrency_limits = 	bettani_limit:35
 

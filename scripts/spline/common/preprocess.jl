@@ -28,8 +28,8 @@ function write_args_and_configs(df, p, index, path, binneddir="csv/", argsdir="i
 	index, group, reference = pretty(Dict(p..., :index=>index))
 	filename = join([index, group, reference], '-') 
 
-	clusterpath = "/kingdoms/nbc/workspace14/CETO05/bettani/" * argsdir
-	uniformpath = path * uniformdir * filename * ".RData"
+	clusterpath = "/kingdoms/nbc/workspace14/CETO05/bettani/" * argsdir * filename * ".RData"
+	uniformpath = path * uniformdir * filename * ".R"
 	csvpath = path * binneddir * filename * ".csv"
 	cfgpath = path * argsdir * filename * ".R"
 	
@@ -40,7 +40,7 @@ function write_args_and_configs(df, p, index, path, binneddir="csv/", argsdir="i
 	reference <- '$reference'
 	csvpath <- '$csvpath'
 	uniformpath <- '$uniformpath'
-	clusterpath <- ''
+	clusterpath <- '$clusterpath'
 	"""
 
 	open(cfgpath, "w") do io

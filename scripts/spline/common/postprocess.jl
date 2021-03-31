@@ -8,7 +8,7 @@ using Plots
 using Spikes
 using Arrow
 
-include(srcdir("spline", "models_summaries.jl"))
+include(srcdir("spline", "model_summaries.jl"))
 
 
 inpath = "$(ARGS[1])results/postprocessed.RData"

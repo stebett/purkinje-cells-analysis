@@ -7,11 +7,11 @@ using Arrow
 using CSV
 using StatsPlots; pyplot(size=(800,800))
 
-include(srcdir("spline", "models_summaries.jl"))
+include(srcdir("spline", "model_summaries.jl"))
 include(srcdir("spline", "plots.jl"))
 
 #' # Load results
-batch=6
+batch=7
 inpath = "/home/ginko/ens/data/analyses/spline/batch-$batch/results/result.arrow"
 result = Arrow.Table(inpath) |> DataFrame;
 ll_n = CSV.read(datadir("analyses/spline/batch-4/postprocessed",
