@@ -32,3 +32,4 @@
 - [ ] use dataframesmeta.jl
 - [ ] make notebooks with analyses and write stuff, and use them for daily reports
 - [ ] bootstraping 
+- [ ] add hash to metadata

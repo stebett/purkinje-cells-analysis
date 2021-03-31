@@ -47,4 +47,4 @@ rm $(diff -rs $diffpath/out/data $respath/out/data | egrep '^Files .+ and .+ are
 Rscript /home/ginko/ens/scripts/spline/common/postprocess.R $diffpath
 julia /home/ginko/ens/scripts/spline/common/postprocess.jl $diffpath
 
-julia /home/ginko/ens/scripts/spline/common/postprocess-diff.jl.jl $respath $diffpath
+julia /home/ginko/ens/scripts/spline/common/postprocess-diff.jl $respath $diffpath

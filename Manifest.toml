@@ -1362,9 +1362,7 @@ version = "0.10.3"
 
 [[Spikes]]
 deps = ["CategoricalArrays", "Combinatorics", "DataFrames", "ImageFiltering", "Measurements", "OffsetArrays", "Statistics", "StatsBase"]
-git-tree-sha1 = "4ab9e0a7dc411b949b1ca421fc060218c46b249a"
-repo-rev = "master"
-repo-url = "/home/ginko/.julia/dev/Spikes"
+path = "/home/ginko/.julia/dev/Spikes"
 uuid = "a305d8b4-9cce-41f7-8708-a71367dc1260"
 version = "0.1.0"
 

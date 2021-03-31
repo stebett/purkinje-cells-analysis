@@ -18,6 +18,7 @@ function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift
 	st, st₂ = st[valid], st₂[valid]
 
 	isi = binisi.(st₂, t₁, t₂) |> x->vcat(x...)
+	isi = [isi[2:end]; NaN]
 	isi_r = binisi_r.(st₂, t₁, t₂) |> x->vcat(x...)
 
 	X                    = DataFrame()
@@ -25,12 +26,14 @@ function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift
 	X.timetoevt          = relativetime(cellpair, T, tmax, valid) |> x->vcat(x...)
 	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
 	X.event              = bin.(st, t₁, t₂, binsize=1., binary=true)      |> x->vcat(x...)
-	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
-	X.previousIsi 	     = lastisi.(st, t₁, t₂, 0, t₂ + pad)      |> x->vcat(x...)
+	X.timeSinceLastSpike = binisi.(st, t₁, t₂)    |> x->vcat(x...) |> x->ceil.(x)  
+	X.previousIsi 	     = lastisi.(st, t₁, t₂, 0, t₂ + pad)      |> x->vcat(x...) |> x->ceil.(x)
+	X.tback = isi
+	X.tforw = isi_r
 	X.nearest            = min.(isi, isi_r)                       
 
 	drop!(X)
-	X = roundX ? round.(X) : X
+	X = roundX ? floor.(X) : X
 end
 
 function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift, minspikes=2, roundX=true)
