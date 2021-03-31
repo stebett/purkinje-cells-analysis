@@ -20,19 +20,19 @@ ll_d = CSV.read(datadir("analyses/spline/batch-4/postprocessed",
 						"likelihood-dist.csv"), types=[Array{Int, 1}, Bool], DataFrame);
 
 
-df_n = get_peaks(result, "multi", "neigh");
-df_d = get_peaks(result, "multi", "dist");
+df_n = get_peaks(result, "best", "neigh");
+df_d = get_peaks(result, "best", "dist");
 n_better = df_n[in.(df_n.index, Ref(ll_n[ll_n.c_better .== true, :index])), :];
 d_better = df_d[in.(df_d.index, Ref(ll_d[ll_d.c_better .== true, :index])), :];
 
 #' # Neighbors 
 #+ fig_ext = ".svg"
-plot(n_better.x, ribbon=n_better.sd, fillalpha=0.05, n_better.mean,  xlims=(0, 40), legend=false)
+plot(n_better.x - n_better.sd, fillalpha=0.05, n_better.mean,  xlims=(0, 40), legend=false)
 hline!([0], lw=1.5, c=:black, s=:dash)
 
 #' # Distant neurons
 #+ fig_ext = ".svg"
-plot(d_better.x, ribbon=d_better.sd, fillalpha=0.05, d_better.mean,  xlims=(0, 40), legend=false)
+plot(d_better.x - d_better.sd, fillalpha=0.05, d_better.mean,  xlims=(0, 40), legend=false)
 hline!([0], lw=1.5, c=:black, s=:dash)
 
 #' # Full picture
