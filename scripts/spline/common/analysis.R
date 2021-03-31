@@ -4,7 +4,7 @@ args <- commandArgs(trailingOnly = TRUE)
 
 source(args[1])
 
-load(clusterpath)
+load(uniformpath)
 
 time = "time"
 if (reference == "multi") {

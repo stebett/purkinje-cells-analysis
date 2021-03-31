@@ -4,7 +4,8 @@ using DrWatson
 using KernelDensity
 using Measures
 using Distributions
-using StatsBase; plotly()
+using StatsBase
+using Plots
 using DataFrames 
 
 

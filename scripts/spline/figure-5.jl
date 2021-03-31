@@ -4,6 +4,7 @@ using DrWatson
 using JLD2 
 using Spikes
 using Arrow
+using CSV
 
 include(srcdir("spline", "plots.jl"))
 # include(srcdir("spline", "utils.jl"))
@@ -26,6 +27,8 @@ d_better = df_d[in.(df_d.index, Ref(ll_d[ll_d.c_better .== 1, :index])), :]
 
 plot(n_better.x - 2n_better.sd, n_better.mean,  xlims=(0, 100), legend=false)
 hline!([0], lw=3, c=:black)
+
+plot(d_better.x - 2d_better.sd, d_better.mean,  xlims=(0, 100), legend=false)
 
 figure_5(n_better, d_better, ll_n, ll_d)
 

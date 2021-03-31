@@ -11,24 +11,34 @@
 !_TAG_PROGRAM_VERSION	5.9.0	/e52cf4a7/
 Base.parse	src/parse.jl	/^function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Array{Int, 1}$/;"	f
 Base.parse	src/parse.jl	/^function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Tuple{Int, Int}$/;"	f
-corr_by_landmark	scripts/correlations/new-crosscor.jl	/^function corr_by_landmark(landmark::Symbol, neigh, dist)$/;"	f
-correct_df	_research/multivariate-functions.jl	/^function correct_df(data, idx)$/;"	f
-correlate	scripts/correlations/old-crosscor.jl	/^function correlate(convolutions)$/;"	f
+GLM.predict	_research/glm.jl	/^GLM.predict(linreg, df[df.trial .== 1, :]) |> plot$/;"	f
+average	scripts/crosscorr/f-g.jl	/^function average(x::Vector, df::DataFrame)$/;"	f
+average	scripts/crosscorr/f-g.jl	/^function average(x::Vector, y::Vector{<:Vector{<:Real}})$/;"	f
+average	test/average-test.jl	/^@test @inferred average(x, y) == fill(2, 20)$/;"	f
+average	test/average-test.jl	/^@test average(x, y) == fill(2, 20)$/;"	f
+corr_by_landmark	scripts/correlations/new.jl	/^function corr_by_landmark(landmark::Symbol, neigh, dist)$/;"	f
+correlate	scripts/correlations/old.jl	/^function correlate(convolutions)$/;"	f
 cost	_research/information.jl	/^function cost(df, around, binsize)$/;"	f
+couple	src/couple.jl	/^function couple(df::DataFrame, kind::Symbol)$/;"	f
 couple_sign	_research/glm.jl	/^function couple_sign(data, idx)$/;"	f
 couple_sign	_research/multivariate-functions.jl	/^function couple_sign(data, idx)$/;"	f
-cut	test/section-test.jl	/^@test cut(a, 50, [-10, 10]) == [0, 10, 20]$/;"	f
-distant_correlation	scripts/correlations/old-crosscor.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
+crosscor_c	src/crosscor.jl	/^@inline function crosscor_c(df, c, active_c::Dict, binsize, norm=true) $/;"	f
+crosscor_c	src/crosscor.jl	/^@inline function crosscor_c(df, c, around::Vector, binsize, norm=true) $/;"	f
+deviation	scripts/speed/linreg.jl	/^function deviation(x::Vector, y::Vector{<:Vector{<:Real}})$/;"	f
+deviation	test/average-test.jl	/^@test @inferred deviation(x, y) == fill(std([0, 1, 2, 3, 4]), 20)$/;"	f
+deviation	test/average-test.jl	/^@test deviation(x, y) == fill(std([0, 1, 2, 3, 4]), 20)$/;"	f
+distant_correlation	scripts/correlations/old.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
 ens	src/ens.jl	/^module ens$/;"	n
 equalize_landmarks	scripts/io/v1-v6.jl	/^function equalize_landmarks(df, idx) #TODO don't think it works if lift is smaller$/;"	f
 extract_index	scripts/io/fix-full-data-index.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
 extract_index	scripts/io/load-full.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
-extract_trials	_research/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
+extract_trials	_research/old/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
-figure_5A	scripts/spline/figure-5.jl	/^function figure_5A(ll, title)$/;"	f
-figure_5B	scripts/spline/figure-5.jl	/^function figure_5B(df)$/;"	f
-figure_5C	scripts/spline/figure-5.jl	/^function figure_5C(df)$/;"	f
+figure_5	src/spline/plots.jl	/^function figure_5(n, d, ll_n, ll_d)$/;"	f
+figure_5A	src/spline/plots.jl	/^function figure_5A(ll, title)$/;"	f
+figure_5B	src/spline/plots.jl	/^function figure_5B(df)$/;"	f
+figure_5C	src/spline/plots.jl	/^function figure_5C(df)$/;"	f
 figure_A	scripts/crosscorr/a.jl	/^function figure_A(b, r, title; kwargs...)$/;"	f
 figure_B	scripts/crosscorr/b.jl	/^function figure_B(modulated, unmodulated; kwargs...)$/;"	f
 figure_C	scripts/crosscorr/c-d-clement.jl	/^function figure_C(neighbors::Matrix; kwargs...)$/;"	f
@@ -36,8 +46,8 @@ figure_D	scripts/crosscorr/c-d-clement.jl	/^function figure_D(distant::Matrix; k
 figure_E	scripts/crosscorr/e.jl	/^function figure_E(x, xs, y; kwargs...)$/;"	f
 figure_F	scripts/crosscorr/f-g.jl	/^function figure_F(folded_sim_mean, folded_sim_sem; kwargs...)$/;"	f
 figure_G	scripts/crosscorr/f-g.jl	/^function figure_G(folded_diff_mean, folded_diff_sem; kwargs...)$/;"	f
-filterData	_research/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
-filterLandmarks	_research/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
+filterData	_research/old/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
+filterLandmarks	_research/old/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
 filter_by_length	scripts/crosscorr/c-d-clement.jl	/^function filter_by_length(x::Vector{<:Tuple}, minlen::Int)$/;"	f
 find	src/find.jl	/^function find(df::DataFrame, index::Int, column=Colon())$/;"	f
 find	src/find.jl	/^function find(df::DataFrame, index::Vector, column=Colon())$/;"	f
@@ -48,44 +58,37 @@ fit_halfes	scripts/pca/speed.jl	/^function fit_halfes(st)$/;"	f
 fit_thirds	scripts/pca/speed.jl	/^function fit_thirds(st)$/;"	f
 fitcell	src/spline/fit.jl	/^function fitcell(cell::DataFrameRow; reference)$/;"	f
 fitcell	src/spline/fit.jl	/^function fitcell(cellpair::DataFrame; reference)$/;"	f
-fitcell_log_save	scripts/spline/local/produce.jl	/^function fitcell_log_save(x, fn, reference) $/;"	f
 get_active_couples	scripts/crosscorr/c-d-clement.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_active_couples	scripts/crosscorr/c-d.jl	/^function get_active_couples(couples, ranges)$/;"	f
-get_aligned_trial	_research/alligned-trials.jl	/^@inline function get_aligned_trial(df, n, i)$/;"	f
+get_distant	src/couple.jl	/^function get_distant(df::DataFrame)$/;"	f
+get_neighbors	src/couple.jl	/^function get_neighbors(df::DataFrame)$/;"	f
 get_p	_research/information.jl	/^function get_p(df, landmark, around, binsize)$/;"	f
-get_trial	_research/single-trials.jl	/^@inline function get_trial(df, n, i, after)$/;"	f
-get_trial	_research/single-trials.jl	/^function get_trial(df, n)$/;"	f
-get_trial	_research/single-trials.jl	/^function get_trial(df, n, after)$/;"	f
+get_peaks	src/spline/models_summaries.jl	/^function get_peaks(df, ref, group)$/;"	f
 halffit	src/spline/fit.jl	/^function halffit(cellpair; reference)$/;"	f
-interval	_research/landmarks-info.jl	/^function interval(data, l1, l2)$/;"	f
-jpsth	_research/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
-likelihood_analysis	scripts/spline/local/produce.jl	/^function likelihood_analysis(p)$/;"	f
+jpsth	_research/old/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 likelihoodtest	_research/multivariate-functions.jl	/^function likelihoodtest(data, idx)$/;"	f
-likelihoodtest_corrected	_research/multivariate-functions.jl	/^function likelihoodtest_corrected(data, idx)$/;"	f
 load_data	src/load-data.jl	/^function load_data(filename)$/;"	f
 load_full	scripts/io/load-full.jl	/^function load_full()$/;"	f
-main	scripts/spline/local/produce.jl	/^function main(p)$/;"	f
 merge_ranges	scripts/crosscorr/c-d-clement.jl	/^function merge_ranges(x::Vector{<:Tuple})$/;"	f
 minmax_scale	src/minmax.jl	/^function minmax_scale(x::Vector)$/;"	f
-mkdf	src/spline/mkdf.jl	/^function mkdf(cell::DataFrameRow; tmax = [-600., 600.], pad=150., reference=:lift, landmark=:lif/;"	f
-mkdf	src/spline/mkdf.jl	/^function mkdf(cellpair::DataFrame; tmax = [-600., 600.], pad=100., reference=:lift, landmark=:li/;"	f
-neighbor_correlation	scripts/correlations/old-crosscor.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
+mkdf	src/spline/mkdf.jl	/^function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift,/;"	f
+mkdf	src/spline/mkdf.jl	/^function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift/;"	f
+neighbor_correlation	scripts/correlations/old.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
 plot_crosscor_distant	scripts/crosscorr/c-d.jl	/^function plot_crosscor_distant(distant::Matrix)$/;"	f
 plot_crosscor_neigh	scripts/crosscorr/c-d.jl	/^function plot_crosscor_neigh(neighbors::Matrix)$/;"	f
-plot_gpfa	_research/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
-plot_gpfa_slow_vs_fast	_research/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
-plot_gpfa_speed	_research/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
+plot_gpfa	_research/old/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
+plot_gpfa_slow_vs_fast	_research/old/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
+plot_gpfa_speed	_research/old/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
 plot_quick_prediction	src/spline/plots.jl	/^function plot_quick_prediction(x, title="")$/;"	f
 plot_single_result	src/spline/plots.jl	/^function plot_single_result(x::NamedTuple)$/;"	f
-predictLogProb	src/spline/mkdf.jl	/^function predictLogProb(gssResult, uniformdf)$/;"	f
-produce_data	scripts/spline/server/preprocess.jl	/^function produce_data(name::String, reference)$/;"	f
-quickPredict	src/spline/mkdf.jl	/^function quickPredict(uniformdf, gssResult, variable)$/;"	f
+preprocess	scripts/spline/common/preprocess.jl	/^function preprocess(data, p; path)$/;"	f
+pretty	scripts/spline/common/preprocess.jl	/^function pretty(p::Dict)$/;"	f
 rangeT	src/spline/models_summaries.jl	/^function rangeT(y::BitArray{1})$/;"	f
+relativetime	src/spline/mkdf.jl	/^function relativetime(cell::T, time, tmax, valid)  where T <: DataFrameRow $/;"	f
+relativetime	src/spline/mkdf.jl	/^function relativetime(cellpair::DataFrame, time, tmax, valid)$/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(lift, cover, grasp, t, tmax)$/;"	f
-relativetime	src/spline/mkdf.jl	/^relativetime(cell::DataFrameRow, time, tmax) = relativetime.(cell[:lift], $/;"	f
-relativetime	src/spline/mkdf.jl	/^relativetime(cellpair::DataFrame, time, tmax) = relativetime.(cellpair[1, :lift], $/;"	f
 remove_nan	scripts/io/v1-v6.jl	/^function remove_nan(df)$/;"	f
 remove_zerotrials	scripts/io/v1-v6.jl	/^function remove_zerotrials(df)$/;"	f
 save_trials	scripts/io/save-trials.jl	/^function save_trials(trials)$/;"	f
@@ -94,24 +97,13 @@ scatter_dynamics	scripts/pca/pca.jl	/^function scatter_dynamics(around, title)$/
 search_routes	scripts/io/load-full.jl	/^function search_routes(x, l, saved_list::Vector)$/;"	f
 sem	scripts/crosscorr/c-d.jl	/^function sem(x::Matrix; dims=2)$/;"	f
 sem	src/sem.jl	/^function sem(x::Matrix; dims=2)$/;"	f
-seq	_research/ppseq.jl	/^const seq = PPSeq$/;"	c
-single_trials	_research/experimental.jl	/^function single_trials(df, landmark::String)$/;"	f
-single_trials	_research/plot-gpfa.jl	/^function single_trials(df, landmark::String)$/;"	f
+seq	_research/old/ppseq.jl	/^const seq = PPSeq$/;"	c
+single_trials	_research/old/experimental.jl	/^function single_trials(df, landmark::String)$/;"	f
+single_trials	_research/old/plot-gpfa.jl	/^function single_trials(df, landmark::String)$/;"	f
 single_trials	scripts/io/save-trials.jl	/^function single_trials(df, landmark::String)$/;"	f
 size	scripts/io/v1-v6.jl	/^@test size(new.t) == size(unique(new.t))$/;"	f
 sort_active	scripts/pca/speed-pca.jl	/^function sort_active(n, thr=0.5)$/;"	f
-standardize_landmarks	_research/experimental.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
+standardize_landmarks	_research/old/experimental.jl	/^function standardize_landmarks(landmarks::Array{Array{Float64,1},1})::Array{Float64, 2}$/;"	f
 sum	scripts/io/v1-v6.jl	/^@test sum([x for c in new.cover for x in c] .- [x for l in new.lift for x in l] .== 0) == 0$/;"	f
 sum	scripts/io/v1-v6.jl	/^@test sum([x for c in new.grasp for x in c] .- [x for l in new.cover for x in l] .== 0) == 0$/;"	f
-summarize_complex_model	src/spline/models_summaries.jl	/^function summarize_complex_model(data)$/;"	f
-summarize_simple_model	src/spline/models_summaries.jl	/^function summarize_simple_model(data)$/;"	f
-test_active	test/psth-v2-test.jl	/^function test_active(df, idx, rng)$/;"	f
-test_all_active	test/cross-corr-plot-test.jl	/^function test_all_active(df, saveplot=false)$/;"	f
-test_all_active	test/psth-v2-test.jl	/^function test_all_active(df)$/;"	f
-test_all_active2	test/cross-corr-plot-test.jl	/^function test_all_active2(df, saveplot=false)$/;"	f
-test_discretize	test/tests-psth.jl	/^function test_discretize()$/;"	f
-test_fractions	test/bin-test.jl	/^function test_fractions(a, i)$/;"	f
-test_int	test/bin-test.jl	/^function test_int(a, i)$/;"	f
-test_norm_slice	test/tests-psth.jl	/^function test_norm_slice()$/;"	f
-test_slice	test/tests-psth.jl	/^function test_slice()$/;"	f
-test_sum	test/bin-test.jl	/^function test_sum(a, i)$/;"	f
+write_args_and_configs	scripts/spline/common/preprocess.jl	/^function write_args_and_configs(df, p, index, path, binneddir="csv\/", argsdir="in\/r.config\/",/;"	f

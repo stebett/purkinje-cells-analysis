@@ -11,8 +11,8 @@ using Arrow
 include(srcdir("spline", "models_summaries.jl"))
 
 
-inpath = "$(ARG[1])/results/postprocessed.RData"
-outpath = "$(ARG[1])/results/result.arrow"
+inpath = "$(ARGS[1])results/postprocessed.RData"
+outpath = "$(ARGS[1])results/result.arrow"
 
 
 data = RData.load(inpath)["predictions"]
@@ -38,4 +38,4 @@ for row in data
 	end
 end
 
-result = Arrow.Table(outpath) |> DataFrame
+Arrow.write(outpath, result)

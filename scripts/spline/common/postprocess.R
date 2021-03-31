@@ -49,5 +49,4 @@ infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
 
 predictions = lapply(infiles, predict.one.result)
 
-outpath = "~/ens/data/analyses/spline/batch-5/results/postprocessed.RData"
 save(predictions, file=outpath)

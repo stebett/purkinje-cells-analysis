@@ -5,7 +5,7 @@ function get_peaks(df, ref, group)
 	tmp = @where(df, :reference .== ref, :group .== group, :variable .== "r.nearest")
 	res = DataFrame()
 	for d in eachrow(tmp)
-		act = (d.mean .+ 2d.sd) .> 0
+		act = (d.mean ) .> 0 #TODO add confidence interval
 		maxrange = d.x .< 100.0
 		act = act .& maxrange
 		indexes = rangeT(act)
