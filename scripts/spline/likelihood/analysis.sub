@@ -1,0 +1,14 @@
+initialDir	= 	/kingdoms/nbc/workspace14/CETO05/bettani/
+executable 	= 	analysis.sh
+error 		= 	out/analysis.err
+log 		= 	out/analysis.log
+output 		= 	out/analysis.out
+nice_user 	= 	True
+
+request_cpus	=	1
+request_memory	=	320
+
+concurrency_limits = 	bettani_limit:35
+
+arguments = $(filename)
+queue filename matching files in/r.config/*

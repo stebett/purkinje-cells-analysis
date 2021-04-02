@@ -12,6 +12,7 @@
 Base.parse	src/parse.jl	/^function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Array{Int, 1}$/;"	f
 Base.parse	src/parse.jl	/^function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Tuple{Int, Int}$/;"	f
 GLM.predict	_research/glm.jl	/^GLM.predict(linreg, df[df.trial .== 1, :]) |> plot$/;"	f
+GLM.predict	notebooks/glm/glm.jl	/^GLM.predict(linreg, df[df.trial .== 1, :]) |> plot$/;"	f
 average	scripts/crosscorr/f-g.jl	/^function average(x::Vector, df::DataFrame)$/;"	f
 average	scripts/crosscorr/f-g.jl	/^function average(x::Vector, y::Vector{<:Vector{<:Real}})$/;"	f
 average	test/average-test.jl	/^@test @inferred average(x, y) == fill(2, 20)$/;"	f
@@ -22,8 +23,10 @@ cost	_research/information.jl	/^function cost(df, around, binsize)$/;"	f
 couple	src/couple.jl	/^function couple(df::DataFrame, kind::Symbol)$/;"	f
 couple_sign	_research/glm.jl	/^function couple_sign(data, idx)$/;"	f
 couple_sign	_research/multivariate-functions.jl	/^function couple_sign(data, idx)$/;"	f
+couple_sign	notebooks/glm/glm.jl	/^function couple_sign(data, idx)$/;"	f
 crosscor_c	src/crosscor.jl	/^@inline function crosscor_c(df, c, active_c::Dict, binsize, norm=true) $/;"	f
 crosscor_c	src/crosscor.jl	/^@inline function crosscor_c(df, c, around::Vector, binsize, norm=true) $/;"	f
+cticks	notebooks/glm/mkdf-plots.jl	/^cticks(ctg::CategoricalArray) = (1:length(levels(ctg)), levels(ctg));$/;"	f
 deviation	scripts/speed/linreg.jl	/^function deviation(x::Vector, y::Vector{<:Vector{<:Real}})$/;"	f
 deviation	test/average-test.jl	/^@test @inferred deviation(x, y) == fill(std([0, 1, 2, 3, 4]), 20)$/;"	f
 deviation	test/average-test.jl	/^@test deviation(x, y) == fill(std([0, 1, 2, 3, 4]), 20)$/;"	f
@@ -63,7 +66,7 @@ get_active_couples	scripts/crosscorr/c-d.jl	/^function get_active_couples(couple
 get_distant	src/couple.jl	/^function get_distant(df::DataFrame)$/;"	f
 get_neighbors	src/couple.jl	/^function get_neighbors(df::DataFrame)$/;"	f
 get_p	_research/information.jl	/^function get_p(df, landmark, around, binsize)$/;"	f
-get_peaks	src/spline/models_summaries.jl	/^function get_peaks(df, ref, group)$/;"	f
+get_peaks	src/spline/model_summaries.jl	/^function get_peaks(df, ref, group)$/;"	f
 halffit	src/spline/fit.jl	/^function halffit(cellpair; reference)$/;"	f
 jpsth	_research/old/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
 likelihoodtest	_research/multivariate-functions.jl	/^function likelihoodtest(data, idx)$/;"	f
@@ -73,6 +76,7 @@ merge_ranges	scripts/crosscorr/c-d-clement.jl	/^function merge_ranges(x::Vector{
 minmax_scale	src/minmax.jl	/^function minmax_scale(x::Vector)$/;"	f
 mkdf	src/spline/mkdf.jl	/^function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift,/;"	f
 mkdf	src/spline/mkdf.jl	/^function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift/;"	f
+nbdir	src/ens.jl	/^nbdir(args...) = projectdir("notebooks", args...)$/;"	f
 neighbor_correlation	scripts/correlations/old.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
 padder	scripts/io/save-trials.jl	/^function padder(n, trials)$/;"	f
@@ -85,7 +89,7 @@ plot_quick_prediction	src/spline/plots.jl	/^function plot_quick_prediction(x, ti
 plot_single_result	src/spline/plots.jl	/^function plot_single_result(x::NamedTuple)$/;"	f
 preprocess	scripts/spline/common/preprocess.jl	/^function preprocess(data, p; path)$/;"	f
 pretty	scripts/spline/common/preprocess.jl	/^function pretty(p::Dict)$/;"	f
-rangeT	src/spline/models_summaries.jl	/^function rangeT(y::BitArray{1})$/;"	f
+rangeT	src/spline/model_summaries.jl	/^function rangeT(y::BitArray{1})$/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(cell::T, time, tmax, valid)  where T <: DataFrameRow $/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(cellpair::DataFrame, time, tmax, valid)$/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(lift, cover, grasp, t, tmax)$/;"	f
