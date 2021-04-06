@@ -17,15 +17,16 @@ outpath = "$(ARGS[1])results/result.arrow"
 
 data = RData.load(inpath)["predictions"]
 
-df = DataFrame(index=Vector{Float64}[], 
-				   group=String[],
-				   reference=String[],
-				   n=Float64[],
-				   ll_c1=Float64[],
-				   ll_s1=Float64[],
-				   ll_c2=Float64[],
-				   ll_s2=Float64[],
-				   )
+df = DataFrame(index1=Float64[], 
+			   index1=Float64[], 
+			   group=String[],
+			   reference=String[],
+			   n=Float64[],
+			   ll_c1=Float64[],
+			   ll_s1=Float64[],
+			   ll_c2=Float64[],
+			   ll_s2=Float64[],
+			   )
 
 for i in 1:length(data)
 	try

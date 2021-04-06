@@ -17,7 +17,8 @@ outpath = "$(ARGS[1])results/result.arrow"
 
 data = RData.load(inpath)["predictions"]
 
-result = DataFrame(index=Union{Float64, Vector{Float64}}[], 
+result = DataFrame(index1=Float64[],
+				   index2=Float64[], 
 				   group=String[],
 				   reference=String[],
 				   variable=String[],
@@ -29,12 +30,13 @@ for row in data
 	variables  = filter(x -> (x != "index" && x!= "group" && x != "reference"), 
 						row.index2name)
 
-	index = row["index"]
+	index1 = row["index"][1]
+	index2 = length(row["index"]) > 1 ? row["index"][2] : NaN
 	group = row["group"]
 	reference = row["reference"]
 
 	for v in variables
-		push!(result, (index, group, reference, v, row[v]["x"], row[v]["mean"], row[v]["sd"]))
+		push!(result, (index1, index2, group, reference, v, row[v]["x"], row[v]["mean"], row[v]["sd"]))
 	end
 end
 
