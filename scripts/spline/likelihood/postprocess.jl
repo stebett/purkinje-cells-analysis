@@ -18,7 +18,7 @@ outpath = "$(ARGS[1])results/result.arrow"
 data = RData.load(inpath)["predictions"]
 
 df = DataFrame(index1=Float64[], 
-			   index1=Float64[], 
+			   index2=Float64[], 
 			   group=String[],
 			   reference=String[],
 			   n=Float64[],
@@ -30,7 +30,8 @@ df = DataFrame(index1=Float64[],
 
 for i in 1:length(data)
 	try
-		index = data[i]["index"]
+		index1 = data[i]["index"][1]
+		index2 = data[i]["index"][2]
 		group = data[i]["group"]
 		reference = data[i]["reference"]
 		n = data[i]["n"]
@@ -38,7 +39,7 @@ for i in 1:length(data)
 		ll_s1 = data[i]["ll_s1"]
 		ll_c2 = data[i]["ll_c2"]
 		ll_s2 = data[i]["ll_s2"]
-		push!(df, [index, group, reference, n, ll_c1, ll_s1, ll_c2, ll_s2])
+		push!(df, [index1, index2, group, reference, n, ll_c1, ll_s1, ll_c2, ll_s2])
 	catch e
 		@show e
 	end

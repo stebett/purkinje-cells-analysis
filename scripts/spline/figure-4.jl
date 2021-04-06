@@ -1,18 +1,19 @@
 using DrWatson
 @quickactivate :ens
 
-using JLD2 
+using RData
+using DataFrames
+using DataFramesMeta
+using Plots
 using Spikes
-using StatsBase
-using RCall
+using Arrow
 
-include(srcdir("spline", "spline-plots.jl"))
-include(srcdir("spline", "spline-utils.jl"))
+include(srcdir("spline", "model_summaries.jl"))
 
-data = load_data("data-v6.arrow");
-#%
-idx = 455
-spiketrain = cut(find(data, idx, :t)[1], find(data, idx, :lift)[1][2], [-300., 300.]) |> x->binary_bin(x, 600, 1.)
+batch = 7
+inpath = "/home/ginko/ens/data/analyses/spline/batch-$batch/results/postprocessed.RData"
+
+data = RData.load(inpath)["predictions"]
 
 R"""
 library(STAR)

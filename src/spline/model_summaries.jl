@@ -6,16 +6,6 @@ function best_model(df, ll)
 	df[(in.(df.index1, Ref(index[!, 1]))) .& (in.(df.index2, Ref(index[!, 2]))), :]
 end
 
-function ranges_counts(df; binsize = 0.001, tmax = 50.)
-	counts = zeros(Int(tmax/binsize))
-	timerange = 0:binsize:tmax-binsize
-	for (i, v) in enumerate(timerange)
-		counts[i] = sum([r[1] .< v .< r[2] for r in vcat(df.ranges...)])
-	end
-	counts_perc = counts ./ size(df, 1) .* 100.
-	timerange, counts_perc
-end
-
 
 function get_peaks(df, ref, group)
 	tmp = @where(df, :reference .== ref, :group .== group, :variable .== "r.nearest")

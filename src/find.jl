@@ -10,3 +10,4 @@ function find(df::DataFrame, index::Vector, column=Colon())
 	end
 	df[in.(df.index, Ref(index)), column]
 end
+
