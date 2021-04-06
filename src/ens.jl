@@ -3,6 +3,7 @@ module ens
 using DrWatson
 using DataFrames
 using Combinatorics
+using Spikes
 
 nbdir(args...) = projectdir("notebooks", args...)
 

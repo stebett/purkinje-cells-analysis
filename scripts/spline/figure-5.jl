@@ -1,35 +1,52 @@
 using DrWatson
 @quickactivate :ens
 
-using JLD2 
-using Spikes
 using Arrow
-using CSV
+using DataFramesMeta
+using StatsPlots; pyplot(size=(800,800))
 
+include(srcdir("spline", "model_summaries.jl"))
 include(srcdir("spline", "plots.jl"))
-# include(srcdir("spline", "utils.jl"))
 
-batch=6
+
+#' # Load results
+batch=7
 inpath = "/home/ginko/ens/data/analyses/spline/batch-$batch/results/result.arrow"
-
+inpath_ll = "/home/ginko/ens/data/analyses/spline/ll-batch-$batch/results/result.arrow"
 result = Arrow.Table(inpath) |> DataFrame
+result_ll = Arrow.Table(inpath_ll) |> DataFrame;
 
-ll_n = CSV.read(datadir("analyses/spline/batch-4/postprocessed",
-						"likelihood-neigh.csv"), types=[Array{Int, 1}, Bool], DataFrame)
-ll_d = CSV.read(datadir("analyses/spline/batch-4/postprocessed",
-						"likelihood-dist.csv"), types=[Array{Int, 1}, Bool], DataFrame)
+ll_n = @where(result_ll, :reference .== "best", :group .== "neigh")
+ll_d = @where(result_ll, :reference .== "best", :group .== "dist")
 
+df_n = get_peaks(result, "best", "neigh")
+df_d = get_peaks(result, "best", "dist")
 
-df_n = get_peaks(result, "multi", "neigh")
-df_d = get_peaks(result, "multi", "dist")
-n_better = df_n[in.(df_n.index, Ref(ll_n[ll_n.c_better .== 1, :index])), :]
-d_better = df_d[in.(df_d.index, Ref(ll_d[ll_d.c_better .== 1, :index])), :]
+n_better = best_model(df_n, ll_n)
+d_better = best_model(df_d, ll_d);
 
-plot(n_better.x - 2n_better.sd, n_better.mean,  xlims=(0, 100), legend=false)
-hline!([0], lw=3, c=:black)
+#' # Neighbors 
+#+ fig_ext = ".svg"
+@df n_better plot(:x, :mean,  xlims=(0, 201), ylims=(-1, 1), lab="")
+scatter!(n_better.peak, [-0.2], lab="", c=:black, m=:vline)
+hline!([0], lw=1.5, c=:black, s=:dash, lab="")
+title!("Complex fit for couples of neighbor cells")
+xlabel!("Time (ms)")
+ylabel!("η")
+lens!([1, 10], [-0.5, 0.5], inset = (1, bbox(0.5, 0.0, 0.4, 0.4)))
 
-plot(d_better.x - 2d_better.sd, d_better.mean,  xlims=(0, 100), legend=false)
+#' # Distant neurons
+#+ fig_ext = ".svg"
+@df d_better plot(:x, :mean, xlims=(0, 201), ylims=(-1, 1), lab="")
+scatter!(d_better.peak, [-0.2], lab="", c=:black, m=:vline)
+hline!([0], lw=1.5, c=:black, s=:dash, lab="")
+title!("Complex fit for couples of distant cells")
+xlabel!("Time (ms)")
+ylabel!("η")
+lens!([1, 10], [-0.25, 0.25], inset = (1, bbox(0.5, 0.0, 0.4, 0.4)))
 
-figure_5(n_better, d_better, ll_n, ll_d)
+#' # Full picture
+#+ fig_ext = ".svg"
+SplinePlots.figure_5(df_n, df_d, ll_n, ll_d)
 
-savefig(plotsdir("logbook", "24-03", "figure-5-fixed"), "scripts/spline/figure-5.jl")
+# save(plotsdir("logbook", "06-04", "figure-5-2sd.png"), fig)

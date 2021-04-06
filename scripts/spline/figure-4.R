@@ -1,5 +1,18 @@
 library(STAR)
 
+
+read_rdata <- function(file) {
+		r_data <- load(file)
+	x <- get(r_data)
+		return(x)
+}
+
+inpath = "/home/ginko/ens/data/analyses/spline/batch-7/out/data"
+infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
+
+result = read_rdata(infiles[400])
+
+
 function (m2uSelf)
 {
 	  force(m2uSelf)
@@ -7,11 +20,6 @@ function (m2uSelf)
 	      m2uSelf(proposedtime - max(st))
     }
 }
-
-inpath = "/home/ginko/ens/data/analyses/spline/batch-$batch/out/data/"
-
-res = result_multi_neigh
-res_clean=apply(res,2,function(x) {S=x[1:27];C=x[28:54];names(S)=sub('S\\.','',names(S));names(C)=sub('C\\.','',names(C));list(C=C,S=S)})
 
 Id=function(x,...) return(x)
 
