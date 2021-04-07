@@ -65,7 +65,7 @@ end;
 
 chain_raw = sample(bernoulli_reg(nearest, y, n, 10), NUTS(200, 0.65), 500, discard_adapt=false)
 
-chain = chain_raw[250:end, :, 1]
+chain = chain_raw[100:end, :, 1]
 
 plot(chain)
 
@@ -93,9 +93,7 @@ function fast_predict(data, idx)
 	x = df.nearest
 	y = df.event
 
-	p = sortperm(x)
-	x = x[p]
-	y = y[p]
+	perm = sortperm(x)
 
 	dt = fit(ZScoreTransform, x)
 	x_new = StatsBase.transform(dt, x)
@@ -104,12 +102,14 @@ function fast_predict(data, idx)
 
 	pred = prediction(x_new, chain)
 
-	p = plot(x, pred, legend=false)
+	p = plot(x[perm], pred[perm], legend=false)
 	ylabel!("p")
 	xlabel!("time to nearest spike")
 
 	p
 end
+
+f(η) = 1 / (1 + exp(-η))
 
 # Synth data
 

@@ -4,7 +4,6 @@ using DrWatson
 using RData
 using DataFrames
 using DataFramesMeta
-using Plots
 using Spikes
 using Arrow
 
