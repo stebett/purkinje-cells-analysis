@@ -10,15 +10,15 @@ using Spikes
 include(srcdir("spline", "mkdf.jl"))
 
 
-function preprocess(cells; indexes, reference, group, path)
+function preprocess(data; indexes, reference, group, path)
 	dir_paths = dirs(path, indexes)
 
 	cells = find(data, indexes) 
-	active = get_active_events(tmp)[1]
+	active = get_active_events(cells)[1]
 	landmark = reference == "best" ? [:lift, :cover, :grasp][active] : :lift
 	df = mkdf(cells, reference=reference, landmark=landmark)
 
-	write_configs(reference, group, landmark, idx, dir_paths)
+	write_configs(reference, group, landmark, indexes, dir_paths)
 	CSV.write(dir_paths[:csv], df)
 end
 
@@ -47,7 +47,7 @@ function write_configs(reference, group, landmark, indexes, dirs)
 	clusterpath <- '$(dirs[:clust])'
 	resultpath <- '$(dirs[:result])'
 	"""
-	open(dir_paths[:conf], "w") do io
+	open(dirs[:conf], "w") do io
 		write(io, configs)
 	end
 end
@@ -58,7 +58,7 @@ reference = ARGS[2]
 group = ARGS[3]
 
 data = load_data("data-v6.arrow");
-indexes = load(path * "../indexes.jld2", group)
+indexes = load(datadir("analyses", "spline", "indexes.jld2"), group)
 for idx in indexes
 	preprocess(data, indexes=idx, reference=reference, group=group, path=path)
 end

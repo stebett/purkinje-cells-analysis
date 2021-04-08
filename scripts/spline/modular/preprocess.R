@@ -28,7 +28,7 @@ uniformize <- function(file){
 }
 
 uniformize.ignore.errors <- function(file){
-	return(tryCatch(uniformize(file), error=function(e) file.remove(file)))
+	return(tryCatch(uniformize(file), error=function(e) message(e)))
 }
 
 lapply(infiles , uniformize.ignore.errors)

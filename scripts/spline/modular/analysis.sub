@@ -9,4 +9,4 @@ request_memory	=	1536
 concurrency_limits = 	bettani_limit:35
 
 arguments = $(filename) 
-queue filename matching files in/r.config/*
+queue filename matching files in/conf/*

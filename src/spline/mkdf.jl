@@ -52,10 +52,10 @@ function mkdf(cell::DataFrameRow; reference, tmax=[-600., 600.], pad=350., landm
 	X.timetoevt          = relativetime(cell, T, tmax, valid)     |> x->vcat(x...)
 	X.trial              = fill.(findall(valid), length(T))       |> x->vcat(x...)
 	X.event              = bin.(st, t₁, t₂, binsize=1., binary=true)      |> x->vcat(x...)
-	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
-	X.previousIsi 	     = lastisi.(st, t₁, t₂, tpadded...)       |> x->vcat(x...)
+	X.timeSinceLastSpike = binisi.(st, t₁, t₂)    |> x->vcat(x...) |> x->ceil.(x)  
+	X.previousIsi 	     = lastisi.(st, t₁, t₂, 0, t₂ + pad)      |> x->vcat(x...) |> x->ceil.(x)
 
-	# drop!(X)
+	drop!(X)
 	X = roundX ? round.(X) : X
 end
 
