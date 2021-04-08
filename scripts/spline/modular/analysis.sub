@@ -1,0 +1,12 @@
+executable 	= 	analysis.sh
+error 		= 	out/analysis.err
+log 		= 	out/analysis.log
+nice_user 	= 	True
+
+request_cpus	=	1
+request_memory	=	1536
+
+concurrency_limits = 	bettani_limit:35
+
+arguments = $(filename) 
+queue filename matching files in/r.config/*

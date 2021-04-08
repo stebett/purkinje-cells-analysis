@@ -4,9 +4,8 @@ using DrWatson
 using DataFrames
 using Spikes
 
-function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift, minspikes=2, roundX=true)
-	tmax[2] += reference == :multi ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
-	landmark = reference == :best ? [:lift, :cover, :grasp][get_active_events(cellpair)[1]] : :lift
+function mkdf(cellpair::DataFrame; reference, tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
+	tmax[2] += reference == "multi" ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
 
 	tpadded = tmax .+ [-pad, pad]
 	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
@@ -36,10 +35,9 @@ function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift
 	X = roundX ? floor.(X) : X
 end
 
-function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift, minspikes=2, roundX=true)
+function mkdf(cell::DataFrameRow; reference, tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
 	T = collect(tmax[1] : tmax[2] - 1)
-	tmax[2] += reference == :multi ? maximum(cell[:grasp] .- cell[:lift]) : 0.
-	landmark = reference == :best ? [:lift, :cover, :grasp][get_active_events(cell)[1]] : :lift
+	tmax[2] += reference == "multi" ? maximum(cell[:grasp] .- cell[:lift]) : 0.
 
 	tpadded = tmax .+ [-pad, pad]
 	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
