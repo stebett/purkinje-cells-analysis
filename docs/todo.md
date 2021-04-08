@@ -36,4 +36,4 @@
 - [ ] add git hash to metadata
 
 - [ ] add best reference to best
-- [ ] figure out why best time starts from 0
+- [x] figure out why best time starts from 0
