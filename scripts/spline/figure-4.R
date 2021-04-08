@@ -3,14 +3,32 @@ library(STAR)
 
 inpath = "/home/ginko/ens/data/analyses/spline/batch-7/out/data"
 infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
+
 simulations = lapply(infiles, sim.agg)
 
-saveRDS(simulations, "data/analyses/spline/batch-7/results/simulations.rds")
+saveRDS(simulations, "data/analyses/spline/batch-7/results/simulations-simple.rds")
 
-read_rdata <- function(file) {
-	r_data <- load(file)
-	x <- get(r_data)
-	return(x)
+
+sim.agg <- function(file, n=2) {
+	res = read_rdata(file)
+	sims = list()
+	if (res$group == 'all') {
+		if (res$reference == 'best') {
+			sims = tryCatch(sim(res, n), error=function(e) e)
+		}
+	}
+	list(fake=sims, index=res$index, group=res$group, reference=res$reference)
+}
+
+sim.agg <- function(file, n=2) {
+	res = read_rdata(file)
+	sims = list()
+	if (res$group != 'all') {
+		if (res$reference == 'best') {
+			sims = sim(res, n)
+		}
+	}
+	list(fake=sims, index=res$index, group=res$group, reference=res$reference)
 }
 
 sim <- function(res, n) {
@@ -24,18 +42,11 @@ sim <- function(res, n) {
 				  trials, SIMPLIFY=FALSE)
 }
 
-
-sim.agg <- function(file, n=2) {
-	res = read_rdata(file)
-	sims = list()
-	if (res$group != 'all') {
-		if (res$reference == 'best') {
-			sims = sim(res, n)
-		}
-	}
-	list(fake=sims, index=res$index, group=res$group, reference=res$reference)
+read_rdata <- function(file) {
+	r_data <- load(file)
+	x <- get(r_data)
+	return(x)
 }
-
 
 
 #for debugging

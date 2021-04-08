@@ -21,7 +21,8 @@
 - [x] use dataframesmeta.jl
 - [x] make notebooks with analyses and write stuff, and use them for daily reports
 
-- [ ] try out non-parametric kernel regression, MARS, simple anova
+- [x] try out non-parametric kernel regression, MARS, simple anova
+- [x] simulate cells
 
 - [ ] implement a clustering pipeline with statsplots for plotting (or gadfly or makie)
 
@@ -32,6 +33,7 @@
 
 - [ ] bootstraping 
 
-- [ ] add hash to metadata
+- [ ] add git hash to metadata
 
-- [ ] simulate cells
+- [ ] add best reference to best
+- [ ] figure out why best time starts from 0

@@ -1,6 +1,6 @@
 using DataFrames
 
-function find(df::DataFrame, index::Int, column=Colon())
+function find(df::DataFrame, index::Real, column=Colon())
 	@view df[findall(df.index .== index)[1], column]
 end
 

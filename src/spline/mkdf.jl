@@ -57,7 +57,7 @@ function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift,
 	X.timeSinceLastSpike = binisi.(st, t₁, t₂)                    |> x->vcat(x...)
 	X.previousIsi 	     = lastisi.(st, t₁, t₂, tpadded...)       |> x->vcat(x...)
 
-	drop!(X)
+	# drop!(X)
 	X = roundX ? round.(X) : X
 end
 
