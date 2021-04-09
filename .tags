@@ -13,10 +13,14 @@ Base.parse	src/parse.jl	/^function Base.parse(::Type{T}, c::String; n::Int=2) wh
 Base.parse	src/parse.jl	/^function Base.parse(::Type{T}, c::String; n::Int=2) where T<:Tuple{Int, Int}$/;"	f
 GLM.predict	_research/glm.jl	/^GLM.predict(linreg, df[df.trial .== 1, :]) |> plot$/;"	f
 GLM.predict	notebooks/glm/glm.jl	/^GLM.predict(linreg, df[df.trial .== 1, :]) |> plot$/;"	f
+SplinePlots	src/spline/plots.jl	/^module SplinePlots$/;"	n
 average	scripts/crosscorr/f-g.jl	/^function average(x::Vector, df::DataFrame)$/;"	f
 average	scripts/crosscorr/f-g.jl	/^function average(x::Vector, y::Vector{<:Vector{<:Real}})$/;"	f
 average	test/average-test.jl	/^@test @inferred average(x, y) == fill(2, 20)$/;"	f
 average	test/average-test.jl	/^@test average(x, y) == fill(2, 20)$/;"	f
+bernoulli_reg	notebooks/turing/pois-reg.jl	/^@model bernoulli_reg(x, y, n, σ²) = begin$/;"	f
+best_model	src/spline/model_summaries.jl	/^function best_model(df, ll)$/;"	f
+binomial_reg	notebooks/turing/binomial.jl	/^@model binomial_reg(x, y, n, σ²) = begin$/;"	f
 corr_by_landmark	scripts/correlations/new.jl	/^function corr_by_landmark(landmark::Symbol, neigh, dist)$/;"	f
 correlate	scripts/correlations/old.jl	/^function correlate(convolutions)$/;"	f
 cost	_research/information.jl	/^function cost(df, around, binsize)$/;"	f
@@ -30,18 +34,19 @@ cticks	notebooks/glm/mkdf-plots.jl	/^cticks(ctg::CategoricalArray) = (1:length(l
 deviation	scripts/speed/linreg.jl	/^function deviation(x::Vector, y::Vector{<:Vector{<:Real}})$/;"	f
 deviation	test/average-test.jl	/^@test @inferred deviation(x, y) == fill(std([0, 1, 2, 3, 4]), 20)$/;"	f
 deviation	test/average-test.jl	/^@test deviation(x, y) == fill(std([0, 1, 2, 3, 4]), 20)$/;"	f
+dirs	scripts/spline/modular/preprocess.jl	/^function dirs(path, indexes)$/;"	f
 distant_correlation	scripts/correlations/old.jl	/^function distant_correlation(correlations, dist_list, neuron_list)$/;"	f
 ens	src/ens.jl	/^module ens$/;"	n
 equalize_landmarks	scripts/io/v1-v6.jl	/^function equalize_landmarks(df, idx) #TODO don't think it works if lift is smaller$/;"	f
+extract	scripts/spline/figure-4.jl	/^extract(x, idx) = values(x) |> collect |> k->getindex.(k, idx)$/;"	f
 extract_index	scripts/io/fix-full-data-index.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
 extract_index	scripts/io/load-full.jl	/^function extract_index(df::DataFrame, path::String, name::String)::Int$/;"	f
 extract_trials	_research/old/plot-gpfa.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(groups::GroupedDataFrame{DataFrame}, min_length)$/;"	f
 extract_trials	scripts/io/save-trials.jl	/^function extract_trials(neigh, min_length, around=[-1000, 1000])$/;"	f
-figure_5	src/spline/plots.jl	/^function figure_5(n, d, ll_n, ll_d)$/;"	f
-figure_5A	src/spline/plots.jl	/^function figure_5A(ll, title)$/;"	f
-figure_5B	src/spline/plots.jl	/^function figure_5B(df)$/;"	f
-figure_5C	src/spline/plots.jl	/^function figure_5C(df)$/;"	f
+f	notebooks/turing/pois-reg.jl	/^f(η) = 1 \/ (1 + exp(-η))$/;"	f
+fast_predict	notebooks/turing/pois-reg.jl	/^function fast_predict(data, idx)$/;"	f
+figure_5	src/spline/plots.jl	/^function figure_5(df_n, df_d, ll_n, ll_d)$/;"	f
 figure_A	scripts/crosscorr/a.jl	/^function figure_A(b, r, title; kwargs...)$/;"	f
 figure_B	scripts/crosscorr/b.jl	/^function figure_B(modulated, unmodulated; kwargs...)$/;"	f
 figure_C	scripts/crosscorr/c-d-clement.jl	/^function figure_C(neighbors::Matrix; kwargs...)$/;"	f
@@ -52,7 +57,7 @@ figure_G	scripts/crosscorr/f-g.jl	/^function figure_G(folded_diff_mean, folded_d
 filterData	_research/old/experimental.jl	/^function filterData(df; rat="all", site="all", groupby="none", index="all", spec="none")$/;"	f
 filterLandmarks	_research/old/experimental.jl	/^function filterLandmarks(df, index)$/;"	f
 filter_by_length	scripts/crosscorr/c-d-clement.jl	/^function filter_by_length(x::Vector{<:Tuple}, minlen::Int)$/;"	f
-find	src/find.jl	/^function find(df::DataFrame, index::Int, column=Colon())$/;"	f
+find	src/find.jl	/^function find(df::DataFrame, index::Real, column=Colon())$/;"	f
 find	src/find.jl	/^function find(df::DataFrame, index::Vector, column=Colon())$/;"	f
 find_broken_landmarks	scripts/io/fix-landmarks.jl	/^function find_broken_landmarks(data)$/;"	f
 find_broken_landmarks	scripts/io/v1-v6.jl	/^function find_broken_landmarks(data)$/;"	f
@@ -61,6 +66,7 @@ fit_halfes	scripts/pca/speed.jl	/^function fit_halfes(st)$/;"	f
 fit_thirds	scripts/pca/speed.jl	/^function fit_thirds(st)$/;"	f
 fitcell	src/spline/fit.jl	/^function fitcell(cell::DataFrameRow; reference)$/;"	f
 fitcell	src/spline/fit.jl	/^function fitcell(cellpair::DataFrame; reference)$/;"	f
+fitcell_log_save	scripts/spline/local/produce.jl	/^function fitcell_log_save(x, fn, reference) $/;"	f
 get_active_couples	scripts/crosscorr/c-d-clement.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_active_couples	scripts/crosscorr/c-d.jl	/^function get_active_couples(couples, ranges)$/;"	f
 get_distant	src/couple.jl	/^function get_distant(df::DataFrame)$/;"	f
@@ -69,13 +75,17 @@ get_p	_research/information.jl	/^function get_p(df, landmark, around, binsize)$/
 get_peaks	src/spline/model_summaries.jl	/^function get_peaks(df, ref, group)$/;"	f
 halffit	src/spline/fit.jl	/^function halffit(cellpair; reference)$/;"	f
 jpsth	_research/old/jpsth.jl	/^function jpsth(idx1, idx2)$/;"	f
+likelihood_analysis	scripts/spline/local/produce.jl	/^function likelihood_analysis(p)$/;"	f
 likelihoodtest	_research/multivariate-functions.jl	/^function likelihoodtest(data, idx)$/;"	f
 load_data	src/load-data.jl	/^function load_data(filename)$/;"	f
 load_full	scripts/io/load-full.jl	/^function load_full()$/;"	f
+logit_inv	scripts/spline/figure-5.jl	/^logit_inv(η) = 1 \/ (1 + exp(-η))$/;"	f
+logit_inv	scripts/spline/figure-5.jl	/^logit_inv(η::Vector) = 1 .\/ (1 .+ exp.(-η))$/;"	f
+main	scripts/spline/local/produce.jl	/^function main(p)$/;"	f
 merge_ranges	scripts/crosscorr/c-d-clement.jl	/^function merge_ranges(x::Vector{<:Tuple})$/;"	f
 minmax_scale	src/minmax.jl	/^function minmax_scale(x::Vector)$/;"	f
-mkdf	src/spline/mkdf.jl	/^function mkdf(cell::DataFrameRow; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift,/;"	f
-mkdf	src/spline/mkdf.jl	/^function mkdf(cellpair::DataFrame; tmax=[-600., 600.], pad=350., reference=:lift, landmark=:lift/;"	f
+mkdf	src/spline/mkdf.jl	/^function mkdf(cell::DataFrameRow; reference, tmax=[-600., 600.], pad=350., landmark=:lift, minsp/;"	f
+mkdf	src/spline/mkdf.jl	/^function mkdf(cellpair::DataFrame; reference, tmax=[-600., 600.], pad=350., landmark=:lift, mins/;"	f
 nbdir	src/ens.jl	/^nbdir(args...) = projectdir("notebooks", args...)$/;"	f
 neighbor_correlation	scripts/correlations/old.jl	/^function neighbor_correlation(correlations, neigh_list)$/;"	f
 nodouble	scripts/io/load-full.jl	/^function nodouble(x)$/;"	f
@@ -85,11 +95,16 @@ plot_crosscor_neigh	scripts/crosscorr/c-d.jl	/^function plot_crosscor_neigh(neig
 plot_gpfa	_research/old/plot-gpfa.jl	/^function plot_gpfa(traj, stop=900, title="")$/;"	f
 plot_gpfa_slow_vs_fast	_research/old/plot-gpfa.jl	/^function plot_gpfa_slow_vs_fast(traj, idx_slow, idx_fast, stop=900)$/;"	f
 plot_gpfa_speed	_research/old/plot-gpfa.jl	/^function plot_gpfa_speed(traj, speeds, stop=500, color=:inferno)$/;"	f
-plot_quick_prediction	src/spline/plots.jl	/^function plot_quick_prediction(x, title="")$/;"	f
-plot_single_result	src/spline/plots.jl	/^function plot_single_result(x::NamedTuple)$/;"	f
+prediction	notebooks/turing/binomial.jl	/^function prediction(x::Vector, chain)$/;"	f
+prediction	notebooks/turing/pois-reg.jl	/^function prediction(x::Vector, chain)$/;"	f
 preprocess	scripts/spline/common/preprocess.jl	/^function preprocess(data, p; path)$/;"	f
+preprocess	scripts/spline/likelihood/preprocess.jl	/^function preprocess(data, p; path)$/;"	f
+preprocess	scripts/spline/modular/preprocess.jl	/^function preprocess(data; indexes, reference, group, path)$/;"	f
 pretty	scripts/spline/common/preprocess.jl	/^function pretty(p::Dict)$/;"	f
+pretty	scripts/spline/likelihood/preprocess.jl	/^function pretty(p::Dict, n::Int)$/;"	f
+produce_only_configs	scripts/spline/likelihood/preprocess.jl	/^function produce_only_configs(p, ;path)$/;"	f
 rangeT	src/spline/model_summaries.jl	/^function rangeT(y::BitArray{1})$/;"	f
+ranges_counts	src/spline/plots.jl	/^function ranges_counts(df; binsize = 0.001, tmax = 50.)$/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(cell::T, time, tmax, valid)  where T <: DataFrameRow $/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(cellpair::DataFrame, time, tmax, valid)$/;"	f
 relativetime	src/spline/mkdf.jl	/^function relativetime(lift, cover, grasp, t, tmax)$/;"	f
@@ -102,6 +117,7 @@ search_routes	scripts/io/load-full.jl	/^function search_routes(x, l, saved_list:
 sem	scripts/crosscorr/c-d.jl	/^function sem(x::Matrix; dims=2)$/;"	f
 sem	src/sem.jl	/^function sem(x::Matrix; dims=2)$/;"	f
 seq	_research/old/ppseq.jl	/^const seq = PPSeq$/;"	c
+sigmoid	notebooks/turing/pois-reg.jl	/^sigmoid(z::Real) = one(z) \/ (one(z) + exp(-z))$/;"	f
 single_trials	_research/old/experimental.jl	/^function single_trials(df, landmark::String)$/;"	f
 single_trials	_research/old/plot-gpfa.jl	/^function single_trials(df, landmark::String)$/;"	f
 single_trials	scripts/io/save-trials.jl	/^function single_trials(df, landmark::String)$/;"	f
@@ -111,3 +127,5 @@ standardize_landmarks	_research/old/experimental.jl	/^function standardize_landm
 sum	scripts/io/v1-v6.jl	/^@test sum([x for c in new.cover for x in c] .- [x for l in new.lift for x in l] .== 0) == 0$/;"	f
 sum	scripts/io/v1-v6.jl	/^@test sum([x for c in new.grasp for x in c] .- [x for l in new.cover for x in l] .== 0) == 0$/;"	f
 write_args_and_configs	scripts/spline/common/preprocess.jl	/^function write_args_and_configs(df, p, index, path, binneddir="csv\/", argsdir="in\/r.config\/",/;"	f
+write_args_and_configs	scripts/spline/likelihood/preprocess.jl	/^function write_args_and_configs(df, p, index, path, n; binneddir="csv\/", argsdir="in\/r.config\//;"	f
+write_configs	scripts/spline/modular/preprocess.jl	/^function write_configs(reference, group, landmark, indexes, dirs)$/;"	f

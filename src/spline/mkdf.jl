@@ -4,7 +4,7 @@ using DrWatson
 using DataFrames
 using Spikes
 
-function mkdf(cellpair::DataFrame; reference, tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
+function mkdf(cellpair::DataFrame; reference="", tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
 	tmax[2] += reference == "multi" ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
 
 	tpadded = tmax .+ [-pad, pad]
@@ -35,12 +35,12 @@ function mkdf(cellpair::DataFrame; reference, tmax=[-600., 600.], pad=350., land
 	X = roundX ? floor.(X) : X
 end
 
-function mkdf(cell::DataFrameRow; reference, tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
+function mkdf(cell::DataFrameRow; reference="", tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
 	T = collect(tmax[1] : tmax[2] - 1)
 	tmax[2] += reference == "multi" ? maximum(cell[:grasp] .- cell[:lift]) : 0.
 
 	tpadded = tmax .+ [-pad, pad]
-	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
+	t₁, t₂  = pad, diff(tmax)[1] + pad
 	T = collect(tmax[1] : tmax[2] - 1)
 
 	st = cut(cell[:t], cell[landmark], tpadded)
