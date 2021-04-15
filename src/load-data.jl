@@ -4,7 +4,7 @@ using DrWatson
 using Arrow
 using DataFrames
 
-function load_data(filename)
+function load_data(filename::String)
 	data = Arrow.Table(datadir("processed", filename)) |> DataFrame;
 	data.rat = convert(Array{String, 1}, data.rat);
 	data.site = convert(Array{String, 1}, data.site);

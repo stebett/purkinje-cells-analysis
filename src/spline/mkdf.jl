@@ -8,7 +8,7 @@ function mkdf(cellpair::DataFrame; reference="", tmax=[-600., 600.], pad=350., l
 	tmax[2] += reference == "multi" ? maximum(cellpair[1, :grasp] .- cellpair[1, :lift]) : 0.
 
 	tpadded = tmax .+ [-pad, pad]
-	t₁, t₂  = pad, diff(tmax)[1] + pad - 1
+	t₁, t₂  = pad, diff(tmax)[1] + pad
 	T = collect(tmax[1] : tmax[2] - 1)
 
 	st = cut(cellpair[1, :t], cellpair[1, landmark], tpadded)
@@ -36,7 +36,6 @@ function mkdf(cellpair::DataFrame; reference="", tmax=[-600., 600.], pad=350., l
 end
 
 function mkdf(cell::DataFrameRow; reference="", tmax=[-600., 600.], pad=350., landmark=:lift, minspikes=2, roundX=true)
-	T = collect(tmax[1] : tmax[2] - 1)
 	tmax[2] += reference == "multi" ? maximum(cell[:grasp] .- cell[:lift]) : 0.
 
 	tpadded = tmax .+ [-pad, pad]

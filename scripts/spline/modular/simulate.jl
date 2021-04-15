@@ -33,4 +33,17 @@ foreach(simulations) do row
 	end
 end
 
+data = load_data("data-v6.arrow")
+data = @where(data, in.(:index, Ref(df.index1)))
+
+sort!(data, :index)
+sort!(df, :index1)
+@assert data.index == df.index1
+
+good_sims = length.(data.lift) .== length.(df.fake)
+
+data = data[good_sims, :]
+df = df[good_sims, :]
+@assert data.index == df.index1
+
 Arrow.write(outpath, df)

@@ -1,30 +1,34 @@
 using DrWatson
 @quickactivate :ens
 
-using RCall
-using DataFrames
 using DataFramesMeta
+using DataFrames
+using Statistics
 using Plots
+using Arrow
+using Spikes
 
-batch = 7
-inpath = "/home/ginko/ens/data/analyses/spline/batch-$batch/results/simulations.rds"
+batch = 8
+inpath_all = "/home/ginko/ens/data/analyses/spline/batch-$batch/best-all/results/simulated.arrow"
+sim_all = Arrow.Table(inpath_all) |> DataFrame
 
-simulations = rcopy(R"readRDS($inpath)")
+data = load_data("data-v6.arrow")
+data_all = @where(data, in.(:index, Ref(sim_all.index1)))
 
-df = DataFrame(index1=Float64[], index2=Float64[], group=String[], reference=String[], fake1=Any[], fake2=Any[])
+sort!(data_all, :index)
+sort!(sim_all, :index1)
+@assert data_all.index == sim_all.index1
+@assert length.(data_all.lift) == length.(sim_all.fake)
 
-extract(x, idx) = values(x) |> collect |> k->getindex.(k, idx)
 
-foreach(simulations) do row
-	index1 = row[:index][1]
-	index2 = length(row[:index]) > 1 ? row[:index][2] : NaN
-	group = row[:group]
-	reference = row[:reference]
-	fake1 = extract(row[:fake], 1)
-	fake2 = extract(row[:fake], 1)
-	if !isempty(fake)
-		push!(df, [index1, index2, group, reference, fake])
-	end
-end
+
+r = cut(data_all.t ,data_all.lift, [-600., 600.])
+r = [x .- 600 for x in r]
+f = [k for x in sim_all.fake for k in x]
+
+bins_r = bin.(r, 0, 1200)
+bins_f = bin.(f, -595, 599)
+
+cc = crosscor.(r, f, -80, 80, 1)
 
 
