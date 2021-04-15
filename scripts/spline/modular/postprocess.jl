@@ -11,7 +11,7 @@ include(srcdir("spline", "model_summaries.jl"))
 
 
 inpath = "$(ARGS[1])/post-proc/fit.RData"
-outpath = "$(ARGS[1])results/fit.arrow"
+outpath = "$(ARGS[1])/results/fit.arrow"
 
 
 data = RData.load(inpath)["predictions"]
@@ -26,11 +26,11 @@ result = DataFrame(index1=Float64[],
 				   sd=Vector{Float64}[])
 
 for row in data
-	variables  = filter(x -> (x != "index" && x!= "group" && x != "reference"), 
+	variables  = filter(x -> (x != "index1" && x!= "index2" && x!= "group" && x != "reference"), 
 						row.index2name)
 
 	index1 = row["index1"]
-	index2 = row["index"]
+	index2 = ismissing(row["index2"]) ? NaN : row["index2"]
 	group = row["group"]
 	reference = row["reference"]
 

@@ -45,7 +45,9 @@ predict.one.result <- function(file) {
 	return(res)
 	}
 
+message("\nLoading files from: ", inpath)
 infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
+
 
 predictions = lapply(infiles, predict.one.result)
 
