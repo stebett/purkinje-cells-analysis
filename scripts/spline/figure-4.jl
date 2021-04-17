@@ -7,28 +7,31 @@ using Statistics
 using Plots
 using Arrow
 using Spikes
+using StatsBase
 
 batch = 8
-inpath_all = "/home/ginko/ens/data/analyses/spline/batch-$batch/best-all/results/simulated.arrow"
+
+inpath_all = datadir("analyses/spline/batch-$batch/best-all/results/simulated.arrow"
 sim_all = Arrow.Table(inpath_all) |> DataFrame
 
+inpath_neigh = datadir("analyses/spline/batch-$batch/best-neigh/results/simulated.arrow"
+sim_neigh = Arrow.Table(inpath_neigh) |> DataFrame
+
 data = load_data("data-v6.arrow")
-data_all = @where(data, in.(:index, Ref(sim_all.index1)))
+idx = @where(data, :rat .== "R17", :site .== "39", :tetrode .== "tet2").index
 
-sort!(data_all, :index)
-sort!(sim_all, :index1)
-@assert data_all.index == sim_all.index1
-@assert length.(data_all.lift) == length.(sim_all.fake)
+landmark = :grasp
+c1 = cut(find(data, idx[1], :t)[1], find(data, idx[1], landmark)[1], [-600., 600.])
+c2 = cut(find(data, idx[2], :t)[1], find(data, idx[2], landmark)[1], [-600., 600.])
 
-
-
-r = cut(data_all.t ,data_all.lift, [-600., 600.])
-r = [x .- 600 for x in r]
-f = [k for x in sim_all.fake for k in x]
-
-bins_r = bin.(r, 0, 1200)
-bins_f = bin.(f, -595, 599)
-
-cc = crosscor.(r, f, -80, 80, 1)
+cc = crosscor.(c1, c2, -40, 40, 0.5) |> x->zscore.(x) |> sum |> plot
 
 
+c1_s = @where(sim_all, :index1 .== idx[1]) |> x->[j .+ 600 for k in x.fake for j in k]
+cc_s = crosscor.(c1_s, c1, -80, 80, 1) |> sum
+plot(cc_s)
+
+# Complex model
+c1_c = @where(sim_neigh, :index1 .== idx[1]) |> x->[j .+ 600 for k in x.fake for j in k]
+cc_c = crosscor.(c1_c, c1, -80, 80, 1) |> sum
+plot(cc_c)

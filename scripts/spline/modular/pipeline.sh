@@ -2,7 +2,7 @@
 
 n=8
 reference="best"
-group="all"
+group="neigh"
 
 clusterpath="/kingdoms/nbc/workspace14/CETO05/bettani/spline"
 respath="/home/ginko/ens/data/analyses/spline/batch-$n/$reference-$group"

@@ -7,7 +7,7 @@ using DataFramesMeta
 using Arrow
 
 inpath = ARGS[1] * "/post-proc/simulated.rds"
-outpath = ARGS[1] * "/results/simulated.rds"
+outpath = ARGS[1] * "/results/simulated.arrow"
 
 simulations = rcopy(R"readRDS($inpath)")
 
@@ -32,18 +32,5 @@ foreach(simulations) do row
 		push!(df, [index1, index2, group, reference, fake])
 	end
 end
-
-data = load_data("data-v6.arrow")
-data = @where(data, in.(:index, Ref(df.index1)))
-
-sort!(data, :index)
-sort!(df, :index1)
-@assert data.index == df.index1
-
-good_sims = length.(data.lift) .== length.(df.fake)
-
-data = data[good_sims, :]
-df = df[good_sims, :]
-@assert data.index == df.index1
 
 Arrow.write(outpath, df)
