@@ -22,11 +22,14 @@ m = hcat(n...) |> drop |> transpose
 
 l = size(m, 2)
 low, high = -7, 7
-closeall()
-heatmap(m, c=:viridis, clim=(low, high), size=(1000, 1000), colorbar_title="Normalized firing rate", yflip=true)
+
+pyplot(size=(900, 1000), c=:viridis)
+heatmap(m, c=:viridis, clim=(low, high), colorbar_title="Normalized firing rate", yflip=true)
 xticks!([1, l÷4, l÷2-num_bins÷2, l÷2+num_bins÷2, l÷4*3, l], ["$(-round(pad/1000, digits=1))s before lift", "approach", "reach", "grasp", "retrieve", "$(round(pad/1000, digits=1))s after grasp"]) 
 xaxis!("Landmarks")
 yaxis!("Neuron #")
 vline!([l÷2-num_bins, l÷2, l÷2+num_bins], line = (0.2, :dash, 0.6, :white), legend=false)
+
+savefig(plotsdir("presentation", "multi-psth.png"), "scripts/psth/psth.jl")
 
 # savefig(plotsdir("psth", "multi-psth-agg"), "scripts/psth/multi-psth.jl")
