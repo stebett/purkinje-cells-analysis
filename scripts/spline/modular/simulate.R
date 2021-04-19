@@ -6,16 +6,6 @@ sim.agg <- function(file, n=1) {
 	list(fake=sims, index1=res$index1, index2=res$index2, group=res$group, reference=res$reference, landmark=res$landmark)
 }
 
-# sim.agg <- function(file, n=2) {
-# 	res = read_rdata(file)
-# 	sims = list()
-# 	if (res$group != 'all') {
-# 		if (res$reference == 'best') {
-# 			sims = sim(res, n)
-# 		}
-# 	}
-# 	list(fake=sims, index=res$index, group=res$group, reference=res$reference)
-# }
 
 sim <- function(res, n) {
 	lfun = lapply(res$rnfun['r.timeSinceLastSpike'], mkSelf)

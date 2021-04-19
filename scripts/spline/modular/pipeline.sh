@@ -14,6 +14,7 @@ mkdir -p "$respath/in/conf"
 mkdir -p "$respath/out/data"
 mkdir -p "$respath/post-proc"
 mkdir -p "$respath/results"
+mkdir -p "$respath/plots"
 cp /home/ginko/ens/scripts/spline/modular/analysis* $respath
 chmod a+x $respath/analysis.sh
 
@@ -39,3 +40,6 @@ julia /home/ginko/ens/scripts/spline/modular/postprocess.jl $respath
 # Simulate
 Rscript /home/ginko/ens/scripts/spline/modular/simulate.R $respath
 julia /home/ginko/ens/scripts/spline/modular/simulate.jl $respath
+
+# Plot
+julia /home/ginko/ens/scripts/spline/modular/plot.jl $respath

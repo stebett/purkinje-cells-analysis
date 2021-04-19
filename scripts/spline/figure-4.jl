@@ -3,35 +3,59 @@ using DrWatson
 
 using DataFramesMeta
 using DataFrames
-using Statistics
 using Plots
 using Arrow
-using Spikes
 using StatsBase
 
+analysis = "spline"
 batch = 8
-
-inpath_all = datadir("analyses/spline/batch-$batch/best-all/results/simulated.arrow"
-sim_all = Arrow.Table(inpath_all) |> DataFrame
-
-inpath_neigh = datadir("analyses/spline/batch-$batch/best-neigh/results/simulated.arrow"
-sim_neigh = Arrow.Table(inpath_neigh) |> DataFrame
+reference = "best"
+file = "simulated.arrow"
 
 data = load_data("data-v6.arrow")
+
+sim_all = load_data(analysis, batch, reference, "all", file)
+sim_neigh = load_data(analysis, batch, reference, "neigh", file)
+
 idx = @where(data, :rat .== "R17", :site .== "39", :tetrode .== "tet2").index
+idx = [134, 136]
 
-landmark = :grasp
-c1 = cut(find(data, idx[1], :t)[1], find(data, idx[1], landmark)[1], [-600., 600.])
-c2 = cut(find(data, idx[2], :t)[1], find(data, idx[2], landmark)[1], [-600., 600.])
+cells = find(data, idx)
+landmark = [:lift, :cover, :grasp][get_active_events(cells)[1]]
 
-cc = crosscor.(c1, c2, -40, 40, 0.5) |> x->zscore.(x) |> sum |> plot
+c1 = cut(cells[1, :t], cells[1, landmark], [-600., 600.])
+c2 = cut(cells[2, :t], cells[2, landmark], [-600., 600.])
+
+cc = crosscor.(c1, c2, -20, 20, 0.5) |> x->zscore.(x) |> sum |> plot
 
 
 c1_s = @where(sim_all, :index1 .== idx[1]) |> x->[j .+ 600 for k in x.fake for j in k]
-cc_s = crosscor.(c1_s, c1, -80, 80, 1) |> sum
+cc_s = crosscor.(c1_s, c1, -20, 20, 0.5) |> sum
 plot(cc_s)
 
 # Complex model
-c1_c = @where(sim_neigh, :index1 .== idx[1]) |> x->[j .+ 600 for k in x.fake for j in k]
-cc_c = crosscor.(c1_c, c1, -80, 80, 1) |> sum
+c1_c = @where(sim_neigh, :index1 .== idx[1], :index2 .== idx[2]) |> x->[j .+ 600 for k in x.fake for j in k]
+cc_c = crosscor.(c1_c, c1, -20, 20, 0.5) |> sum
 plot(cc_c)
+
+# fake psth
+function pipe(x)
+	r = bin.(x, -600, 600) 
+	r = convolve.(r, 10)
+	r = zscore.(r)
+end
+
+spikes = [mean(pipe(x)) for x in sim_neigh.fake]
+s = hcat(spikes...)
+f = heatmap(s')
+
+
+index = sim_neigh[:, :index1]
+new_index =  [findall(i .== data.index)[1] for i in index]
+x = data[new_index, :]
+h = cut(x[:, :t], x[:, landmark], [-600., 600.])
+h = @. bin(h, 0, 1200) |> convolve |> zscore 
+h = average(h, x)
+h = hcat(h...) |> transpose |> heatmap
+
+plot(h, f)

@@ -22,3 +22,9 @@ function load_data(filename::String)
 	end
 	data
 end
+
+function load_data(analysis, batch, reference, group, file)
+	inpath = datadir("analyses/$analysis/batch-$batch/$reference-$group/results/$file")
+	Arrow.Table(inpath) |> DataFrame
+end
+
