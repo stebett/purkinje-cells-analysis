@@ -28,7 +28,7 @@ c2 = cut(cells[2, :t], cells[2, landmark], [-600., 600.])
 
 cc = crosscor.(c1, c2, -20, 20, 0.5) |> x->zscore.(x) |> sum |> plot
 
-
+# Simple model
 c1_s = @where(sim_all, :index1 .== idx[1]) |> x->[j .+ 600 for k in x.fake for j in k]
 cc_s = crosscor.(c1_s, c1, -20, 20, 0.5) |> sum
 plot(cc_s)

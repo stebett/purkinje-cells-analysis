@@ -13,7 +13,6 @@ sim <- function(res, n) {
 	fake = mapply(function(x) replicate(n, as.double(thinProcess(object=res$gss,
 																 m2uFctList=lfun,
 																 trueData=x,
-																 # TODO: probably fix 
 																 formerSpikes=-600))), 
 				  trials, SIMPLIFY=FALSE)
 }
@@ -24,20 +23,18 @@ read_rdata <- function(file) {
 	return(x)
 }
 
-
-#for debugging
 thinProcess <- 
-	function (object, m2uFctList, trueData, formerSpikes, intensityMax, 
-			  ...) 
+	function (object, m2uFctList, trueData, formerSpikes, intensityMax,
+			   ...)
 	{
-		if (!inherits(object, c("ssanova", "ssanova0"))) 
+		if (!inherits(object, c("ssanova", "ssanova0")))
 			stop("object should be a ssanova or a ssanova0 object.")
-		if (is.null(names(m2uFctList))) 
+		if (is.null(names(m2uFctList)))
 			stop("m2uFctList should be a NAMED list of functions.")
-		if (!all(sapply(m2uFctList, function(f) inherits(f, "function")))) 
+		if (!all(sapply(m2uFctList, function(f) inherits(f, "function"))))
 			stop("m2uFctList should be a named list of FUNCTIONS.")
 		family4fit <- object[["call"]][["family"]]
-		if (!(family4fit %in% c("binomial", "poisson"))) 
+		if (!(family4fit %in% c("binomial", "poisson")))
 			stop("The fit should have been done with the binomial or the poisson family.")
 		mf <- object[["mf"]]
 		allVN <- names(mf)[names(mf) %in% object[["terms"]][["labels"]]]
@@ -49,14 +46,14 @@ thinProcess <-
 		IFct <- switch(family4fit, binomial = function(df = df0) {
 						   pred <- exp(predict(object, df))
 						   pred/(1 + pred)/binWidth
-			  }, poisson = function(df = df0) {
-				  exp(predict(object, df))/binWidth
-			  })
+	   }, poisson = function(df = df0) {
+		 exp(predict(object, df))/binWidth
+	   })
 		if (missing(intensityMax)) {
 			intensityMax <- maxIntensity(object, trueData, ...)
 		}
 		else {
-			if (intensityMax <= 0) 
+			if (intensityMax <= 0)
 				stop("intensityMax must be > 0.")
 		}
 		from <- with(trueData, range(time))
@@ -72,7 +69,7 @@ thinProcess <-
 		st <- formerSpikes
 		stLength <- length(st)
 		for (poissonTime in pProc) {
-			vVector <- sapply(m2uFctList, function(f) f(poissonTime, 
+			vVector <- sapply(m2uFctList, function(f) f(poissonTime,
 														st))
 			dfIdx <- (poissonTime - from)%/%binWidth + 1
 			theDF <- trueData[dfIdx, ]
@@ -93,6 +90,7 @@ thinProcess <-
 
 
 args <- commandArgs(trailingOnly = TRUE)
+# inpath = "data/analyses/spline/batch-8/best-neigh/out/data/"
 inpath = paste(args[1], "out", "data", sep="/")
 infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
 simulations = lapply(infiles, sim.agg)
