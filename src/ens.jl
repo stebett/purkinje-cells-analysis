@@ -1,10 +1,11 @@
 module ens
  
 using DrWatson
-using DataFrames
 using Combinatorics
-using Statistics
-using Spikes
+using Reexport
+@reexport using Statistics
+@reexport using DataFrames
+@reexport using Spikes
 
 nbdir(args...) = projectdir("notebooks", args...)
 
