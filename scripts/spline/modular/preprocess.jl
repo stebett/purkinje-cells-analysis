@@ -6,19 +6,18 @@ using CSV
 using DataFrames
 using Random
 using Spikes
+using TOML
 
 include(srcdir("spline", "mkdf.jl"))
 
 
-function preprocess(data; indexes, reference, group, path)
-	dir_paths = dirs(path, indexes)
-
-	cells = find(data, indexes) 
+function preprocess(alldata; index, reference, group, path, tmax, pad, minspikes, kw...)
+	dir_paths = dirs(path, index)
+	cells = find(alldata, index) 
 	active = get_active_events(cells)[1]
 	landmark = reference == "best" ? [:lift, :cover, :grasp][active] : :lift
-	df = mkdf(cells, reference=reference, landmark=landmark)
-
-	write_configs(reference, group, landmark, indexes, dir_paths)
+	df = mkdf(cells, reference=reference, landmark=landmark, tmax=tmax, pad=pad, minspikes=minspikes)
+	write_configs(reference, group, landmark, index, dir_paths)
 	CSV.write(dir_paths[:csv], df)
 end
 
@@ -52,13 +51,28 @@ function write_configs(reference, group, landmark, indexes, dirs)
 	end
 end
 
+# params = TOML.parsefile("/home/ginko/ens/data/analyses/spline/batch-test/params.toml")
+# params = Dict(Symbol(k)=>v for (_, subdict) in params for (k, v) in subdict)
+# params[:path] = "/home/ginko/ens/data/analyses/spline/batch-test/best-dist"
+# params[:reference] = "best"
+# params[:group] = "dist"
 
-path = ARGS[1]
+batch_path = ARGS[1]
 reference = ARGS[2]
 group = ARGS[3]
 
-data = load_data("data-v6.arrow");
-indexes = load(datadir("analyses", "spline", "indexes.jld2"), group)
+params = TOML.parse(batch_path * "/params.toml")
+params = Dict(Symbol(k)=>v for (_, subdict) in params for (k, v) in subdict)
+
+params[:path] = join([batch_path, reference, group], '-')
+params[:reference] = reference
+params[:group] = group
+
+data = load_data(params[:data])
+indexes = TOML.parse(batch_path * "/indexes.toml")[group]
+
+indexes_all = load(datadir(params[:indexes]))
+
 for idx in indexes
-	preprocess(data, indexes=idx, reference=reference, group=group, path=path)
+	preprocess(data; index=idx, params...)
 end

@@ -6,7 +6,7 @@ using DataFrames
 using DataFramesMeta
 using Arrow
 
-respath = "data/analyses/spline/batch-8/best-all"
+respath = "data/analyses/spline/batch-8/best-neigh"
 respath = ARGS[1]
 inpath = respath * "/post-proc/simulated.rds"
 outpath = respath * "/results/simulated.arrow"
@@ -22,14 +22,10 @@ function Base.vec(x::Float64)
 	return Float64[x]
 end
 
-function extract(x)
-	r = (collect ∘ values)(x)
-	if r[1] isa String
-		return []
-	end
-
+function extract(fake)
+	r = (collect ∘ values)(fake)
 	r = vec.(r)
-	replace(x->(isempty(x[1]) ? Float64[] : x), r)
+	replace(x->(isempty(x) || isempty(x[1]) ? Float64[] : x), r)
 end
 
 foreach(simulations) do row
@@ -44,5 +40,5 @@ foreach(simulations) do row
 	end
 end
 
-
+df = @where(df, !all(isempty.(:fake)))
 Arrow.write(outpath, df)

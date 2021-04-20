@@ -12,21 +12,20 @@ batch = 8
 reference = "best"
 file = "simulated.arrow"
 
-data = load_data("data-v6.arrow")
+data = load_data(:last)
 
 sim_all = load_data(analysis, batch, reference, "all", file)
 sim_neigh = load_data(analysis, batch, reference, "neigh", file)
 
 idx = @where(data, :rat .== "R17", :site .== "39", :tetrode .== "tet2").index
 
-idx = [478, 477]
+idx = [106, 107]
 
 cells = find(data, idx)
 landmark = [:lift, :cover, :grasp][get_active_events(cells)[1]]
 
 c1 = cut(cells[1, :t], cells[1, landmark], [-600., 600.])
 c2 = cut(cells[2, :t], cells[2, landmark], [-600., 600.])
-
 cc = crosscor.(c1, c2, -20, 20, 0.5) |> x->zscore.(x) |> sum |> plot
 
 # Simple model

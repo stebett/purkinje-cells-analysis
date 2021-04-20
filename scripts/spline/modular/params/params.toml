@@ -1,0 +1,7 @@
+[preprocess]
+data = "data-v6.arrow"
+
+[mkdf]
+tmax = [-600.0, 600.0]
+pad = 350.0
+minspikes = 2

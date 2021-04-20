@@ -1,11 +1,24 @@
 #!bin/bash
 
-n=8
+# Parameters
+n="test"
 reference="best"
 group="neigh"
 
+# Standard variables
+batchpath="/home/ginko/ens/data/analyses/spline/batch-$n"
 clusterpath="/kingdoms/nbc/workspace14/CETO05/bettani/spline"
-respath="/home/ginko/ens/data/analyses/spline/batch-$n/$reference-$group"
+respath="$batchpath/$reference-$group"
+pipeline="/home/ginko/ens/scripts/spline/modular"
+
+server="bettani@jord.biologie.ens.fr"
+bioclust="bettani@bioclusts01.bioclust.biologie.ens.fr"
+
+# Make batch dir with toml if new batch
+mkdir -p $newbatch
+cp $pipeline/params/params.toml $newbatch/params.toml
+cp $pipeline/params/indexes.toml $newbatch/indexes.toml
+
 
 # Create input dirs and files
 mkdir -p "$respath/in/csv"
@@ -15,31 +28,44 @@ mkdir -p "$respath/out/data"
 mkdir -p "$respath/post-proc"
 mkdir -p "$respath/results"
 mkdir -p "$respath/plots"
-cp /home/ginko/ens/scripts/spline/modular/analysis* $respath
+cp $pipeline/analysis* $respath
 chmod a+x $respath/analysis.sh
 
 
 # Preprocessing
-julia  "/home/ginko/ens/scripts/spline/modular/preprocess.jl" $respath $reference $group
-Rscript "/home/ginko/ens/scripts/spline/modular/preprocess.R" $respath
+julia  $pipeline/preprocess.jl $batchpath $reference $group
+Rscript $pipeline/preprocess.R $respath
 
 # Upload
-ssh bettani@jord.biologie.ens.fr "cd $clusterpath && rm -r $reference-$group"
-scp -r "$respath" "bettani@jord.biologie.ens.fr:$clusterpath/$reference-$group"
+ssh $server "rm -rI $clusterpath/$reference-$group"
+scp -r $respath "bettani@jord.biologie.ens.fr:$clusterpath/$reference-$group"
 
-# Connect to the cluster
-ssh -J bettani@jord.biologie.ens.fr bettani@bioclusts01.bioclust.biologie.ens.fr
+# Give permissions
+ssh $server "cd $clusterpath/$reference-$group
+			 mv analysis.sh ~
+			 chmod a+x ~/analysis.sh
+			 mv ~/analysis.sh .
+			 "
 
-# Download
-scp -r bettani@jord.biologie.ens.fr:"$clusterpath/$reference-$group/out/data/" "$respath/out"
+# Submit
+ssh -J $server $bioclust  "cd $clusterpath/$reference-$group
+						   condor_submit analysis.sub
+						   "
+
+# Check
+ssh -J $server $bioclust "condor_q"
+
+
+# Download                                                                        
+scp -r "$server:$clusterpath/$reference-$group/out/data/" "$respath/out"
 
 # Post-processing
-Rscript /home/ginko/ens/scripts/spline/modular/postprocess.R $respath
-julia /home/ginko/ens/scripts/spline/modular/postprocess.jl $respath
+Rscript $pipeline/postprocess.R $respath
+julia $pipeline/postprocess.jl $respath
 
 # Simulate
-Rscript /home/ginko/ens/scripts/spline/modular/simulate.R $respath
-julia /home/ginko/ens/scripts/spline/modular/simulate.jl $respath
+Rscript $pipeline/simulate.R $respath
+julia $pipeline/simulate.jl $respath
 
 # Plot
-julia /home/ginko/ens/scripts/spline/modular/plot.jl $respath
+julia $pipeline/plot.jl $respath
