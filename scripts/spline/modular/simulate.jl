@@ -6,8 +6,10 @@ using DataFrames
 using DataFramesMeta
 using Arrow
 
-inpath = ARGS[1] * "/post-proc/simulated.rds"
-outpath = ARGS[1] * "/results/simulated.arrow"
+respath = "data/analyses/spline/batch-8/best-all"
+respath = ARGS[1]
+inpath = respath * "/post-proc/simulated.rds"
+outpath = respath * "/results/simulated.arrow"
 
 simulations = rcopy(R"readRDS($inpath)")
 
@@ -19,7 +21,16 @@ function Base.vec(x::Float64)
 	end
 	return Float64[x]
 end
-extract(x) = values(x) |> collect |> k -> vec.(k) |> j->replace(k -> isempty(k[1]) ? Float64[] : k, j)
+
+function extract(x)
+	r = (collect ∘ values)(x)
+	if r[1] isa String
+		return []
+	end
+
+	r = vec.(r)
+	replace(x->(isempty(x[1]) ? Float64[] : x), r)
+end
 
 foreach(simulations) do row
 	index1 = row[:index1]
@@ -32,5 +43,6 @@ foreach(simulations) do row
 		push!(df, [index1, index2, group, reference, fake])
 	end
 end
+
 
 Arrow.write(outpath, df)
