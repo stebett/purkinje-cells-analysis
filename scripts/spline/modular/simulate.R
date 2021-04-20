@@ -20,10 +20,10 @@ read_rdata <- function(file) {
 }
 
 
+# inpath = "data/analyses/spline/batch-test/best-neigh/out/data/" 
 args <- commandArgs(trailingOnly = TRUE)
 inpath = paste(args[1], "out", "data", sep="/")
 
-# inpath = "data/analyses/spline/batch-8/best-neigh/out/data/" 
 infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
 simulations = lapply(infiles, sim.all)
 

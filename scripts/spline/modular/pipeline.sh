@@ -3,7 +3,7 @@
 # Parameters
 n="test"
 reference="best"
-group="neigh"
+group="dist"
 
 # Standard variables
 batchpath="/home/ginko/ens/data/analyses/spline/batch-$n"
@@ -15,9 +15,9 @@ server="bettani@jord.biologie.ens.fr"
 bioclust="bettani@bioclusts01.bioclust.biologie.ens.fr"
 
 # Make batch dir with toml if new batch
-mkdir -p $newbatch
-cp -n $pipeline/params/params.toml $newbatch/params.toml
-cp -n $pipeline/params/indexes.toml $newbatch/indexes.toml
+mkdir -p $batchpath
+cp -n $pipeline/params/params.toml $batchpath/params.toml
+cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml
 
 # Create input dirs and files
 mkdir -p "$respath/in/csv"
@@ -28,6 +28,9 @@ mkdir -p "$respath/post-proc"
 mkdir -p "$respath/results"
 mkdir -p "$respath/plots"
 cp $pipeline/analysis* $respath
+
+# Tag params 
+echo "$reference-$group = '$(git rev-parse HEAD)'" >> $batchpath/params.toml
 
 # Preprocessing
 julia  $pipeline/preprocess.jl $batchpath $reference $group

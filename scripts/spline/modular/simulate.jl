@@ -13,7 +13,7 @@ outpath = respath * "/results/simulated.arrow"
 
 simulations = rcopy(R"readRDS($inpath)")
 
-df = DataFrame(index1=Float64[], index2=Float64[], group=String[], reference=String[], fake=Vector{Vector{Float64}}[])
+df = DataFrame(index1=Float64[], index2=Float64[], group=String[], reference=String[], landmark=String[], fake=Vector{Vector{Float64}}[])
 
 function Base.vec(x::Float64)
 	if isempty(x[1])

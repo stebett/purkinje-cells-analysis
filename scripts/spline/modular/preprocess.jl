@@ -10,8 +10,7 @@ using TOML
 
 include(srcdir("spline", "mkdf.jl"))
 
-
-function preprocess(alldata; index, reference, group, path, tmax, pad, minspikes, kw...)
+function preprocess(alldata; index, reference, group, path, tmax, pad, minspikes)
 	dir_paths = dirs(path, index)
 	cells = find(alldata, index) 
 	active = get_active_events(cells)[1]
@@ -62,13 +61,19 @@ batch_path = ARGS[1]
 reference = ARGS[2]
 group = ARGS[3]
 
-params = TOML.parsefile(batch_path * "/params.toml") |> flatten_dict
-params[:path] = batch_path * "/$reference-$group"
-params[:reference] = reference
-params[:group] = group
+params = TOML.parsefile(batch_path * "/params.toml")
+path = batch_path * "/$reference-$group"
 
-data = load_data(params[:data])
+data = load_data(params["preprocess"]["data"])
 indexes = TOML.parsefile(batch_path * "/indexes.toml")[group]
+
 for idx in indexes
-	preprocess(data; index=idx, params...)
+	preprocess(data; 
+			   index=idx, 
+			   reference=reference,
+			   group=group,
+			   path=path,
+			   tmax=params["mkdf"]["tmax"],
+			   pad=params["mkdf"]["pad"],
+			   minspikes=params["mkdf"]["minspikes"])
 end

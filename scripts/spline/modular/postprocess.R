@@ -37,7 +37,7 @@ predict.one.result <- function(file) {
 	}
 
 
-	res = list(index1=result$index1, index2=result$index2, reference=result$reference, group=result$group)
+	res = list(index1=result$index1, index2=result$index2, reference=result$reference, group=result$group, landmark=result$landmark)
 
 	for (var in vars) {
 		res[[var]] = predict.one.var(result, var)
