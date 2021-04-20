@@ -6,3 +6,5 @@ src/lfads
 plots/
 python/notebooks/
 docs/
+.RData
+.RHistory
