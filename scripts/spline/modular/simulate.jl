@@ -6,7 +6,7 @@ using DataFrames
 using DataFramesMeta
 using Arrow
 
-# respath = "data/analyses/spline/batch-test/best-neigh"
+respath = "data/analyses/spline/batch-test/best-dist"
 respath = ARGS[1]
 inpath = respath * "/post-proc/simulated.rds"
 outpath = respath * "/results/simulated.arrow"
@@ -33,9 +33,10 @@ foreach(simulations) do row
 	index2 = ismissing(row[:index2]) ? NaN : row[:index2] 
 	group = row[:group]
 	reference = row[:reference]
+	landmark = row[:landmark]
 	fake = extract(row[:fake])
 	if !isempty(fake)
-		push!(df, [index1, index2, group, reference, fake])
+		push!(df, [index1, index2, group, reference, landmark, fake])
 	end
 end
 

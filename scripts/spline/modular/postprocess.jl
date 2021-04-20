@@ -40,7 +40,6 @@ for row in data
 	group = row["group"]
 	reference = row["reference"]
 	landmark = row["landmark"]
-	landmark = "lift"
 
 	for v in variables
 		push!(result, (index1, index2, group, reference, landmark, v, row[v]["x"], row[v]["mean"], row[v]["sd"]))

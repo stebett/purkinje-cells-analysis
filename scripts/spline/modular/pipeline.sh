@@ -37,7 +37,7 @@ julia  $pipeline/preprocess.jl $batchpath $reference $group
 Rscript $pipeline/preprocess.R $respath
 
 # Upload
-ssh $server "rm -rI $clusterpath/$reference-$group"
+ssh $server "rm -r $clusterpath/$reference-$group"
 scp -r $respath "bettani@jord.biologie.ens.fr:$clusterpath/$reference-$group"
 
 # Give permissions
@@ -47,13 +47,8 @@ ssh $server "cd $clusterpath/$reference-$group
 			 mv ~/analysis.sh .
 			 "
 
-# Submit
-ssh -J $server $bioclust  "cd $clusterpath/$reference-$group
-						   condor_submit analysis.sub
-						   "
-
-# Check
-ssh -J $server $bioclust "condor_q"
+# Submit (need to cd otherwise initialDir doesn't work)
+ssh -J $server $bioclust  "cd $clusterpath/$reference-$group && condor_submit analysis.sub"
 
 # Watch
 watch ssh -J $server $bioclust "condor_q"
