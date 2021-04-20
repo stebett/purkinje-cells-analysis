@@ -1,9 +1,9 @@
 #!bin/bash
 
 # Parameters
-n="test"
+n="artificial"
 reference="best"
-group="dist"
+group="neigh"
 
 # Standard variables
 batchpath="/home/ginko/ens/data/analyses/spline/batch-$n"
@@ -29,7 +29,7 @@ mkdir -p "$respath/results"
 mkdir -p "$respath/plots"
 cp $pipeline/analysis* $respath
 
-# Tag params 
+# Tag params
 echo "$reference-$group = '$(git rev-parse HEAD)'" >> $batchpath/params.toml
 
 # Preprocessing

@@ -3,17 +3,22 @@ using DrWatson
 
 using DataFrames
 using Arrow
+using Distributions
+using Random
 
 data = load_data(:last) 
 
 df = similar(data[1:2, :])
 
-t1 = collect(1:3:3001)
-t2 = collect(0:3:3000)
+Random.seed!(42)
+lambdas = rand(TruncatedNormal(20, 200, 0, 500), 300)
+t1 = rand.(Poisson.(lambdas)) |> cumsum
 
-lift = [1400, 1400, 1400]
-cover = [1500, 1500, 1500]
-grasp = [1600, 1600, 1600]
+t2 = t1 .- 1
+
+lift = collect(1000:500:13000)
+cover = collect(1100:500:13100)
+grasp = collect(1200:500:13200)
 
 df.rat = ["R", "R"]
 df.site = ["site", "site"]
