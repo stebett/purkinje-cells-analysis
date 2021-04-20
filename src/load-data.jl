@@ -28,3 +28,6 @@ function load_data(analysis, batch, reference, group, file)
 	Arrow.Table(inpath) |> DataFrame
 end
 
+load_data(shortcut::Symbol) = load_data(Val(shortcut))
+
+load_data(::Val{:last}) = load_data("data-v6.arrow")

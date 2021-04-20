@@ -18,7 +18,8 @@ sim_all = load_data(analysis, batch, reference, "all", file)
 sim_neigh = load_data(analysis, batch, reference, "neigh", file)
 
 idx = @where(data, :rat .== "R17", :site .== "39", :tetrode .== "tet2").index
-idx = [134, 136]
+
+idx = [478, 477]
 
 cells = find(data, idx)
 landmark = [:lift, :cover, :grasp][get_active_events(cells)[1]]
