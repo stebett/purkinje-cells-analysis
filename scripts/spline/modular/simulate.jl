@@ -6,7 +6,7 @@ using DataFrames
 using DataFramesMeta
 using Arrow
 
-respath = "data/analyses/spline/batch-8/best-neigh"
+# respath = "data/analyses/spline/batch-test/best-neigh"
 respath = ARGS[1]
 inpath = respath * "/post-proc/simulated.rds"
 outpath = respath * "/results/simulated.arrow"
@@ -34,11 +34,10 @@ foreach(simulations) do row
 	group = row[:group]
 	reference = row[:reference]
 	fake = extract(row[:fake])
-	@show index1 index2
 	if !isempty(fake)
 		push!(df, [index1, index2, group, reference, fake])
 	end
 end
 
-df = @where(df, !all(isempty.(:fake)))
+df = filter(x->!all(isempty.(x.fake)), df)
 Arrow.write(outpath, df)

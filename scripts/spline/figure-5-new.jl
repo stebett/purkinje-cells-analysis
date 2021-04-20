@@ -10,20 +10,25 @@ include(srcdir("spline", "plots.jl"))
 
 
 #' # Load results
-batch=7
-inpath = "/home/ginko/ens/data/analyses/spline/batch-$batch/results/result.arrow"
-inpath_ll = "/home/ginko/ens/data/analyses/spline/ll-batch-$batch/results/result.arrow"
-result = Arrow.Table(inpath) |> DataFrame
+analysis = "spline"
+batch = 8
+reference = "best"
+file = "fit.arrow"
+
+n  = load_data(analysis, batch, reference, "neigh", file)
+d = load_data(analysis, batch, reference, "dist", file)
+
+inpath_ll = "/home/ginko/ens/data/analyses/spline/ll-batch-7/results/result.arrow"
 result_ll = Arrow.Table(inpath_ll) |> DataFrame;
 
 ll_n = @where(result_ll, :reference .== "best", :group .== "neigh")
 ll_d = @where(result_ll, :reference .== "best", :group .== "dist")
 
-df_n = get_peaks(result, "best", "neigh")
-df_d = get_peaks(result, "best", "dist")
+df_n = get_peaks(n, "best", "neigh")
+df_d = get_peaks(d , "best", "dist")
 
 n_better = best_model(df_n, ll_n)
-d_better = best_model(df_d, ll_d);
+d_better = best_model(df_d, ll_d)
 
 logit_inv(η) = 1 / (1 + exp(-η))
 logit_inv(η::Vector) = 1 ./ (1 .+ exp.(-η))
@@ -63,6 +68,6 @@ lens!([1, 10], [0.4, 0.6], inset = (1, bbox(0.5, 0.0, 0.4, 0.4)))
 
 #' # Full picture
 #+ fig_ext = ".svg"
-SplinePlots.figure_5(df_n, df_d, ll_n, ll_d)
+SplinePlots.figure_5(n_better, d_better, ll_n, ll_d)
 
 savefig(plotsdir("logbook", "07-04", "dist_eta_inverted.png"))

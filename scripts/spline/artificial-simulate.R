@@ -3,7 +3,7 @@ library(STAR)
 
 sim.all <- function(file, n) {
 	res = read_rdata(file)
-	lfun = lapply(res$rnfun['r.timeSinceLastSpike'], mkSelf)
+	lfun = lapply(res$rnfun, mkSelf)[-2] 
 	trials = lapply(split(res$data, res$data$trial), function(x) x[, names(res$gss$mf)])
 
 	fake = mapply(function(x) replicate(n, sim.catch(res$gss, lfun, x)), trials)

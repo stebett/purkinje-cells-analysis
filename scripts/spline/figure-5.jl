@@ -1,7 +1,6 @@
 using DrWatson
 @quickactivate :ens
 
-using Arrow
 using DataFramesMeta
 using StatsPlots; pyplot(size=(800,800))
 using LaTeXStrings

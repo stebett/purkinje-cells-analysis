@@ -16,9 +16,8 @@ bioclust="bettani@bioclusts01.bioclust.biologie.ens.fr"
 
 # Make batch dir with toml if new batch
 mkdir -p $newbatch
-cp $pipeline/params/params.toml $newbatch/params.toml
-cp $pipeline/params/indexes.toml $newbatch/indexes.toml
-
+cp -n $pipeline/params/params.toml $newbatch/params.toml
+cp -n $pipeline/params/indexes.toml $newbatch/indexes.toml
 
 # Create input dirs and files
 mkdir -p "$respath/in/csv"
@@ -29,8 +28,6 @@ mkdir -p "$respath/post-proc"
 mkdir -p "$respath/results"
 mkdir -p "$respath/plots"
 cp $pipeline/analysis* $respath
-chmod a+x $respath/analysis.sh
-
 
 # Preprocessing
 julia  $pipeline/preprocess.jl $batchpath $reference $group
@@ -55,6 +52,8 @@ ssh -J $server $bioclust  "cd $clusterpath/$reference-$group
 # Check
 ssh -J $server $bioclust "condor_q"
 
+# Watch
+watch ssh -J $server $bioclust "condor_q"
 
 # Download                                                                        
 scp -r "$server:$clusterpath/$reference-$group/out/data/" "$respath/out"

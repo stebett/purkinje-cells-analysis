@@ -10,7 +10,7 @@ sim.all <- function(file, n=1) {
 
 sim.catch <- function(gss, lfun, x) {
 	tryCatch(as.double(thinProcess(object=gss, m2uFctList=lfun, trueData=x, formerSpikes=with(x, time[match(1, event)]))),
-			 error = function(e) e)
+			 error = function(e) list())
 }
 
 read_rdata <- function(file) {
@@ -28,6 +28,6 @@ infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
 simulations = lapply(infiles, sim.all)
 
 
+# outpath = "data/analyses/spline/batch-8/best-neigh/post-proc/simulated.rds"
 outpath = paste(args[1], "post-proc", "simulated.rds", sep="/")
-outpath = "data/analyses/spline/batch-8/best-neigh/post-proc/simulated.rds"
 saveRDS(simulations, outpath)

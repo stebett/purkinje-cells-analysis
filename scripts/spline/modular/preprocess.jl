@@ -51,28 +51,24 @@ function write_configs(reference, group, landmark, indexes, dirs)
 	end
 end
 
-# params = TOML.parsefile("/home/ginko/ens/data/analyses/spline/batch-test/params.toml")
-# params = Dict(Symbol(k)=>v for (_, subdict) in params for (k, v) in subdict)
-# params[:path] = "/home/ginko/ens/data/analyses/spline/batch-test/best-dist"
-# params[:reference] = "best"
-# params[:group] = "dist"
+flatten_dict(d::Dict) = Dict(Symbol(k)=>v for (_, subdict) in d for (k, v) in subdict)
+
+
+# batch_path = "data/analyses/spline/batch-test"
+# reference = "best"
+# group = "neigh"
 
 batch_path = ARGS[1]
 reference = ARGS[2]
 group = ARGS[3]
 
-params = TOML.parse(batch_path * "/params.toml")
-params = Dict(Symbol(k)=>v for (_, subdict) in params for (k, v) in subdict)
-
-params[:path] = join([batch_path, reference, group], '-')
+params = TOML.parsefile(batch_path * "/params.toml") |> flatten_dict
+params[:path] = batch_path * "/$reference-$group"
 params[:reference] = reference
 params[:group] = group
 
 data = load_data(params[:data])
-indexes = TOML.parse(batch_path * "/indexes.toml")[group]
-
-indexes_all = load(datadir(params[:indexes]))
-
+indexes = TOML.parsefile(batch_path * "/indexes.toml")[group]
 for idx in indexes
 	preprocess(data; index=idx, params...)
 end
