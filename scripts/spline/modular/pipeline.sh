@@ -36,22 +36,24 @@ echo "$reference-$group = '$(git rev-parse HEAD)'" >> $batchpath/params.toml
 julia  $pipeline/preprocess.jl $batchpath $reference $group
 Rscript $pipeline/preprocess.R $respath
 
-# Upload
+# Clean dir
 ssh $server "rm -r $clusterpath/$reference-$group"
+
+# Upload
 scp -r $respath "bettani@jord.biologie.ens.fr:$clusterpath/$reference-$group"
 
 # Give permissions
 ssh $server "cd $clusterpath/$reference-$group
-			 mv analysis.sh ~
-			 chmod a+x ~/analysis.sh
-			 mv ~/analysis.sh .
-			 "
+mv analysis.sh ~
+chmod a+x ~/analysis.sh
+mv ~/analysis.sh .
+"
 
 # Submit (need to cd otherwise initialDir doesn't work)
 ssh -J $server $bioclust  "cd $clusterpath/$reference-$group && condor_submit analysis.sub"
 
-# Watch
-watch ssh -J $server $bioclust "condor_q"
+# Wait
+ssh -J $server $bioclust "condor_wait $clusterpath/$reference-$group/out/analysis.log"
 
 # Download                                                                        
 scp -r "$server:$clusterpath/$reference-$group/out/data/" "$respath/out"
