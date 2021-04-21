@@ -6,10 +6,8 @@ using DataFrames
 using DataFramesMeta
 using Arrow
 
-respath = "data/analyses/spline/batch-test/best-dist"
-respath = ARGS[1]
-inpath = respath * "/post-proc/simulated.rds"
-outpath = respath * "/results/simulated.arrow"
+inpath = ARGS[1]
+outpath = ARGS[2]
 
 simulations = rcopy(R"readRDS($inpath)")
 

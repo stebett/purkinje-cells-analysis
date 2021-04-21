@@ -11,8 +11,8 @@ include(srcdir("spline", "model_summaries.jl"))
 
 # inpath = "/home/ginko/ens/data/analyses/spline/batch-test/best-neigh/post-proc/fit.RData"
 
-inpath = "$(ARGS[1])/post-proc/fit.RData"
-outpath = "$(ARGS[1])/results/fit.arrow"
+inpath = ARGS[1]
+outpath = ARGS[1]
 
 
 data = RData.load(inpath)["predictions"]

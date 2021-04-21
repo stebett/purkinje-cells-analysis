@@ -1,66 +1,10 @@
-#!/bin/bash
+using DrWatson
+@quickactivate :ens
 
 n="artificial"
 reference="best"
 group="all"
 
-function usage()
-{
-	echo "Fit a smoothing spline on your data"
-	echo ""
-	echo "OPTIONS"
-	echo -e "\t-h --help"
-	echo ""
-	echo -e "\t-n=$n"
-	echo -e "\t\tBatch name"
-	echo ""
-	echo -e "\t-r --reference=$reference"
-	echo -e "\t\tSet reference: either best or multi"
-	echo ""
-	echo -e "\t-g --group=$group"
-	echo -e "\t\tSet group: neigh, all or dist"
-	echo ""
-}
-
-if [[ $# -gt 0 ]]
-then
-	usage
-	exit
-fi
-
-
-while [ "$1" != "" ]; do
-	PARAM=`echo $1 | awk -F= '{print $1}'`
-	VALUE=`echo $1 | awk -F= '{print $2}'`
-	case $PARAM in
-		-h | --help)
-			usage
-			exit
-			;;
-		-n)
-			n=$VALUE
-			;;
-		-r | --reference)
-			reference=$VALUE
-			;;
-		-g | --group)
-			group=$VALUE
-			;;
-		*)
-			echo "ERROR: unknown parameter \"$PARAM\""
-			usage
-			exit 1
-			;;
-	esac
-	shift
-done
-
-echo ""
-echo -e "Starting analysis for:"
-echo -e "\tbatch-$n"
-echo -e "\t$reference"
-echo -e "\t$group"
-echo ""
 
 
 # Standard variables
@@ -80,6 +24,7 @@ sim1="$respath/post-proc/simulated.rds"
 sim2="$respath/result/simulated.arrow"
 
 # Make batch dir with toml if new batch
+function mkdirs(batchpath, pipeline, respath)
 mkdir -p $batchpath
 cp -n $pipeline/params/params.toml $batchpath/params.toml
 cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml

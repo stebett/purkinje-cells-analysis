@@ -13,7 +13,6 @@ reference = "best"
 file = "simulated.arrow"
 
 data = load_data(:last)
-
 sim_all = load_data(analysis, batch, reference, "all", file)
 sim_neigh = load_data(analysis, batch, reference, "neigh", file)
 

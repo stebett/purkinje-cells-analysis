@@ -2,7 +2,7 @@ library(STAR)
 
 args <- commandArgs(trailingOnly = TRUE)
 inpath = paste(args[1], "out", "data", sep="/")
-outpath = paste(args[1], "post-proc", "fit.RData", sep="/")
+outpath = args[2]
 
 read_rdata <- function(file) {
 	r_data <- load(file)

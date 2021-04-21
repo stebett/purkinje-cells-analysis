@@ -30,5 +30,5 @@ simulations = lapply(infiles, sim.all)
 
 
 # outpath = "data/analyses/spline/batch-8/best-neigh/post-proc/simulated.rds"
-outpath = paste(args[1], "post-proc", "simulated.rds", sep="/")
+outpath = args[2]
 saveRDS(simulations, outpath)
