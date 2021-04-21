@@ -2,7 +2,7 @@ library(STAR)
 
 sim.all <- function(file, n=1) {
 	res = read_rdata(file)
-	lfun = lapply(res$rnfun, mkSelf)[-2] 
+	lfun = lapply(res$rnfun, mkSelf)[1] 
 	trials = lapply(split(res$data, res$data$trial), function(x) x[, names(res$gss$mf)])
 	fake = mapply(function(x) replicate(n, sim.catch(res$gss, lfun, x)), trials)
 	list(fake=fake, index1=res$index1, index2=res$index2, group=res$group, reference=res$reference, landmark=res$landmark)
@@ -20,7 +20,8 @@ read_rdata <- function(file) {
 }
 
 
-# inpath = "data/analyses/spline/batch-test/best-neigh/out/data/" 
+# inpath = "data/analyses/spline/batch-artificial/best-neigh/out/data/" 
+
 args <- commandArgs(trailingOnly = TRUE)
 inpath = paste(args[1], "out", "data", sep="/")
 

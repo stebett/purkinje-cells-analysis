@@ -1,23 +1,12 @@
 library(STAR)
 
 
-sim.all <- function(file, n) {
-	res = read_rdata(file)
-	lfun = lapply(res$rnfun, mkSelf)[-2] 
-	trials = lapply(split(res$data, res$data$trial), function(x) x[, names(res$gss$mf)])
-
-	fake = mapply(function(x) replicate(n, sim.catch(res$gss, lfun, x)), trials)
-
-	list(fake=fake, index1=res$index1, index2=res$index2, group=res$group, reference=res$reference, landmark=res$landmark)
-}
-
-sim.catch <- function(gss, lfun, x) {
-	tryCatch(as.double(thinProcess(object=gss, m2uFctList=lfun, trueData=x, formerSpikes=with(x, time[match(1, event)]))),
-			 error = function(e) e)
+sim.one <- function(gss, lfun, x) {
+	as.double(thinProcess(object=gss, m2uFctList=lfun, trueData=x, formerSpikes=with(x, time[match(1, event)])))
 }
 
 sim.one <- function(gss, lfun, x) {
-	as.double(thinProcess(object=gss, m2uFctList=lfun, trueData=x, formerSpikes=with(x, time[match(1, event)])))
+	as.double(thinProcess(object=gss, m2uFctList=lfun, trueData=x, formerSpikes=-700))
 }
 
 read_rdata <- function(file) {
@@ -26,15 +15,14 @@ read_rdata <- function(file) {
 	return(x)
 }
 
-file = "data/analyses/spline/batch-8/best-neigh/out/data/134-136.RData"
+# file = "data/analyses/spline/batch-8/best-neigh/out/data/134-136.RData"
+file = "data/analyses/spline/batch-artificial/best-neigh/out/data/1-2.RData" 
+
 res = read_rdata(file)
-lfun = lapply(res$rnfun, mkSelf)[-2] 
+trials = lapply(split(res$data, res$data$trial), function(x) x[, names(res$gss$mf)])
+lfun = lapply(res$rnfun, mkSelf)[1] 
 
-x = data.frame(time=-600:599,
-			   event = rep(c(0, 0, 1), times=200),
-			   r.timeSinceLastSpike = rep(c(3, 2, 1), times=200),
-			   r.nearest = rep(c(1, 0, 1), times=200))
-
+x = trials[[1]]
 fake = sim.one(res$gss, lfun, x)
 fake
 
