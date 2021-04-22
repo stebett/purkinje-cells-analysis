@@ -65,12 +65,12 @@ active_ranges = merge_trials(tmp, active_trials);
 
 
 #% Merge neighbors active ranges
-neigh = couple(tmp, :n);
+neigh = ens.couple(tmp, :n);
 active_neigh = get_active_couples(neigh, active_ranges);
 neighbors = crosscor_c(tmp, neigh, active_neigh, binsize) |> drop;
 
 #% Merge distant active ranges
-dist = couple(tmp, :d);
+dist = ens.couple(tmp, :d);
 active_dist = get_active_couples(dist, active_ranges);
 distant = crosscor_c(tmp, dist, active_dist, binsize) |> drop;
 
