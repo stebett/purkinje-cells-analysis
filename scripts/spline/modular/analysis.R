@@ -16,7 +16,7 @@ if (group != "all") {
 }
 
 formula = as.formula(paste("event ~",  paste(indep, collapse= "+")))
-gss = gssanova(formula, data=uniformized_df$data, family="binomial", alpha=1)
+gss = gssanova(formula, data=uniformized_df$data, family="binomial", alpha=alpha)
 
 result = list(index1=index1, 
 			  index2=index2,

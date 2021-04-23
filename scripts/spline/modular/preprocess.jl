@@ -10,13 +10,13 @@ using TOML
 
 include(srcdir("spline", "mkdf.jl"))
 
-function preprocess(alldata; index, reference, group, path, tmax, pad, minspikes)
+function preprocess(alldata; index, reference, group, path, tmax, pad, minspikes, alpha)
 	dir_paths = dirs(path, index)
 	cells = find(alldata, index) 
 	active = get_active_events(cells)[1]
 	landmark = reference == "best" ? [:lift, :cover, :grasp][active] : :lift
 	df = mkdf(cells, reference=reference, landmark=landmark, tmax=tmax, pad=pad, minspikes=minspikes)
-	write_configs(reference, group, landmark, index, dir_paths)
+	write_configs(reference, group, landmark, alpha, index, dir_paths)
 	CSV.write(dir_paths[:csv], df)
 end
 
@@ -32,11 +32,12 @@ function dirs(path, indexes)
 	 )
 end
 
-function write_configs(reference, group, landmark, indexes, dirs)
+function write_configs(reference, group, landmark, alpha, indexes, dirs)
 	configs = """
 	group <- '$group'
 	reference <- '$reference'
 	landmark <- '$landmark'
+	alpha <- $alpha
 	index1 <- $(indexes[1])
 	index2 <- $(length(indexes) > 1 ? indexes[2] : "NA")
 	csvpath <- '$(dirs[:csv])'
@@ -75,5 +76,6 @@ for idx in indexes
 			   path=path,
 			   tmax=params["mkdf"]["tmax"],
 			   pad=params["mkdf"]["pad"],
-			   minspikes=params["mkdf"]["minspikes"])
+			   minspikes=params["mkdf"]["minspikes"],
+			   alpha=params["mkdf"]["alpha"],)
 end

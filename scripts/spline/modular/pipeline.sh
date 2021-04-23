@@ -80,9 +80,14 @@ sim1="$respath/post-proc/simulated.rds"
 sim2="$respath/result/simulated.arrow"
 
 # Make batch dir with toml if new batch
-mkdir -p $batchpath
-cp -n $pipeline/params/params.toml $batchpath/params.toml
-cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml
+if [ ! -d $batchpath ]
+then
+	mkdir -p $batchpath
+	cp -n $pipeline/params/params.toml $batchpath/params.toml
+	cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml
+	vim $batchpath/params.toml
+	vim $batchpath/indexes.toml
+fi
 
 # Create input dirs and files
 mkdir -p "$respath/in/csv"
