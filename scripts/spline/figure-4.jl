@@ -17,7 +17,6 @@ sim_all = load_data(analysis, batch, reference, "all", file)
 sim_neigh = load_data(analysis, batch, reference, "neigh", file)
 
 idx = @where(data, :rat .== "R17", :site .== "39", :tetrode .== "tet2").index
-
 idx = [106, 107]
 
 cells = find(data, idx)

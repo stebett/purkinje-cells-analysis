@@ -1,10 +1,10 @@
 library(STAR)
 
-sim.all <- function(file, n=1) {
+sim.all <- function(file, n=5) {
 	res = read_rdata(file)
 	lfun = lapply(res$rnfun, mkSelf)[1] 
 	trials = lapply(split(res$data, res$data$trial), function(x) x[, names(res$gss$mf)])
-	fake = mapply(function(x) replicate(n, sim.catch(res$gss, lfun, x)), trials)
+	fake = lapply(trials, function(x) replicate(n, sim.catch(res$gss, lfun, x)))
 	list(fake=fake, index1=res$index1, index2=res$index2, group=res$group, reference=res$reference, landmark=res$landmark)
 }
 

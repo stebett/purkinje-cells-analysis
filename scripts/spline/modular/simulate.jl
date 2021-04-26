@@ -8,10 +8,13 @@ using Arrow
 
 inpath = ARGS[1]
 outpath = ARGS[2]
+n = 5 # TODO: take this from params
 
 simulations = rcopy(R"readRDS($inpath)")
+data = load_data(:last)
 
-df = DataFrame(index1=Float64[], index2=Float64[], group=String[], reference=String[], landmark=String[], fake=Vector{Vector{Float64}}[])
+
+df = DataFrame(index1=Float64[], index2=Float64[], group=String[], reference=String[], landmark=Union{Nothing, String}[], fake=Vector{Vector{Vector{Float64}}}[])
 
 function Base.vec(x::Float64)
 	if isempty(x[1])
@@ -21,20 +24,23 @@ function Base.vec(x::Float64)
 end
 
 function extract(fake)
-	r = (collect ∘ values)(fake)
-	r = vec.(r)
-	replace(x->(isempty(x) || isempty(x[1]) ? Float64[] : x), r)
+	result = (collect ∘ values)(fake)
+	[vec.(r) for r in result]
 end
 
-foreach(simulations) do row
+
+for row in simulations
 	index1 = row[:index1]
 	index2 = ismissing(row[:index2]) ? NaN : row[:index2] 
 	group = row[:group]
 	reference = row[:reference]
 	landmark = row[:landmark]
 	fake = extract(row[:fake])
-	if !isempty(fake)
-		push!(df, [index1, index2, group, reference, landmark, fake])
+	if length(@where(data, :index .== index1).lift[1]) == length(fake) # TODO: make correlation dependent on trials 
+		transformed = [[trial[i] for trial in fake] for i in 1:n]
+		if !isempty(transformed)
+			push!(df, [index1, index2, group, reference, landmark, transformed])
+		end
 	end
 end
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-n="artificial"
+n=8
 reference="best"
-group="all"
+group="dist"
 
 function usage()
 {
@@ -77,7 +77,7 @@ postproc1="$respath/post-proc/fit.RData"
 postproc2="$respath/results/fit.arrow"
 
 sim1="$respath/post-proc/simulated.rds"
-sim2="$respath/result/simulated.arrow"
+sim2="$respath/results/simulated.arrow"
 
 # Make batch dir with toml if new batch
 if [ ! -d $batchpath ]
