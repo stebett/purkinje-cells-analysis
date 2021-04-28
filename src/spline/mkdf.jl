@@ -14,8 +14,11 @@ function mkdf(cellpair::DataFrame; reference="", tmax=[-600., 600.], pad=350., l
 	st = cut(cellpair[1, :t], cellpair[1, landmark], tpadded)
 	st₂ = cut(cellpair[2, :t], cellpair[2, landmark], tpadded)
 	valid = (length.(st) .>= minspikes) .& (length.(st₂) .>= minspikes)
-	st, st₂ = st[valid], st₂[valid]
+	if !any(valid)
+		return DataFrame()
+	end
 
+	st, st₂ = st[valid], st₂[valid]
 	isi = binisi.(st₂, t₁, t₂) |> x->vcat(x...)
 	isi = [isi[2:end]; NaN]
 	isi_r = binisi_r.(st₂, t₁, t₂) |> x->vcat(x...)
@@ -45,6 +48,9 @@ function mkdf(cell::DataFrameRow; reference="", tmax=[-600., 600.], pad=350., la
 	st = cut(cell[:t], cell[landmark], tpadded)
 	valid = length.(st) .>= minspikes
 	st = st[valid]
+	if !any(valid)
+		return DataFrame()
+	end
 
 	X                    = DataFrame()
 	X.time               = T                                      |> x->repeat(x, length(st))

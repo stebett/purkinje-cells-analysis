@@ -15,6 +15,7 @@ fits = Arrow.Table(respath * "/results/fit.arrow") |> DataFrame
 sims = Arrow.Table(respath * "/results/simulated.arrow") |> DataFrame
 params = TOML.parsefile(respath * "/../params.toml")
 tmax = params["mkdf"]["tmax"]
+n = params["mkdf"]["n_sims"]
 
 fig_pars = (
 		   grid = false,
@@ -31,14 +32,8 @@ function plot_trials(t, l)
 	heatmap(xticks, yticks, x, c=[:white, :black], cbar=false, yticks=yticks, framestyle=:grid)
 end
 
-a = 1
-for (i1, i2) in zip(fits.index1, fits.index2)
-	@show a
-	a+=1
-	summary(fits, sims, data, respath, tmax, fig_pars, i1, i2)
-end
 
-function summary(fits, sims, data, respath, tmax, fig_params, i1, i2)
+function summary(fits, sims, data, respath, tmax, n, fig_params, i1, i2)
 	nearest = @where(fits, :index1 .== i1, :index2 .== i2, :variable .== "r.nearest")
 	isi = @where(fits, :index1 .== i1, :index2 .== i2, :variable .== "r.timeSinceLastSpike")
 	t = @where(fits, :index1 .== i1, :index2 .== i2, :variable .== "time")
@@ -103,4 +98,8 @@ function summary(fits, sims, data, respath, tmax, fig_params, i1, i2)
 
 	fn = @sprintf "%s/plots/%d-%d" respath i1 i2
 	savefig(final, fn)
+end
+
+for (i1, i2) in zip(fits.index1, fits.index2)
+	summary(fits, sims, data, respath, tmax, n, fig_pars, i1, i2)
 end

@@ -6,5 +6,6 @@ tmax = [-600.0, 600.0]
 pad = 350.0
 minspikes = 2
 alpha = 1.0
+n_sims = 5
 
 [hashes]

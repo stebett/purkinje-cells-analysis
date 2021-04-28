@@ -1,8 +1,11 @@
 #!/bin/bash
 
-n=8
+n=9
 reference="best"
 group="dist"
+
+set -e # Exit when any command fails
+trap "exit" INT # Stop everything when ctrl-C is pressed
 
 function usage()
 {
@@ -22,10 +25,10 @@ function usage()
 	echo ""
 }
 
-if [[ $# -gt 0 ]]
+if [[ $# -lt 1 ]]
 then
 	usage
-	exit
+	exit 0
 fi
 
 

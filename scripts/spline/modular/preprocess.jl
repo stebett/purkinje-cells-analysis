@@ -23,7 +23,6 @@ end
 function dirs(path, indexes)
 	remotepath = "/kingdoms/nbc/workspace14/CETO05/bettani/spline"
 	fn = join(indexes, '-')
-
 	(csv = "$path/in/csv/$fn.csv",
 	 conf = "$path/in/conf/$fn.R",
 	 unif = "$path/in/unif/$fn.RData",
@@ -54,9 +53,9 @@ end
 flatten_dict(d::Dict) = Dict(Symbol(k)=>v for (_, subdict) in d for (k, v) in subdict)
 
 
-# batch_path = "data/analyses/spline/batch-test"
-# reference = "best"
-# group = "neigh"
+batch_path = "data/analyses/spline/batch-9"
+reference = "best"
+group = "neigh"
 
 batch_path = ARGS[1]
 reference = ARGS[2]
