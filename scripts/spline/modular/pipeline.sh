@@ -86,6 +86,7 @@ sim2="$respath/results/simulated.arrow"
 if [ ! -d $batchpath ]
 then
 	mkdir -p $batchpath
+	mkdir -p $batchpath/plots
 	cp -n $pipeline/params/params.toml $batchpath/params.toml
 	cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml
 	vim $batchpath/params.toml
@@ -151,4 +152,6 @@ julia $pipeline/simulate.jl $sim1 $sim2
 
 # Plot
 echo -e "\n[*] Plotting results"
-julia $pipeline/plot.jl $respath
+julia $pipeline/plot-summary.jl $respath
+
+# julia $pipeline/plot-figure-5.jl $n $reference

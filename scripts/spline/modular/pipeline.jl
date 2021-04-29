@@ -26,6 +26,7 @@ sim2="$respath/result/simulated.arrow"
 # Make batch dir with toml if new batch
 function mkdirs(batchpath, pipeline, respath)
 mkdir -p $batchpath
+mkdir -p $batchpath/plots
 cp -n $pipeline/params/params.toml $batchpath/params.toml
 cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml
 
