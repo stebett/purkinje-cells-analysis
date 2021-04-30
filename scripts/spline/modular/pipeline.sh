@@ -1,8 +1,8 @@
 #!/bin/bash
 
-n=9
+n=8
 reference="best"
-group="dist"
+group="all"
 
 set -e # Exit when any command fails
 trap "exit" INT # Stop everything when ctrl-C is pressed
@@ -87,6 +87,7 @@ if [ ! -d $batchpath ]
 then
 	mkdir -p $batchpath
 	mkdir -p $batchpath/plots
+	mkdir -p $batchpath/plots/figure-4
 	cp -n $pipeline/params/params.toml $batchpath/params.toml
 	cp -n $pipeline/params/indexes.toml $batchpath/indexes.toml
 	vim $batchpath/params.toml
@@ -146,7 +147,7 @@ julia $pipeline/postprocess.jl $postproc1 $postproc2
 
 # Simulate
 echo -e "\n[*] Simulating step 1 (R)"
-Rscript $pipeline/simulate.R $respath $sim1
+Rscript $pipeline/simulate.R $batchpath $respath $sim1 
 echo -e "\n[*] Simulating step 2 (Julia)"
 julia $pipeline/simulate.jl $sim1 $sim2
 
@@ -155,3 +156,4 @@ echo -e "\n[*] Plotting results"
 julia $pipeline/plot-summary.jl $respath
 
 # julia $pipeline/plot-figure-5.jl $n $reference
+# julia $pipeline/plot-figure-4.jl $n $reference

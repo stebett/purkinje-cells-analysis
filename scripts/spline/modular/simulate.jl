@@ -5,10 +5,12 @@ using RCall
 using DataFrames
 using DataFramesMeta
 using Arrow
+using TOML
 
-inpath = ARGS[1]
-outpath = ARGS[2]
-n = 5 # TODO: take this from params
+pardir = ARGS[1]
+inpath = ARGS[2]
+outpath = ARGS[3]
+n = TOML.parsefile(pardir * "/params.toml")["mkdf"]["n_sims"]
 
 simulations = rcopy(R"readRDS($inpath)")
 data = load_data(:last)
