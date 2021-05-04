@@ -1,6 +1,6 @@
 #!/bin/bash
 
-n=8
+n=10
 reference="best"
 group="all"
 
@@ -149,11 +149,11 @@ julia $pipeline/postprocess.jl $postproc1 $postproc2
 echo -e "\n[*] Simulating step 1 (R)"
 Rscript $pipeline/simulate.R $batchpath $respath $sim1 
 echo -e "\n[*] Simulating step 2 (Julia)"
-julia $pipeline/simulate.jl $sim1 $sim2
+julia $pipeline/simulate.jl $batchpath $sim1 $sim2
 
 # Plot
 echo -e "\n[*] Plotting results"
 julia $pipeline/plot-summary.jl $respath
 
-# julia $pipeline/plot-figure-5.jl $n $reference
-# julia $pipeline/plot-figure-4.jl $n $reference
+julia $pipeline/plot-figure-5.jl $n $reference
+julia $pipeline/plot-figure-4.jl $n $reference

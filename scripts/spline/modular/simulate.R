@@ -24,15 +24,14 @@ read_rdata <- function(file) {
 # inpath = "data/analyses/spline/batch-artificial/best-neigh/out/data/" 
 
 args <- commandArgs(trailingOnly = TRUE)
-configpath = configfile
-configpath = paste(args[1], "config.toml", sep="/")
+configpath = paste(args[1], "params.toml", sep="/")
 inpath = paste(args[2], "out", "data", sep="/")
 outpath = args[3]
 
 config = read.config(file = configpath)
 n_sims = config$mkdf$n_sims
 infiles <- list.files(path=inpath, pattern=".R", full.names=T, all.files=T)
-simulations = mapply(sim.all, infiles, n_sims)
+simulations = lapply(infiles, function(x) sim.all(x, n_sims))
 
 
 # outpath = "data/analyses/spline/batch-8/best-neigh/post-proc/simulated.rds"

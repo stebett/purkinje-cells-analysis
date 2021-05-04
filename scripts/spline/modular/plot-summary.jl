@@ -8,7 +8,7 @@ using Printf
 using TOML
 using Measures
 
-respath = "data/analyses/spline/batch-8/best-dist"
+respath = "data/analyses/spline/batch-10/best-all"
 respath = ARGS[1]
 data = load_data(:last)
 fits = Arrow.Table(respath * "/results/fit.arrow") |> DataFrame
@@ -101,5 +101,9 @@ function summary(fits, sims, data, respath, tmax, n, fig_params, i1, i2)
 end
 
 for (i1, i2) in zip(fits.index1, fits.index2)
-	summary(fits, sims, data, respath, tmax, n, fig_pars, i1, i2)
+	try
+		summary(fits, sims, data, respath, tmax, n, fig_pars, i1, i2)
+	catch e
+		@show e
+	end
 end
