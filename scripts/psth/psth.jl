@@ -5,7 +5,7 @@ using Plots;
 using Spikes
 using StatsBase
 
-data = load_data("data-v6.arrow")
+data = load_data("data-v2.arrow")
 
 low, high = -0.7, 1.6
 around = [-5000., 5000.]
@@ -35,4 +35,4 @@ yticks!([1, 139], ["1", "139"])
 xaxis!("Time (ms)")
 yaxis!("Neuron #")
 
-savefig(plotsdir("presentation", "psth.png"), "scripts/psth/psth.jl")
+# savefig(plotsdir("presentation", "psth.png"), "scripts/psth/psth.jl")
