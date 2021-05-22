@@ -28,7 +28,7 @@ heatmap(m, c=:viridis, clim=(low, high), colorbar_title="Normalized firing rate"
 xticks!([1, l÷4, l÷2-num_bins÷2, l÷2+num_bins÷2, l÷4*3, l], ["$(-round(pad/1000, digits=1))s before lift", "approach", "reach", "grasp", "retrieve", "$(round(pad/1000, digits=1))s after grasp"]) 
 xaxis!("Landmarks")
 yaxis!("Neuron #")
-vline!([l÷2-num_bins, l÷2, l÷2+num_bins], line = (0.2, :dash, 0.6, :white), legend=false)
+vline!([l÷2-num_bins, l÷2, l÷2+num_bins], line = (0.2, :dash, 0.6, :black), legend=false)
 
 savefig(plotsdir("presentation", "multi-psth.png"), "scripts/psth/psth.jl")
 
