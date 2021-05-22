@@ -1,8 +1,6 @@
 using DrWatson
 @quickactivate :ens
 
-using Revise
-using Spikes
 using DataFrames
 using StatsPlots
 
@@ -11,42 +9,31 @@ using Statistics
 
 data = load_data("data-v6.arrow");
 
+# Add 25Hz minimum condition (biologically relevant, otherwise badly sorted or not Purkinje)
+# Wilcox test for signifcancy
+
 function correlations(data, l, g)
 	group = couple(data, g);
 	couples = find.(Ref(data), group)
-	around = [-500., 500.]
-	over = [-5000., -500.]
+	around = [-150., 150.]
+	around_len = diff(around)[1]
 
 	r = Float64[]
 	for c in couples
-		spikes1 = cut(c[1, :t], c[1, l], around)
-		spikes1 = bin.(spikes1, 0, diff(around)[1])
-		spikes1 = convolve(spikes1, 10)
+		cuts1 = cut(c[1, :t], c[1, l], around)
+		bins1 = bin.(cuts1, around_len)
+		conv1 = convolve(bins1, 10)
 
-		baseline1 = cut(c[1, :t], c[1, l], over)
-		baseline1 = bin.(baseline1, 0, 1000)
-		baseline1 = convolve(baseline1, 10)
+		cuts2 = cut(c[2, :t], c[2, l], around)
+		bins2 = bin.(cuts2, around_len)
+		conv2 = convolve(bins2, 10)
 
-		spikes1 = normalize(spikes1, baseline1)
-		spikes1 = mean(spikes1)
-
-		baseline2 = cut(c[2, :t], c[2, l], over)
-		baseline2 = bin.(baseline2, 0, 1000)
-		baseline2 = convolve(baseline2, 10)
-
-		spikes2 = cut(c[2, :t], c[2, l], around)
-		spikes2 = bin.(spikes2, 0, diff(around)[1])
-		spikes2 = convolve(spikes2, 10)
-
-		spikes2 = normalize(spikes2, baseline2)
-		spikes2 = mean(spikes2)
-
-		push!(r, cor(spikes1, spikes2))
+		push!(r, cor.(conv1, conv2)...)
 	end
 
 	r = drop(r)
 	λ = mean(r)
-	σ = std(r)
+	σ = sem(r)
 	return  λ ± σ
 end
 
@@ -65,4 +52,4 @@ xlabel!("Landmark")
 ylabel!("Correlation coefficient")
 title!("Average time course of firing rate")
 
-savefig(plotsdir("presentation", "correlations.png"))
+# savefig(plotsdir("presentation", "correlations.png"))

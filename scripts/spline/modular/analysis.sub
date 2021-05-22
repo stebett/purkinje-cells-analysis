@@ -1,7 +1,8 @@
 executable 	= 	analysis.sh
 error 		= 	out/analysis.err
 log 		= 	out/analysis.log
-nice_user 	= 	True
+
+accounting_group = ShortJob
 
 request_cpus	=	1
 request_memory	=	1536
