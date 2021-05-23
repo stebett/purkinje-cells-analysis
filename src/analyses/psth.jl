@@ -27,8 +27,8 @@ end
 
 
 function visualise!(A::PSTH, fig::Figure, x::Matrix, plot_params)
-	w, _ = size(x)
 	ax = Axis(fig, title="Peri-Stimulus Time Histogram")
+	w, _ = size(x)
 
 	r = sort_active(drop(x), plot_params[:sort_around])
 	hm = heatmap!(ax, r; plot_params[:kwargs]...)

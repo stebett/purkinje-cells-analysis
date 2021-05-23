@@ -159,6 +159,7 @@ raster1_ax = fig[1, 1][1, 1] = visualise!(rasters[1], fig, raster1_res, nothing)
 raster2_ax = fig[2, 1][1, 1] = visualise!(rasters[2], fig, raster2_res, nothing)
 timecourse1_ax = fig[1, 1][2, 1] = visualise!(timecourses[1], fig, timecourse1_res, nothing)
 timecourse2_ax = fig[2, 1][2, 1] = visualise!(timecourses[2], fig, timecourse2_res, nothing)
-
 hidespines!.([raster1_ax, raster2_ax], :r, :t, :b)
 hidespines!.([timecourse1_ax, timecourse2_ax], :r, :t)
+
+

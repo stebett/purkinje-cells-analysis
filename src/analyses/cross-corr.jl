@@ -1,20 +1,22 @@
 using DrWatson
 @quickactivate :ens
 
-function figure_A(b, r, title; kwargs...)
-	b = sort_active(hcat(convolve(b, 1.)...), 10)
+using Colors
 
-	col = cgrad([:white, :black])
-	p1 = heatmap(b'; c=col, cbar=false, title=title, kwargs...)
-	p1 = xticks!([0, 800, 1595], ["-400", "0", "400"])
-	p1 = ylabel!("Trials")
+includet(srcdir("crosscor.jl"))
 
-	p2 = plot(r; legend=false, c=:black, kwargs...)
-	p2 = ylabel!("Firing rate")
-	p2 = xlabel!("Time (ms)")
-	p2 = xticks!([0, 800, 1595], ["-400", "0", "400"])
-
-	p1, p2
+function merge_ranges(y)
+	ranges::Vector{Tuple{Float64, Float64}} = []
+	start, finish = 0., 0.
+	for c in y
+		if finish != c[1]
+			push!(ranges, (start, finish))
+			start = c[1]
+		end
+		finish = c[2]
+	end
+	push!(ranges, (start, last(y)[2]))
+	ranges[2:end]
 end
 #%
 
@@ -31,6 +33,9 @@ struct TimeCourse
 	around::Vector
 	binsize::Real
 	σ::Real
+end
+
+struct ModCrossCorr
 end
 
 
@@ -64,32 +69,56 @@ function visualise!(A::TimeCourse, fig::Figure, x::Vector, plot_params)
 end
 
 
-function compute(A::M
+function compute(A::ModCrossCorr, data)
+	i1 = 437
+	i2 = 438
+	tmp = data[(data.index .== i1) .| (data.index .== i2), :]
+
+	pad = 400
+	n = 2
+	b1 = 100
+	binsize=.5
+	thr = 1.5
+	around = [-700., 700.]
 
 
-pad = 500
-n = 2
-b1 = 100
-binsize=.5
-thr = 1.5
-around = [-600., 600.]
+	mpsth, ranges = section_trial(tmp, pad, n, b1);
+	active_trials = get_active_trials(mpsth, ranges, thr);
+	active_ranges = merge_trials(tmp, active_trials);
 
+	active = Dict()
+	active[[i1, i2]] = merge_ranges(vcat(active_ranges[i1]..., active_ranges[i2]...))
 
-mpsth, ranges = section_trial(tmp, pad, n, b1);
-active_trials = get_active_trials(mpsth, ranges, thr);
-active_ranges = merge_trials(tmp, active_trials);
+	#% Merge neighbors active ranges
+	modulated, total_spikes = crosscor_c(data, [[i1, i2]], active, 0.5)
+	total_time = diff.(active[[i1, i2]]) |> sum
+	modulated /= (total_spikes * binsize / total_time)
 
-active = Dict()
-active[[i1, i2]] = vcat(active_ranges[i1]..., active_ranges[i2]...)
+	c₁ = cut(data[data.index .== i1, :t], data[data.index .== i1, :cover], around)
+	c₂ = cut(data[data.index .== i2, :t], data[data.index .== i2, :cover], around)
 
-#% Merge neighbors active ranges
-modulated = crosscor_c(data, [[i1, i2]], active, 0.5, true) # TODO make sure normalizing is ok
+	unmodulated = crosscor.(c₁, c₂, -20, 20,  .5) |> sum
+	total_spikes_unmod = sum(length.(c₁) .+ length.(c₂))
+	total_time_unmod = diff(around)[1] * length(find(data, i1, :cover)[1])
+	unmodulated /= (total_spikes_unmod * binsize / total_time_unmod)
 
-c₁ = cut(data[data.index .== i₁, :t], data[data.index .== i₁, :cover], around)
-c₂ = cut(data[data.index .== i₂, :t], data[data.index .== i₂, :cover], around)
+	vec(modulated ./ mean(modulated)), unmodulated ./ mean(modulated)
+end
 
-unmodulated = crosscor.(c₁, c₂, true,  binsize=0.5) |> mean
+function visualise!(A::ModCrossCorr, r)
+	x = -20:0.5:20
+	new_r1 = copy(r[1])
+	new_r1[40:41] .= NaN
+	new_r2 = copy(r[2])
+	new_r2[40:41] .= NaN
+	f = lines(x, new_r1, color=:gold, linewidth=2)
+	lines!(x, new_r2)
+	band!(x, r[1], minimum(r[2]), color=RGBA(0.8,0.8,0.8,0.4), linewidth=2, transparency=true)
+	f
+end
 
+r = compute(A, data)
+visualise!(A, r)
 
 function figure_B(modulated, unmodulated; kwargs...)
 	m = minimum(drop(modulated[:]))
