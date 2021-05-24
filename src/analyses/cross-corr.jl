@@ -2,6 +2,7 @@ using DrWatson
 @quickactivate :ens
 
 using Colors
+using StatsBase
 
 includet(srcdir("crosscor.jl"))
 
@@ -18,6 +19,32 @@ function merge_ranges(y)
 	push!(ranges, (start, last(y)[2]))
 	ranges[2:end]
 end
+
+function get_active_couples(couples, ranges)
+	active_couples = Dict()
+	for c in couples
+		active_couples[c] = vcat(ranges[c[1]]..., ranges[c[2]])
+	end
+	active_couples
+end
+
+function merge_ranges_(x::Vector{<:Tuple})
+	a = x |> unique |> sort
+	val, rep = vcat(collect.(a)...) |> sort |> rle
+	b = val[rep .== 1]
+	idx = BitArray(eachindex(b) .% 2)
+	tuple.(b[idx], b[.!idx])
+end
+
+function filter_by_length(x::Vector{<:Tuple}, minlen::Int)
+	idx = diff.(x) .< minlen
+	if any(idx)
+		# @info "Removing $(sum(idx)) intervals"
+		return x[.!idx]
+	end
+	x
+end
+
 #%
 
 struct Raster
@@ -27,16 +54,7 @@ struct Raster
 	binsize::Real
 end
 
-struct TimeCourse
-	index::Int
-	landmark::Symbol
-	around::Vector
-	binsize::Real
-	σ::Real
-end
 
-struct ModCrossCorr
-end
 
 
 function compute(A::Raster, data)
@@ -53,21 +71,31 @@ function visualise!(A::Raster, fig::Figure, bins::Vector, plot_params)
 	ax
 end
 
+struct TimeCourse
+	index::Int
+	landmark::Symbol
+	around::Vector
+	binsize::Real
+	σ::Real
+end
+
 function compute(A::TimeCourse, data)
 	raster = Raster(A.index, A.landmark, A.around, A.binsize)
 	bins = compute(raster, data)
-	convolve(bins, A.σ) |> mean
+	convolve(mean(bins), A.σ)
 end
 
-function visualise!(A::TimeCourse, fig::Figure, x::Vector, plot_params)
+function visualise!(A::TimeCourse, fig::Figure, x::Vector, p)
 	ax = Axis(fig)
-	lines!(ax, x)
+	lines!(ax, x; linewidth=p.linewidth)
 	ax.xticks = ([0, length(x)÷2, length(x)], string.([A.around[1], A.landmark, A.around[2]]))
 	ax.xlabel = "Time (ms)"
 	ax.ylabel = "Firing Rate"
 	ax
 end
 
+struct ModCrossCorr
+end
 
 function compute(A::ModCrossCorr, data)
 	i1 = 437
@@ -105,30 +133,197 @@ function compute(A::ModCrossCorr, data)
 	vec(modulated ./ mean(modulated)), unmodulated ./ mean(modulated)
 end
 
-function visualise!(A::ModCrossCorr, r)
+function visualise!(A::ModCrossCorr, fig, r, p)
+	ax = Axis(fig, title="Pairs of neighboring cells")
 	x = -20:0.5:20
 	new_r1 = copy(r[1])
 	new_r1[40:41] .= NaN
 	new_r2 = copy(r[2])
 	new_r2[40:41] .= NaN
-	f = lines(x, new_r1, color=:gold, linewidth=2)
-	lines!(x, new_r2)
-	band!(x, r[1], minimum(r[2]), color=RGBA(0.8,0.8,0.8,0.4), linewidth=2, transparency=true)
-	f
+	lines!(ax, x, new_r1, color=p.col_mod, linewidth=p.linewidth, label="During modulation")
+	lines!(ax, x, new_r2, linewidth=p.linewidth, label="During whole task")
+	band!(ax, x, r[1], minimum(r[2]), color=p.col_unmod_shade)
+	ax.xlabel = "Time (ms)"
+	ax.ylabel = "Normalized count"
+	axislegend(ax)
+	ax
 end
 
-r = compute(A, data)
-visualise!(A, r)
-
-function figure_B(modulated, unmodulated; kwargs...)
-	m = minimum(drop(modulated[:]))
-	modulated[40:41] .= NaN
-	unmodulated[40:41] .= NaN
-	plot(modulated; c=:orange, labels="during modulation", fill=m,  fillalpha = 0.2, fillcolor=:grey, kwargs...)
-	plot!(unmodulated; c=:black, labels="during whole task", α=0.6, kwargs...)
-	xticks!([1:10:81;],["$i" for i =-20:5:20])
-	xlabel!("Time (ms)")
-	ylabel!("Normalized count")
+struct GroupCrossCorr
+	pad::Int          
+	num_bins::Int     
+	b1::Int           
+	binsize::Real      
+	thresh_quant::Real 
+	group
 end
-#%
 
+function compute(A::GroupCrossCorr, data)
+
+	m, ranges = multi_psth(data, A.pad, A.num_bins, A.b1);
+	baseline = getindex.(m, Ref(1:ceil(Int, length(m[1])÷3)))
+	m ./= mean.(baseline)
+
+	active_trials = get_active_from_merged(m, ranges, A.thresh_quant);
+	active_ranges = merge_trials(data, active_trials);
+
+	active_couple = get_active_couples(A.group, active_ranges);
+
+	for (key, val) in active_couple
+		if isempty(active_couple[key])
+			continue
+		end
+		active_couple[key] = merge_ranges_(val)
+		active_couple[key] = filter_by_length(val, 200)
+	end
+	group, _= crosscor_c(data, A.group, active_couple, A.binsize) 
+	drop(group)
+end
+
+function visualise(A::GroupCrossCorr, fig::Figure, neighbors, distant, p)
+	ax1 = Axis(fig, title="Pairs of neighboring cells")
+	ax2 = Axis(fig, title="Pairs of distant cells")
+
+	n, d = neighbors ./ mean(neighbors), distant ./ mean(distant)
+	x = -20:A.binsize:20
+
+	mean_n = mean(n, dims=2)[:]
+	mean_n[40:41] .= NaN
+	sem_n = sem(n, dims=2)[:]
+
+	lines!(ax1, x, mean_n, color=:red, linewidth=p.linewidth)
+	band!(ax1, x, mean_n .+ sem_n, mean_n .- sem_n, color=p.col_mod_shade)
+	vlines!.(ax1, [-5, 5], linestyle=:dash, color=:green)
+
+	ax1.xlabel = "Time (ms)"
+	ax1.ylabel = "Mean ± sem deviation"
+
+	mean_d = mean(d, dims=2)[:]
+	mean_d[40:41] .= NaN
+	sem_d = sem(d, dims=2)[:]
+
+	lines!(ax2, x, mean_d, color=p.col_unmod, linewidth=p.linewidth)
+	band!(ax2, x, mean_d + sem_d, mean_d - sem_d, color=p.col_unmod_shade)
+	vlines!.(ax2, [-5, 5], linestyle=:dash, color=:green)
+
+	ax2.xlabel = "Time (ms)"
+	ax2.ylabel = "Mean ± sem deviation"
+
+	ax1, ax2
+end
+
+struct FoldedCrossCorr
+	σ::Float64
+	binsize::Real
+end
+
+
+function compute(A::FoldedCrossCorr, data, neighbors)
+	n = mean(neighbors, dims=2) 
+	n_unmod = crosscor_c(data, couple(data, :n), [-1000., 1000.], A.binsize, true)
+
+	n ./= mean(n)
+	n_unmod ./= mean(n_unmod)
+
+	x = reverse(n[1:39, :], dims=1) .+ n[42:end-1, :]
+
+	scatter_mod = copy(x)
+	folded_mod = convolve(x[:], A.σ)
+
+	y = reverse(n_unmod[1:39, :], dims=1) .+ n_unmod[42:end-1, :]
+	folded_unmod = convolve(y[:], A.σ)
+
+	folded_mod, folded_unmod, vec(scatter_mod)
+end
+
+function visualise(A::FoldedCrossCorr, fig, r, p)
+	ax = Axis(fig, title="Pairs of neighboring cells")
+	x = 1:A.binsize:20
+	fm, fu, sm = r
+	lines!(ax, x, fm, color=p.col_pos, label = "during modulation (smoothed)", linewidth=p.linewidth)
+	lines!(ax, x, fu, color=p.col_unmod, label="during whole task", linewidth=p.linewidth)
+	scatter!(ax, x, sm, color=p.col_unmod, label="modulation", markersize=2)
+	vlines!(ax, 5, linestyle=:dash, color=:black)
+	ax.ylabel = "Average normalized cross-correlogram"
+	ax.xlabel = "Time (ms)"
+	ax.xticks = LinearTicks(10)
+	axislegend(ax)
+	ax
+end
+
+
+struct FoldedCrossCorrNeigh
+	σ::Real
+end
+
+
+
+
+function compute(A::FoldedCrossCorrNeigh, data)
+	timecourses = TimeCourseGroupMean(:cover, :n, [-150., 150.])
+	cors = compute(timecourses, data)
+	neighs = couple(data, :n)
+
+	lowcor = cors .< median(drop(cors))
+	highcor = cors .> median(drop(cors))
+
+	lowcorneighs = GroupCrossCorr((
+						pad = 500,
+						num_bins = 2,
+						b1 = 25,
+						binsize = .5,
+						thresh_quant = 1.4,
+						group = neighs[lowcor],
+						)...)
+
+	highcorneighs = GroupCrossCorr((
+						pad = 500,
+						num_bins = 2,
+						b1 = 25,
+						binsize = .5,
+						thresh_quant = 1.4,
+						group = neighs[highcor],
+						)...)
+
+
+	lowcrosscor = compute(lowcorneighs, data) |> drop
+	highcrosscor = compute(highcorneighs, data) |> drop
+
+	lowcrosscor ./= mean(lowcrosscor, dims=1)
+	highcrosscor ./= mean(highcrosscor, dims=1)
+
+	l, h = mean.(drop.([lowcrosscor, highcrosscor]), dims = 2)
+	l_s, h_s = sem.(drop.([lowcrosscor, highcrosscor]), dims = 2)
+
+	l = reverse(l[1:39, :], dims=1) .+ l[42:end-1, :]
+	h = reverse(h[1:39, :], dims=1) .+ h[42:end-1, :]
+
+	l_s = (reverse(l_s[1:39, :], dims=1) .+ l_s[42:end-1, :]) ./ 2
+	h_s = (reverse(h_s[1:39, :], dims=1) .+ h_s[42:end-1, :]) ./ 2
+
+	vec.([l, l_s, h, h_s])
+end
+
+function visualise(A::FoldedCrossCorrNeigh, fig, r, p)
+	ax1 = Axis(fig, title="Pairs of neighboring cells\nwith similar firing course")
+	ax2 = Axis(fig, title="Pairs of neighboring cells\nwith different firing course")
+	x = 1:0.5:20
+	l, l_s, h, h_s = r
+
+	l = convolve(l, A.σ) 
+	h = convolve(h, A.σ) 
+	lines!(ax1, x, l, color=p.col_unmod, linewidth=p.linewidth)
+	# band!(ax1, x, l.-l_s, l.+l_s, color=RGBA(0.8,0.8,0.8,0.4))
+	vlines!(ax1, 5, linestyle=:dash, color=p.col_unmod)
+	lines!(ax2, x, h, color=:black, linewidth=p.linewidth)
+	# band!(ax2, x, h.-h_s, h.+h_s color=RGBA(0.8,0.8,0.8,0.4), linewidth=2)
+	vlines!(ax2, 5, linestyle=:dash, color=p.col_unmod)
+
+	ax1.ylabel = "Average normalized cross-correlogram"# ± sem deviation"
+	ax2.ylabel = "Average normalized cross-correlogram"# ± sem deviation"
+	ax1.xlabel = "Time (ms)"
+	ax2.xlabel = "Time (ms)"
+	ax1.xticks = LinearTicks(10)
+	ax2.xticks = LinearTicks(10)
+	ax1, ax2
+end

@@ -29,6 +29,6 @@ function visualise!(A::MPSTH, fig::Figure, x::Vector, plot_params)
 	ax.yticks = ([1, h], string.([1, h]))
 	ax.xlabel = "Time (ms)"
 	ax.ylabel = "Neuron #"
-	ax, hm
+	ax
 end
 

@@ -11,11 +11,14 @@
 end
 
 @inline function crosscor_c(df, c, around::Vector, binsize, norm=true) 
-	r = zeros(81, length(c))
-	@inbounds for i = eachindex(c)
-		c1 = abscut(df[df.index .== c[i][1], :t]..., df[df.index .== c[i][1], :cover]..., around) 
-		c2 = abscut(df[df.index .== c[i][2], :t]..., df[df.index .== c[i][2], :cover]..., around)
-		crosscor!(view(r, :, i), c1, c2, -20, 20, binsize)
+	# r = zeros(81, length(c))
+
+	r = zeros(81)
+	for i in c
+		c1 = abscut(find(df, i[1]).t, find(df, i[1]).cover, around) 
+		c2 = abscut(find(df, i[2]).t, find(df, i[2]).cover, around) 
+		r .+= sum(crosscor.(c1, c2, -20, 20, binsize))
+		# crosscor!(view(r, :, i), c1, c2, -20, 20, binsize)
 	end
 	r
 end

@@ -1,22 +1,37 @@
-using DrWatson
-@quickactivate :ens
+### A Pluto.jl notebook ###
+# v0.14.0
 
-# using CairoMakie
+using Markdown
+using InteractiveUtils
+
+# ╔═╡ f62f574e-bbcf-11eb-21fe-f12344791565
+using DrWatson
+
+# ╔═╡ 0fb58f78-bbd0-11eb-1fe2-73b388d7e4bf
+@quickactivate :ens
 using GLMakie
 
-includet(srcdir("analyses/psth.jl"))
-includet(srcdir("analyses/multi-psth.jl"))
-includet(srcdir("analyses/pos-neg-rate.jl"))
-includet(srcdir("analyses/correlations.jl"))
-includet(srcdir("analyses/cross-corr.jl"))
+include(srcdir("analyses/psth.jl"))
+include(srcdir("analyses/multi-psth.jl"))
+include(srcdir("analyses/pos-neg-rate.jl"))
+include(srcdir("analyses/correlations.jl"))
+include(srcdir("analyses/cross-corr.jl"))
+include(srcdir("analyses/surr-cross-corr.jl"))
+include(srcdir("analyses/spline-fits.jl"))
+include(srcdir("analyses/spline-peaks.jl"))
 
+
+# ╔═╡ 14b8628c-bbd0-11eb-1cdc-7319e4c15602
 data = load_data("data-v7.arrow")
 plot_theme = Attributes(Axis = (xgridvisible = false, ygridvisible = false))
 linewidth = 2.
 σ = 10
 colormap = :vik
 
-# Analyses Parameters
+# ╔═╡ 248f71b2-bbd1-11eb-1577-2b61098be0fb
+# Figure 1
+
+# ╔═╡ 18fbd600-bbd0-11eb-2167-630537f68382
 psth = PSTH((
 			 landmark = :cover,
 			 around = [-5000., 5000.],
@@ -36,48 +51,26 @@ pnrate = PNRate((
 				 binsize = 50,
 				 )...)
 
-timecoursegroup = TimeCourseGroup((
-								   landmark = :cover,
-								   group = :n,
-								   around = [-150., 150.],
-								   )...)
-
-correlations = Correlation((
-						   around = [-150., 150.],
-						   )...)
-
-
-# Plot Parameters
 psth_plot_params = (
 					kwargs = (colorrange = (0, 2), colormap = colormap),
 					sort_around = 800,
 					)
-
-
-mpsth_plot_params = (
-					 kwargs = (colorrange = (0, 2), colormap = colormap),
-					 sort_binsize = 20,
-					 )
-
 
 pnrate_plot_params = (
 					  kwargs = (linewidth = linewidth,),
 					  colors = [:red, :blue, :black],
 					  )
 
-correlations_plot_params = (
-							kwargs = (linewidth = 2.,), 
-							color=[:red, :blue]
-							)
+mpsth_plot_params = (
+					 kwargs = (colorrange = (0, 2), colormap = colormap),
+					 sort_binsize = 20,
+					 )
 
-
-# Results
 psth_res = compute(psth, data)
 mpsth_res = compute(mpsth, data)
 pnrate_res = compute(pnrate, data)
-timecoursegroup_res = compute(timecoursegroup, data)
-correlations_res = compute(correlations, data)
 
+# ╔═╡ fe8341ae-bbd0-11eb-01f9-7302ebbef359
 fig = with_theme(plot_theme) do
 	Figure(resolution = (1800, 1024))
 end
@@ -90,23 +83,44 @@ fig[1, 1] = psth_ax
 fig[1, 2] = mpsth_ax
 fig[1, 3] = Colorbar(fig, psth_plot, colormap=colormap, width=10, label="Normalized change in firing rate")
 fig[2, :] = pnrate_ax
-
 hidespines!.([psth_ax, mpsth_ax, pnrate_ax], :t, :r)
 
 label_a = fig[1, 1, TopRight()] = Label(fig, "A", textsize = 25, halign = :right)
 label_b = fig[1, 2, TopRight()] = Label(fig, "B", textsize = 25, halign = :right)
 label_c = fig[2, :, TopRight()] = Label(fig, "C", textsize = 25, halign = :right)
 
-# save(plotsdir("report/figure_1.svg"), fig)
 
-
+# ╔═╡ 1c1c89be-bbd1-11eb-1971-7f9e36ff05d1
 # Figure 2
 
+# ╔═╡ 53f4dc84-bbd0-11eb-2d18-cd38c8e58aa5
+timecoursegroup = TimeCourseGroup((
+								   landmark = :cover,
+								   group = :n,
+								   around = [-150., 150.],
+								   )...)
+
+correlations = Correlation((
+						   around = [-150., 150.],
+						   )...)
+
+
+
+
+correlations_plot_params = (
+							kwargs = (linewidth = 2.,), 
+							color=[:red, :blue]
+							)
+
+timecoursegroup_res = compute(timecoursegroup, data)
+correlations_res = compute(correlations, data)
+
+# ╔═╡ 0edf178a-bbd1-11eb-0ecf-419cb6e7a9bf
 fig = with_theme(plot_theme) do
 	Figure(resolution = (1800, 1024))
 end
 
-tc_ax1, tc_ax2, tc_ax3 = visualise!(timecoursegroup, fig, timecoursegroup_res, plot_2_params)
+tc_ax1, tc_ax2, tc_ax3 = visualise!(timecoursegroup, fig, timecoursegroup_res, nothing)
 corr_ax = visualise!(correlations, fig, correlations_res, plot_params)
 
 fig[1, 1] = tc_ax1
@@ -123,43 +137,27 @@ tc_ax3.xlabel = "Time (ms)"
 label_a = fig[1, 1, TopRight()] = Label(fig, "A", textsize = 25, halign = :right)
 label_b = fig[1, 2, TopRight()] = Label(fig, "B", textsize = 25, halign = :right)
 
-# save(plotsdir("report/figure_2.png"), fig)
-
-# Figure 3
-
-cell1 = (
-         index = 437,
-         landmark = :cover,
-         around = [-400., 400.],
-         binsize = 0.5,
-		 )
-
-cell2 = (
-         index = 438,
-         landmark = :cover,
-         around = [-400., 400.],
-         binsize = 0.5,
-		 )
 
 
-rasters = [Raster(cell...) for cell in [cell1, cell2]]
-timecourses = [TimeCourse(cell..., σ) for cell in [cell1, cell2]]
-
-raster1_res = compute(rasters[1], data)
-raster2_res = compute(rasters[2], data)
-
-timecourse1_res = compute(timecourses[1], data)
-timecourse2_res = compute(timecourses[2], data)
+# ╔═╡ 0ec4af28-bbd1-11eb-3896-bb13bf4b7787
 
 
-fig = with_theme(plot_theme) do
-	Figure(resolution = (1800, 1024))
-end
-raster1_ax = fig[1, 1][1, 1] = visualise!(rasters[1], fig, raster1_res, nothing)
-raster2_ax = fig[2, 1][1, 1] = visualise!(rasters[2], fig, raster2_res, nothing)
-timecourse1_ax = fig[1, 1][2, 1] = visualise!(timecourses[1], fig, timecourse1_res, nothing)
-timecourse2_ax = fig[2, 1][2, 1] = visualise!(timecourses[2], fig, timecourse2_res, nothing)
-hidespines!.([raster1_ax, raster2_ax], :r, :t, :b)
-hidespines!.([timecourse1_ax, timecourse2_ax], :r, :t)
+# ╔═╡ 0ea2b038-bbd1-11eb-325e-b1094eb8514e
 
 
+# ╔═╡ 0e28496c-bbd1-11eb-1f04-a9d6aa04c2ba
+
+
+# ╔═╡ Cell order:
+# ╠═f62f574e-bbcf-11eb-21fe-f12344791565
+# ╠═0fb58f78-bbd0-11eb-1fe2-73b388d7e4bf
+# ╠═14b8628c-bbd0-11eb-1cdc-7319e4c15602
+# ╠═248f71b2-bbd1-11eb-1577-2b61098be0fb
+# ╠═18fbd600-bbd0-11eb-2167-630537f68382
+# ╠═fe8341ae-bbd0-11eb-01f9-7302ebbef359
+# ╠═1c1c89be-bbd1-11eb-1971-7f9e36ff05d1
+# ╠═53f4dc84-bbd0-11eb-2d18-cd38c8e58aa5
+# ╠═0edf178a-bbd1-11eb-0ecf-419cb6e7a9bf
+# ╠═0ec4af28-bbd1-11eb-3896-bb13bf4b7787
+# ╠═0ea2b038-bbd1-11eb-325e-b1094eb8514e
+# ╠═0e28496c-bbd1-11eb-1f04-a9d6aa04c2ba

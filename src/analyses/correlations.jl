@@ -19,6 +19,12 @@ struct TimeCourseGroup
 	around::Vector
 end
 
+struct TimeCourseGroupMean
+	landmark::Symbol
+	group::Symbol
+	around::Vector
+end
+
 struct Correlation
 	around::Vector
 end
@@ -50,6 +56,25 @@ function compute(A::TimeCourseGroup, data)
 	tc1, tc2
 end
 
+function compute(A::TimeCourseGroupMean, data)
+	group = couple(data, A.group)
+	couples = find.(Ref(data), group)
+
+	r = Float64[]
+	for c in couples
+		cuts1 = cut(c[1, :t], c[1, A.landmark], A.around)
+		cuts2 = cut(c[2, :t], c[2, A.landmark], A.around)
+
+		bins1 = bin.(cuts1, diff(A.around)[1])
+		bins2 = bin.(cuts2, diff(A.around)[1])
+
+		conv1 = convolve(bins1, 10)
+		conv2 = convolve(bins2, 10)
+
+		push!(r, mean(cor.(conv1, conv2)))
+	end
+	r
+end
 
 function compute(A::Correlation, data)
 	c = Dict(
@@ -63,19 +88,16 @@ function compute(A::Correlation, data)
 	[cor.(x[1], x[2]) for x in tc]
 end
 
-function visualise!(A::Correlation, fig::Figure, x::Vector, plot_params)
+function visualise!(A::Correlation, fig::Figure, x::Vector, p)
 	ax = Axis(fig, title="Average time course of firing rate")
 
 	xval = [1, 2, 4, 5, 7, 8]
 	yval = [mean(drop(i)) for i in x]
 	err = [sem(drop(i)) for i in x]
-	colorscheme = ColorSchemes.RdBu_11
-	# colorscheme = plot_params[:colors]
-	colors = [colorscheme[i] for i in [1, 11, 1, 11, 1, 11]]
 
 	barplot!(ax, xval, yval,
 			dodge = [1, 2, 1, 2, 1, 2],
-			color = colors,
+			color = [p.col_pos, p.col_neg, p.col_pos, p.col_neg, p.col_pos, p.col_neg], 
 			labels = ["Neighbors", "Distant"])
 
 	errorbars!(ax, xval, yval, err)
@@ -87,7 +109,7 @@ function visualise!(A::Correlation, fig::Figure, x::Vector, plot_params)
 	ax
 end
 
-function visualise!(A::TimeCourseGroup, fig::Figure, x::Tuple, plot_params)
+function visualise!(A::TimeCourseGroup, fig::Figure, x::Tuple, p)
 	ax1 = Axis(fig)
 	ax2 = Axis(fig)
 	ax3 = Axis(fig)
@@ -99,13 +121,13 @@ function visualise!(A::TimeCourseGroup, fig::Figure, x::Tuple, plot_params)
 	c[isnan.(c)] .= 0
 	maxi = argmax(c)
 
-	lines!(ax1, x[1][maxi]; color = plot_params[:color][1], label="Cell 1", plot_params[:kwargs]...)
-	lines!(ax2, x[1][medi]; color = plot_params[:color][1], plot_params[:kwargs]...)
-	lines!(ax3, x[1][mini]; color = plot_params[:color][1], plot_params[:kwargs]...)
+	lines!(ax1, x[1][maxi]; color = p.col_pos, label="Cell 1", linewidth=p[:linewidth])
+	lines!(ax2, x[1][medi]; color = p.col_pos, linewidth=p[:linewidth])
+	lines!(ax3, x[1][mini]; color = p.col_pos, linewidth=p[:linewidth])
 
-	lines!(ax1, x[2][maxi]; color = plot_params[:color][2], label = "Cell 2", plot_params[:kwargs]...)
-	lines!(ax2, x[2][medi]; color = plot_params[:color][2], plot_params[:kwargs]...)
-	lines!(ax3, x[2][mini]; color = plot_params[:color][2], plot_params[:kwargs]...)
+	lines!(ax1, x[2][maxi]; color = p.col_neg, label = "Cell 2", linewidth=p[:linewidth])
+	lines!(ax2, x[2][medi]; color = p.col_neg, linewidth=p[:linewidth])
+	lines!(ax3, x[2][mini]; color = p.col_neg, linewidth=p[:linewidth])
 
 	axislegend(ax1)
 
