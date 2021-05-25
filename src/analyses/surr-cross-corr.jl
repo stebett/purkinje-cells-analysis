@@ -61,14 +61,17 @@ function visualise(A::SurrCrossCorr, fig, r, p)
 	cc_c ./= mean(cc_c)
 	cc_s ./= mean(cc_s)
 
-	ax1 = Axis(fig, title = "Cross-correlogram between real cells")
+	ax1 = Axis(fig, title = "Real cells")
 	lines!(ax1, x, cc; axis=axis, linewidth=p.linewidth)
+	hlines!(ax1, 1, linestyle=:dash, color=:green)
 
-	ax2 =  Axis(fig, title = "Cross-correlogram between real cell\n and surrogate from complex model")
+	ax2 =  Axis(fig, title = "Real cell and surrogate\nfrom complex model")
 	lines!(ax2, x, cc_c; axis=axis, linewidth=p.linewidth)
+	hlines!(ax2, 1, linestyle=:dash, color=:green)
 
-	ax3 =  Axis(fig, title = "Cross-correlogram between real cell\n and surrogate from simple model")
+	ax3 =  Axis(fig, title = "Real cell and surrogate\nfrom simple model ")
 	lines!(ax3, x, cc_s; axis=axis, linewidth=p.linewidth)
+	hlines!(ax3, 1, linestyle=:dash, color=:green)
 
 	title = @sprintf "Cells %d and %d" A.indexes...
 	# supertitle = fig[0, :] = Label(fig, title, textsize = 30, color = (:black, 0.25))

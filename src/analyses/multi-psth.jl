@@ -25,10 +25,9 @@ function visualise!(A::MPSTH, fig::Figure, x::Vector, plot_params)
 	hm = heatmap!(ax, x; plot_params[:kwargs]...)
 	vlines!.(ax, [w÷2-A.num_bins, w÷2, w÷2+A.num_bins], linestyle = :dash, color= :black)
 
-	ax.xticks = ([1, w÷2-A.num_bins, w÷2, w÷2+A.num_bins, w], string.([-A.around, "lift", "cover", "grasp", A.around])) 
+	ax.xticks = ([1, w÷2-A.num_bins, w÷2, w÷2+A.num_bins, w], string.([-A.around, "l", "c", "g", A.around])) 
 	ax.yticks = ([1, h], string.([1, h]))
 	ax.xlabel = "Time (ms)"
 	ax.ylabel = "Neuron #"
 	ax
 end
-

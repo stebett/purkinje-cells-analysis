@@ -140,8 +140,8 @@ function visualise!(A::ModCrossCorr, fig, r, p)
 	new_r1[40:41] .= NaN
 	new_r2 = copy(r[2])
 	new_r2[40:41] .= NaN
-	lines!(ax, x, new_r1, color=p.col_mod, linewidth=p.linewidth, label="During modulation")
-	lines!(ax, x, new_r2, linewidth=p.linewidth, label="During whole task")
+	lines!(ax, x, new_r1, color=p.col_mod, linewidth=p.linewidth, label="Modulation")
+	lines!(ax, x, new_r2, linewidth=p.linewidth, label="Whole task")
 	band!(ax, x, r[1], minimum(r[2]), color=p.col_unmod_shade)
 	ax.xlabel = "Time (ms)"
 	ax.ylabel = "Normalized count"
@@ -240,13 +240,13 @@ function visualise(A::FoldedCrossCorr, fig, r, p)
 	ax = Axis(fig, title="Pairs of neighboring cells")
 	x = 1:A.binsize:20
 	fm, fu, sm = r
-	lines!(ax, x, fm, color=p.col_pos, label = "during modulation (smoothed)", linewidth=p.linewidth)
-	lines!(ax, x, fu, color=p.col_unmod, label="during whole task", linewidth=p.linewidth)
-	scatter!(ax, x, sm, color=p.col_unmod, label="modulation", markersize=2)
+	lines!(ax, x, fm, color=p.col_pos, label = "Modulation\n(smoothed)", linewidth=p.linewidth)
+	lines!(ax, x, fu, color=p.col_unmod, label="Whole task", linewidth=p.linewidth)
+	scatter!(ax, x, sm, color=p.col_unmod, label="Modulation", markersize=2)
 	vlines!(ax, 5, linestyle=:dash, color=:black)
 	ax.ylabel = "Average normalized cross-correlogram"
 	ax.xlabel = "Time (ms)"
-	ax.xticks = LinearTicks(10)
+	ax.xticks = LinearTicks(5)
 	axislegend(ax)
 	ax
 end
@@ -323,7 +323,7 @@ function visualise(A::FoldedCrossCorrNeigh, fig, r, p)
 	ax2.ylabel = "Average normalized cross-correlogram"# ± sem deviation"
 	ax1.xlabel = "Time (ms)"
 	ax2.xlabel = "Time (ms)"
-	ax1.xticks = LinearTicks(10)
-	ax2.xticks = LinearTicks(10)
+	ax1.xticks = LinearTicks(5)
+	ax2.xticks = LinearTicks(5)
 	ax1, ax2
 end
