@@ -1,0 +1,103 @@
+\documentclass[a4paper, notitlepage, 12pt]{article}
+\usepackage{listings}
+\lstset{
+	language=C,
+	basicstyle=\small\sffamily,
+	frame=tb,
+	columns=fullflexible,
+	showstringspaces=false
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[font={small}]{caption}
+\usepackage{wrapfig}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage[paper=a4paper,margin=1in]{geometry}
+\usepackage{apacite}
+\usepackage{xr}
+\usepackage{titling}
+\usepackage{bm}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\graphicspath{ {./figures/} }
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+\renewcommand\fbox{\fcolorbox{gray}{white}}
+
+\newcommand{\plot}[3][2]{
+\begin{figure}[H]
+  \centering
+  \fbox{
+\parbox[c]{\textwidth}{
+\includegraphics[scale=.20]{#1}
+		  \caption{#3}
+		  \label{#2}}}
+\end{figure}
+}
+
+\newcommand{\bigplot}[3][2]{
+\begin{figure}[H]
+  \centering
+\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{#1}}
+		  \caption{#3}
+		  \label{#2}
+\end{figure}
+}
+
+\newenvironment{absolutelynopagebreak}
+{\par\nobreak\vfil\penalty0\vfilneg
+\vtop\bgroup}
+{\par\xdef\tpd{\the\prevdepth}\egroup
+\prevdepth=\tpd}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	% backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	% numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+
+
+
+
+\begin{document}
+\include{cover2}
+\include{introduction}
+\include{results}
+\include{discussion}
+\include{conclusions}
+\include{materials}
+\bibliographystyle{apacite}
+\bibliography{references}
+
+\end{document}
+

@@ -1,0 +1,85 @@
+\section{Materials and Methods}
+
+\subsection{Preprocessing}
+After the data has been acquired, the single-unit spikes were isolated off-line using manual clustering (Xclust, M.A. Wilson), mostly using peak amplitudes recorded from four channels. Usually, one to five units could be isolated per tetrode and the quality of isolation was assessed by verifying the existence of a 1-2 ms refractory period devoid of spikes in the auto-correlogram. 
+
+\subsection{Data Analysis}
+We identified modulations of firing rate during movement using the peri-stimulus time histogram (PSTH). To derive the PSTH, the spike trains have been aligned at the land-mark and binned with 50 ms bin size in a±200ms window around the event, averaged by trial, and normalized in respect to the activity over 1 seconds starting 2 seconds before the lift. The similarity of the time course of firing rate was estimated using the correlation coefficient of the spike density around the landmark events obtained by the convolution of the spike times with a 10ms-wide Gaussian curve. The normalized cross-correlograms were constructed dividing the expected correlation for uncorrelated Poisson spike trains (\emph{i.e.} the product of the length of each spike train and the bin duration, divided by the total recording duration). Excess correlations were expressed as a departure from these expected correlations.
+To visualise how the overall activity evolves during time, we aligned the 3 landmarks between all recordings, binning the spike trains with fixed number of bins that varied size, then averaged by trial and normalized with respect to a baseline. This analysis carries less information about the evolution in time of the response compared to the standard PSTH, but allows for a categorical separation of the time course that separate the responses from noise or subsequent movements related to the task but not analysed, such as chewing.
+
+\subsection{Implementation}
+The implementation of the Smoothing Spline ANOVA Model has been released in the R package \texttt{gss} \cite{gu2014smoothing}, which is an high level interface to FORTRAN code, made necessary by the $O(n^3)$ computational complexity of the algorithm. Another R package \cite{pouzat2009automatic} is employed to ensure efficiency of the smoothing spline algorithm by preprocessing the data, to apply statistical tests and to obtain simulations of spike trains. The rest of the code base is in Julia \cite{bezanson2012julia}, a scientifically oriented programming language that provides multiple dispatch, a powerful feature that allows modular code to be reused in a huge number of situations with minimal adjustments needed.
+
+\subsection{Smoothing Splines}
+The Smoothing Spline ANOVA model has been formalized by Gu (\cite{gu2013smoothing}), and allows to estimate the value of a variable conditional to one or multiple parameters. The resulting fit is not forced to take the shape of a parametric distribution, that is the estimation is non-parametric. This allows to be free from more or less realistically imposing a predefined distribution on the results. To achieve that, it produces a function estimate from the set of observations looking for the value that maximises the log-likelihood with respect to the empirical data.
+However, since the noise present in the data would prevent relations between parameters - if any is actually present - to emerge, a roughness penalty is added to the objective of the maximisation to ensure smoothness of the function (see Equation \ref{eq:3}). We now proceed describing the processing pipeline that led to the results shown previously.
+
+\myparagraph{Construction of the Dataset}
+For each cell we build a dataset, using the binary vector derived from the discretisation of the spike train between 600ms before the landmark where the cell showed the strongest modulation. The discretisation process consists in dividing the spike trains in bins of binsize $\delta$ chosen to be 1ms, and to set the value of the bin to 1 if one or more spike are present, otherwise keep it equal to 0. The result of this process for our data was very similar to the normal binning procedure, since the refractory period of Purkinje neurons is around 1ms, and cells with spikes too frequently closer than that interval were marked as badly sorted and were not utilized for the analysis. This process resulted in a series of bins $Y_i$, with $i \in (0,1,2,\dots,\frac{T}{\delta})$, where 0 and $T$ are respectively the starting and final time, and $Y_i \in [0,1]$. For each $Y_i$, the explanatory variables considered were 1) the time in trial $t_i$, 2) the time from last spike $t_i-t_i^{prev}$, and optionally 3) the time elapsed since the previous spike of another neuron $t_i-t^{nearest}_i$.
+
+Theoretically, fitting a smoothing spline on this model corresponds to a formulation of the spike trains as binomial processes characterized by a conditional intensity function that expresses the instantaneous firing probability as a function of the variables present in the dataset, and we will formalize this relation later on in Equation \ref{eq:3}.
+
+\myparagraph{Preprocessing}
+To ensure efficient computations of the smooth splines, each dataset is mapped smoothly to a uniform distribution through the \texttt{mkM2USTAR} function \cite{pouzat2009automatic}. The functions used to achieve this are stored, in order to use their inverse to recover the original data after the fitting procedure.
+
+\myparagraph{Fitting of Smoothing Splines}
+The smooth-splines are fitted on the logit-transformed intensity as in Brillinger \cite{brillinger1988maximum} (with the only difference of the usage of probit instead of logit trans-formation of the intensity). This results in the function $\lambda(t_i, t_i - t^{prev}_i, t_i-t^{\prime\ nearest}_i)$, that is the conditional firing intensity, function of the time in trial, of the time elapsed since the previous spike (simple model) and optionally of the delay to the nearest spike from another cell (complex model). The probability $p_i$ of finding a spike in the bin  $i$ is the product of the bin size $\delta$ and the conditional firing intensity $\lambda$
+\begin{equation}
+	p_i = \lambda((t_i, t_i - t^{prev}_i, t_i-t^{\prime\ nearest}_i)\cdot\delta)
+	\label{eq:1}
+\end{equation}
+The probabilities are defined in the interval [0,1] but are mapped on the $[-\infty,\infty]$ by a logit transform: $\eta_i = log(\frac{p_i}{1-p_i})$, to accomodate the fitting procedures. Therefore, the log-likelihood of a set of $\eta_i$ for a set of observations $Y_i$ is given by
+\begin{equation}
+	L(\bm{\eta}, \bm{Y}) = \sum^n_{i=1}(Y_i\eta_i-log(1+e^{\eta_i}))
+	\label{eq:2}
+\end{equation}
+where the $\eta_i$ are obtained from a smooth spline function $\eta(x)$ and we maximize a penalized log-likelihood quantity obtained by adding a smoothness constraint: 
+\begin{equation}
+	\sum^n_{i=1}(Y_i\eta_i-log(1+e^{\eta_i})) - \kappa\int_0^T\ddot{\eta}^2dx
+	\label{eq:3}
+\end{equation}
+The value of $\kappa$ is adjusted using standard cross-validation \cite{wahba1990spline}. The existence of a minimizer of Equation \ref{eq:3} is proved analytically, and in practice the convergence is almost always achieved in a limited number of iterations. We used an additive model, such that $\bm{\eta}$ is the sum of a function of the of the time in the trial $\eta_t(x)$, a function of the time elapsed since the previous spike $\eta_{t-t^{prev}}(x)$ and, in the case of the complex model, a function of the delay to the nearest spike from another cell $\eta_{t-t^{\prime\ nearest}}(x)$. The plots in the figures correspond to these function expressing logit-transformed probabilities, so that curves not significantly different from 0 indicate uniformity (\emph{i.e.} lack of influence of the parameters).
+
+\myparagraph{Postprocessing}
+After both the simple and complex models are fitted for each couple of neighboring cells, the parameters are reverted to the original distribution by applying the inverse of the function previously used to uniformize them.The quality of the fit for each spike train is verified using Ogata’s test \cite{ogata1988statistical}. One of the most attractive benefits of this smooth-spline fit procedure is that Bayesian confidence limits may be readily obtained \cite{wahba1983bayesian}, and are represented in the figures as colored shadings. The simple and complex models are compared by fitting them on each half of the trials and computing the log-probability of the observation of the other half
+\begin{equation}
+	ML^{model}=L(\eta^{model}_{firsthalf},Y_{secondhalf}) + L(\eta^{model}_{secondhalf},Y_{firsthalf})
+\end{equation}
+so that the complex model will be preferred over the simple model if $ML^{complexmodel}>ML^{simplemodel}$ and vice-versa. For each pair of cells, we construct two sets of models (one set by cell, using the other cell to compute the delay to nearest spike).
+
+\myparagraph{Thinning}
+We then construct surrogate spike trains (\ref{figure4}F and G) allowing examination of the cross-correlograms between the modeled cell and an observed neighboring cell; spike trains from complex models, but not from simple models, exhibited central peaks in the crosscorrelogram with the neighboring cell, thus reproducing the main feature of the crosscorrelogram between the observed cells (\ref{figure4}F and G). This result is a further proof of the empirical validity of the analysis, showing that the interaction term is necessary and sufficient to explain the observed interaction between neighboring cells.
+
+\myparagraph{Analysis of the results}
+Therefore, we select the models that significantly improved their performance by incorporating $\eta_{t-t^{\prime\ nearest}}(x)$ as a term, we can use the estimation of that function to make inferences on the time scale of synchrony between neighboring cells. To achieve that, we select the peaks of the line fits, defined as the maximum of the longest significantly positive part of the spline. Then we calculate the density of the distribution of the points, and we compare it to the same distribution obtained by the fits on couples of distant cells, observing a clear difference, and a peak of density for the neighbor cells around 4ms, confirming our previous observations. On top of that, we calculate the percentage of couples for which the interaction was significantly positive for each time bin, observing that the large majority of neighbor neurons had a significant interaction in the 1-10ms time range, as opposed to distant neurons, that showed a uniform range of interaction.
+
+\subsection{Reproducibility}
+The choice of Julia as main programming language for the project has been driven by the objective of writing a reproducible, testable and reusable pipeline for the project, which we believe is of utmost importance for the progress of research. 
+The use of Julia brought many advantages, for example very high performance and an easy development process, but its most attractive feature is multiple dispatch. Multiple dispatch is allows function to select the correct method to apply based on the dynamic type of each input, while in most programming languages this can happen only with the first input. Thanks to multiple dispatch, single elements of complex pipelines can be easily reused for other purposes, and it also allow to keep the same functions for each analysis, changing each time what is needed, as shown in Listings 1 and 2.
+
+The approach to data analysis applied in this research has been to structure the pipeline for all analyses in a very similar, yet flexible, way. The division is between methods for
+\begin{enumerate}
+	\item \textbf{Input/Output}: these functions take care of transforming the data to feed it to the rest of the process in the right format, and to save and recover the metadata associated with it, as will be discussed later. Hence, they allow to generalize the inputs and the outputs to a variety of cases, allow flexibility of each individual processing step, and ensure that the parameters and the code version that produced the data are always retrievable.
+	\item \textbf{Processing}: these are the functions that modify the data, taking it as input together with the type of the analysis desired and its parameters. Thanks to multiple dispatch, this method will automatically select the appropriate function to apply based both on the inputs, as it is shown is Listings 1 and 2.
+	\item \textbf{Visualisation}:  these are hierarchical methods that can be used in a modular fashion to readily obtain different figures with minimal changes in the code. They also make heavy usage of multiple dispatch. This logical division is reflected on the files organization, and helps building a predictably scaling structure that doesn't became chaotic as the size of the project increases. Another key point was to separate the functions that were generic - for example methods to bin, convolve or cross-correlate - from functions that were specific for the project. 
+\end{enumerate}
+
+Another central aspect to allow reproducibility of the analyses is the proper storing of metadata. This is a particularly relevant problem for neuroscience, since almost every different paradigm needs a different metadata structure, and this made the task of building a unique format for storing it extremely hard, so much that a whole institution - the International Neuroinformatics Coordinating Facility - has been instantiated to take care of that. Still, the solutions provided at this time are not widely accepted as a standard, and the search and development for an universal metadata format is still ongoing.To tackle this problem, we decided to keep the most flexible format for metadata, which is plain text files, usually in TOML format, associated with data produced by analyses. For figures and plots the solution is easier, since normal PNG files allow to store metadata in them, so that it was easy to include the version of the code within them.
+
+\vspace*{40px}
+\begin{minipage}{0.45\textwidth}
+	\begin{lstinputlisting}[language=Python, caption=Code for peri-stimulus histogram]{snippets/snippet1.jl}
+	\end{lstinputlisting}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+	\begin{lstinputlisting}[language=Python, caption=Code for folded cross-correlation]{snippets/snippet2.jl}
+	\end{lstinputlisting}
+\end{minipage}
+
+\vspace*{40px}
+It can be seen from the examples in Listing 1 and 2 that in Julia a function can be declared on different types (in this case \texttt{PSTH} and \texttt{FoldedCrossCorr}), and the method called will be the most specific one that has been defined for that type. 
+
+For example, if both \texttt{PSTH} and \texttt{FoldedCrossCorr} are a subtype of \texttt{SimpleAnalysis}, I can just define a \texttt{load(Type::SimpleAnalysis)} function for the parent type. In the case another kind of analysis, say \texttt{SplineFit},  will need different data, I will just declare \texttt{load(Type::SplineFit)} and the compiler will figure out when to use the right one. 
+
+This way of defining pipelines allow flexibility and fast development, while keeping the code base clean. The whole code is available on \href{https://github.com/stebett/purkinje-cells-analysis}{github} and for the rest of the internship I will focus on providing a documentation for it, in order to make it public as a Julia package.

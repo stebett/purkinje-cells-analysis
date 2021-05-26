@@ -1,0 +1,376 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Bezanson%
+, Karpinski%
+, Shah%
+\BCBL {}\ \BBA {} Edelman%
+}{%
+Bezanson%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2012}}%
+}]{%
+bezanson2012julia}
+\APACinsertmetastar {%
+bezanson2012julia}%
+\begin{APACrefauthors}%
+Bezanson, J.%
+, Karpinski, S.%
+, Shah, V\BPBI B.%
+\BCBL {}\ \BBA {} Edelman, A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Julia: A fast dynamic language for technical computing}
+  {Julia: A fast dynamic language for technical computing}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{arXiv preprint arXiv:1209.5145}{}{}{}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Brillinger%
+}{%
+Brillinger%
+}{%
+{\protect \APACyear {1988}}%
+}]{%
+brillinger1988maximum}
+\APACinsertmetastar {%
+brillinger1988maximum}%
+\begin{APACrefauthors}%
+Brillinger, D\BPBI R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1988}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Maximum likelihood analysis of spike trains of
+  interacting nerve cells} {Maximum likelihood analysis of spike trains of
+  interacting nerve cells}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Biological cybernetics}{59}{3}{189--200}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+de Solages%
+\ \protect \BOthers {.}}{%
+de Solages%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2008}}%
+}]{%
+de2008high}
+\APACinsertmetastar {%
+de2008high}%
+\begin{APACrefauthors}%
+de Solages, C.%
+, Szapiro, G.%
+, Brunel, N.%
+, Hakim, V.%
+, Isope, P.%
+, Buisseret, P.%
+\BDBL {}L{\'e}na, C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2008}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {High-frequency organization and synchrony of activity in
+  the purkinje cell layer of the cerebellum} {High-frequency organization and
+  synchrony of activity in the purkinje cell layer of the cerebellum}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Neuron}{58}{5}{775--788}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Frontera%
+\ \protect \BOthers {.}}{%
+Frontera%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2020}}%
+}]{%
+frontera2020bidirectional}
+\APACinsertmetastar {%
+frontera2020bidirectional}%
+\begin{APACrefauthors}%
+Frontera, J\BPBI L.%
+, Aissa, H\BPBI B.%
+, Sala, R\BPBI W.%
+, Mailhes-Hamon, C.%
+, Georgescu, I\BPBI A.%
+, L{\'e}na, C.%
+\BCBL {}\ \BBA {} Popa, D.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2020}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Bidirectional control of fear memories by cerebellar
+  neurons projecting to the ventrolateral periaqueductal grey} {Bidirectional
+  control of fear memories by cerebellar neurons projecting to the
+  ventrolateral periaqueductal grey}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Nature communications}{11}{1}{1--17}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Gu%
+}{%
+Gu%
+}{%
+{\protect \APACyear {2013}}%
+}]{%
+gu2013smoothing}
+\APACinsertmetastar {%
+gu2013smoothing}%
+\begin{APACrefauthors}%
+Gu, C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2013}.
+\newblock
+\APACrefbtitle {Smoothing spline ANOVA models} {Smoothing spline anova models}\
+  (\BVOL~297).
+\newblock
+\APACaddressPublisher{}{Springer Science \& Business Media}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Gu%
+\ \protect \BOthers {.}}{%
+Gu%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2014}}%
+}]{%
+gu2014smoothing}
+\APACinsertmetastar {%
+gu2014smoothing}%
+\begin{APACrefauthors}%
+Gu, C.%
+\BCBT {}\ \BOthersPeriod {.}
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2014}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Smoothing spline ANOVA models: R package gss} {Smoothing
+  spline anova models: R package gss}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of Statistical Software}{58}{5}{1--25}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Han%
+\ \protect \BOthers {.}}{%
+Han%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2018}}%
+}]{%
+han2018ephaptic}
+\APACinsertmetastar {%
+han2018ephaptic}%
+\begin{APACrefauthors}%
+Han, K\BHBI S.%
+, Guo, C.%
+, Chen, C\BPBI H.%
+, Witter, L.%
+, Osorno, T.%
+\BCBL {}\ \BBA {} Regehr, W\BPBI G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Ephaptic coupling promotes synchronous firing of
+  cerebellar purkinje cells} {Ephaptic coupling promotes synchronous firing of
+  cerebellar purkinje cells}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Neuron}{100}{3}{564--578}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Huang%
+\ \protect \BOthers {.}}{%
+Huang%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2013}}%
+}]{%
+huang2013convergence}
+\APACinsertmetastar {%
+huang2013convergence}%
+\begin{APACrefauthors}%
+Huang, C\BHBI C.%
+, Sugino, K.%
+, Shima, Y.%
+, Guo, C.%
+, Bai, S.%
+, Mensh, B\BPBI D.%
+\BDBL {}Hantman, A\BPBI W.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2013}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Convergence of pontine and proprioceptive streams onto
+  multimodal cerebellar granule cells} {Convergence of pontine and
+  proprioceptive streams onto multimodal cerebellar granule cells}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Elife}{2}{}{e00400}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Ogata%
+}{%
+Ogata%
+}{%
+{\protect \APACyear {1988}}%
+}]{%
+ogata1988statistical}
+\APACinsertmetastar {%
+ogata1988statistical}%
+\begin{APACrefauthors}%
+Ogata, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1988}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Statistical models for earthquake occurrences and
+  residual analysis for point processes} {Statistical models for earthquake
+  occurrences and residual analysis for point processes}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of the American Statistical
+  association}{83}{401}{9--27}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Person%
+\ \BBA {} Raman%
+}{%
+Person%
+\ \BBA {} Raman%
+}{%
+{\protect \APACyear {2012}}%
+}]{%
+person2012synchrony}
+\APACinsertmetastar {%
+person2012synchrony}%
+\begin{APACrefauthors}%
+Person, A\BPBI L.%
+\BCBT {}\ \BBA {} Raman, I\BPBI M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Synchrony and neural coding in cerebellar circuits}
+  {Synchrony and neural coding in cerebellar circuits}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Frontiers in neural circuits}{6}{}{97}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Pouzat%
+\ \BBA {} Chaffiol%
+}{%
+Pouzat%
+\ \BBA {} Chaffiol%
+}{%
+{\protect \APACyear {2009}}%
+}]{%
+pouzat2009automatic}
+\APACinsertmetastar {%
+pouzat2009automatic}%
+\begin{APACrefauthors}%
+Pouzat, C.%
+\BCBT {}\ \BBA {} Chaffiol, A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2009}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Automatic spike train analysis and report generation. An
+  implementation with R, R2HTML and STAR} {Automatic spike train analysis and
+  report generation. an implementation with r, r2html and star}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of neuroscience methods}{181}{1}{119--144}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Wahba%
+}{%
+Wahba%
+}{%
+{\protect \APACyear {1983}}%
+}]{%
+wahba1983bayesian}
+\APACinsertmetastar {%
+wahba1983bayesian}%
+\begin{APACrefauthors}%
+Wahba, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1983}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Bayesian “confidence intervals” for the
+  cross-validated smoothing spline} {Bayesian “confidence intervals” for
+  the cross-validated smoothing spline}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of the Royal Statistical Society: Series B
+  (Methodological)}{45}{1}{133--150}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Wahba%
+}{%
+Wahba%
+}{%
+{\protect \APACyear {1990}}%
+}]{%
+wahba1990spline}
+\APACinsertmetastar {%
+wahba1990spline}%
+\begin{APACrefauthors}%
+Wahba, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{1990}.
+\newblock
+\APACrefbtitle {Spline models for observational data} {Spline models for
+  observational data}.
+\newblock
+\APACaddressPublisher{}{SIAM}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Wolpert%
+, Miall%
+\BCBL {}\ \BBA {} Kawato%
+}{%
+Wolpert%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1998}}%
+}]{%
+wolpert1998internal}
+\APACinsertmetastar {%
+wolpert1998internal}%
+\begin{APACrefauthors}%
+Wolpert, D\BPBI M.%
+, Miall, R\BPBI C.%
+\BCBL {}\ \BBA {} Kawato, M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1998}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Internal models in the cerebellum} {Internal models in
+  the cerebellum}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Trends in cognitive sciences}{2}{9}{338--347}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}
