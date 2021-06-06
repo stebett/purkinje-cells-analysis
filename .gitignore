@@ -3,9 +3,16 @@ tmp/
 data/
 r/
 src/lfads
-pictures/
+figures/
 plots/
 python/notebooks/
 docs/
 .RData
 .RHistory
+.pdf
+.doc
+.docx
+.ipynb
+.mp4
+
+
