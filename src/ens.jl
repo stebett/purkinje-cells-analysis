@@ -7,6 +7,8 @@ using Reexport
 @reexport using DataFrames
 @reexport using Spikes
 
+abstract type Analysis end
+
 nbdir(args...) = projectdir("notebooks", args...)
 
 include(srcdir("average.jl"))
@@ -17,6 +19,6 @@ include(srcdir("find.jl"))
 include(srcdir("sem.jl"))
 include(srcdir("minmax.jl"))
 include(srcdir("parse.jl"))
-export average, load_data, find, sem, minmax_scale, parse, couple, nbdir, mean, sd
+export Analysis, average, load_data, find, sem, minmax_scale, parse, couple, nbdir, mean, sd
  
 end

@@ -7,7 +7,7 @@ using Arrow
 
 include(srcdir("spline", "model_summaries.jl"))
 
-struct SplineFit
+struct SplineFit <: Analysis
 	indexes::Vector
 	batch::Int
 	reference::String

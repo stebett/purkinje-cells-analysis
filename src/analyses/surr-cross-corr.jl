@@ -32,7 +32,7 @@ end
 
 
 
-struct SurrCrossCorr
+struct SurrCrossCorr <: Analysis
 	indexes::Vector
 	batch::Int
 	reference::String

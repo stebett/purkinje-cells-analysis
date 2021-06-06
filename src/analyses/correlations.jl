@@ -13,26 +13,24 @@ function searchsortednearest(a,x)
 	end
 end
 
-struct TimeCourseGroup
+struct TimeCourseGroup <: Analysis
 	landmark::Symbol
 	group::Symbol
 	around::Vector
 end
 
-struct TimeCourseGroupMean
+struct TimeCourseGroupMean <: Analysis
 	landmark::Symbol
 	group::Symbol
 	around::Vector
 end
 
-struct Correlation
+struct Correlation <: Analysis
 	around::Vector
 end
 
 TimeCourseGroup(d::Dict) = TimeCourseGroup(d[:landmark], d[:group], [d[:around]...])
 
-
-# Wilcox test for signifcancy
 
 function compute(A::TimeCourseGroup, data)
 	group = couple(data, A.group)
@@ -88,8 +86,13 @@ function compute(A::Correlation, data)
 	[cor.(x[1], x[2]) for x in tc]
 end
 
+function visualise(A::Correlation, x::Vector, p)
+	fig = Figure()
+	visualise!(A, fig, x, p)
+end
+
 function visualise!(A::Correlation, fig::Figure, x::Vector, p)
-	ax = Axis(fig, title="Average time course of firing rate")
+	ax = fig[1, 1] = Axis(fig, title="Average time course of firing rate")
 
 	xval = [1, 2, 4, 5, 7, 8]
 	yval = [mean(drop(i)) for i in x]
@@ -106,16 +109,21 @@ function visualise!(A::Correlation, fig::Figure, x::Vector, p)
 	ax.xlabel = "Landmark"
 	ax.ylabel = "Correlation coefficient"
 
-	ax
+	fig, ax, bars
+end
+
+function visualise(A::TimeCourseGroup, y::Tuple, p)
+	fig = Figure()
+	visualise!(A, fig, y, p)
 end
 
 function visualise!(A::TimeCourseGroup, fig::Figure, y::Tuple, p)
-	ax1 = Axis(fig)
-	ax2 = Axis(fig)
-	ax3 = Axis(fig)
-	ax4 = Axis(fig)
-	ax5 = Axis(fig)
-	ax6 = Axis(fig)
+	ax1 = fig[1, 1][1, 1] = Axis(fig)
+	ax2 = fig[2, 1][1, 1] = Axis(fig)
+	ax3 = fig[3, 1][1, 1] = Axis(fig)
+	ax4 = fig[1, 1][1, 2] = Axis(fig)
+	ax5 = fig[2, 1][1, 2] = Axis(fig)
+	ax6 = fig[3, 1][1, 2] = Axis(fig)
 
 	x = A.around[1] : A.around[2]-1
 	c = cor.(y[1], y[2])
@@ -131,19 +139,19 @@ function visualise!(A::TimeCourseGroup, fig::Figure, y::Tuple, p)
 	c[maxi1] = -1
 	maxi2 = argmax(c)
 
-	lines!(ax1, x, y[1][maxi1]; color = p.col_pos, label="Cell 1", linewidth=p[:linewidth])
-	lines!(ax2, x, y[1][medi1]; color = p.col_pos, linewidth=p[:linewidth])
-	lines!(ax3, x, y[1][mini1]; color = p.col_pos, linewidth=p[:linewidth])
-	lines!(ax4, x, y[1][maxi2]; color = p.col_pos, linewidth=p[:linewidth])
-	lines!(ax5, x, y[1][medi2]; color = p.col_pos, linewidth=p[:linewidth])
-	lines!(ax6, x, y[1][mini2]; color = p.col_pos, linewidth=p[:linewidth])
+	l1 = lines!(ax1, x, y[1][maxi1]; color = p.col_pos, label="Cell 1", linewidth=p[:linewidth])
+	l2 = lines!(ax2, x, y[1][medi1]; color = p.col_pos, linewidth=p[:linewidth])
+	l3 = lines!(ax3, x, y[1][mini1]; color = p.col_pos, linewidth=p[:linewidth])
+	l4 = lines!(ax4, x, y[1][maxi2]; color = p.col_pos, linewidth=p[:linewidth])
+	l5 = lines!(ax5, x, y[1][medi2]; color = p.col_pos, linewidth=p[:linewidth])
+	l6 = lines!(ax6, x, y[1][mini2]; color = p.col_pos, linewidth=p[:linewidth])
 
-	lines!(ax1, x, y[2][maxi1]; color = p.col_neg, label = "Cell 2", linewidth=p[:linewidth])
-	lines!(ax2, x, y[2][medi1]; color = p.col_neg, linewidth=p[:linewidth])
-	lines!(ax3, x, y[2][mini1]; color = p.col_neg, linewidth=p[:linewidth])
-	lines!(ax4, x, y[2][maxi2]; color = p.col_neg, linewidth=p[:linewidth])
-	lines!(ax5, x, y[2][medi2]; color = p.col_neg, linewidth=p[:linewidth])
-	lines!(ax6, x, y[2][mini2]; color = p.col_neg, linewidth=p[:linewidth])
+	l1 = lines!(ax1, x, y[2][maxi1]; color = p.col_neg, label = "Cell 2", linewidth=p[:linewidth])
+	l2 = lines!(ax2, x, y[2][medi1]; color = p.col_neg, linewidth=p[:linewidth])
+	l3 = lines!(ax3, x, y[2][mini1]; color = p.col_neg, linewidth=p[:linewidth])
+	l4 = lines!(ax4, x, y[2][maxi2]; color = p.col_neg, linewidth=p[:linewidth])
+	l5 = lines!(ax5, x, y[2][medi2]; color = p.col_neg, linewidth=p[:linewidth])
+	l6 = lines!(ax6, x, y[2][mini2]; color = p.col_neg, linewidth=p[:linewidth])
 
 	axislegend(ax1)
 
@@ -158,7 +166,7 @@ function visualise!(A::TimeCourseGroup, fig::Figure, y::Tuple, p)
 	ax5.yticks = []
 	ax6.yticks = []
 
-	ax1, ax2, ax3, ax4, ax5, ax6
+	fig, [ax1, ax2, ax3, ax4, ax5, ax6], [l1, l2, l3, l4, l5, l6]
 end
 
 

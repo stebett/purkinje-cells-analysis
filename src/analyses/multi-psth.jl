@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate :ens
 
-struct MPSTH 
+struct MPSTH  <: Analysis
 	around::Real
 	num_bins::Int
 	b1::Int
@@ -14,10 +14,13 @@ function compute(A::MPSTH, data)
 	@. mpsth / mean(baseline)
 end
 
+function visualise(A::MPSTH, x::Vector, plot_params)
+	fig = Figure()
+	visualise!(A, fig, x, plot_params)
+end
 
 function visualise!(A::MPSTH, fig::Figure, x::Vector, plot_params)
-	ax = Axis(fig, title="Multi Peri-Stimulus Time Histogram")
-
+	ax = fig[1, 1] = Axis(fig, title="Multi Peri-Stimulus Time Histogram")
 	sort_agg_peaks!(x, plot_params[:sort_binsize])
 	x = hcat(drop(x)...)
 	w, h = size(x)
@@ -29,5 +32,5 @@ function visualise!(A::MPSTH, fig::Figure, x::Vector, plot_params)
 	ax.yticks = ([1, h], string.([1, h]))
 	ax.xlabel = "Time (ms)"
 	ax.ylabel = "Neuron #"
-	ax
+	fig, ax, hm
 end

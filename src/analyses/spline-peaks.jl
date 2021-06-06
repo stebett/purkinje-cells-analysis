@@ -13,7 +13,7 @@ function ranges_counts(df; binsize = 0.001, tmax = 50.)
 	timerange, counts_perc
 end
 
-struct SplinePeaks
+struct SplinePeaks <: Analysis
 	batch::Int
 	reference::String
 end

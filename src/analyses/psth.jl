@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate :ens
 
-struct PSTH 
+struct PSTH  <: Analysis
 	landmark::Symbol
 	around::Vector
 	over::Vector
@@ -25,9 +25,13 @@ function compute(A::PSTH, data)
 	hcat(norms...)
 end
 
+function visualise(A::PSTH, x::Matrix, plot_params)
+	fig = Figure()
+	visualise!(A, fig, x, plot_params)
+end
 
 function visualise!(A::PSTH, fig::Figure, x::Matrix, plot_params)
-	ax = Axis(fig, title="Peri-Stimulus Time Histogram")
+	ax = fig[1, 1] = Axis(fig, title="Peri-Stimulus Time Histogram")
 	w, _ = size(x)
 
 	r = sort_active(drop(x), plot_params[:sort_around])
@@ -36,6 +40,6 @@ function visualise!(A::PSTH, fig::Figure, x::Matrix, plot_params)
 	ax.yticks = ([1, size(r, 2)], string.([1, size(r, 2)]))
 	ax.xlabel = "Time (ms)"
 	ax.ylabel = "Neuron #"
-	ax, hm
+	fig, ax, hm
 end
 

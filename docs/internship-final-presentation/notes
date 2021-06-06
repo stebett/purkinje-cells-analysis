@@ -1,0 +1,73 @@
+# Notes 
+
+# Context - 3 minutes
+
+Present role of cerebellum in motor circuit, then cerebellar anatomy and functionality in the cortex, then perceptron 
+
+Motor system
+Learning (adaptive filter)
+Adaptive filter as perceptron
+Question on how microzones act on nuclei
+
+Picture of cerebellar cortex being close to a perceptron like system
+Picture of synchrony
+Picture of microzone
+
+# Recordings
+Tetrodes during grasping recorded by student with recordings too
+# Synchrony 
+Picture of sorted spikes
+
+1. do cell in the same microzone (recorded from a single tetrode) encode similiar features of the movement
+2. are cells in a microzone exhibiting synchronous firing
+
+Critical role of synchrony in Purkinje cells on activity of nuclei cells 
+
+Picture of dynamic clamps
+
+# Results
+
+expalain what is grasping with the picture
+explain landmarks
+
+Briefly explain psth, exposing the fact that modulation is over a scale of 1 sec, bigger then the 
+Show multi-psth  
+
+
+## Figure 1
+Add schematic for mpsth
+
+## Figure 2
+Add column for mpsth
+
+## Figure 3
+Cross correlation, indication of modulation
+The critic is that is hard to make assessments of pairs of cells
+We would want confidence interval on the interaction of cells 
+
+## Figure 4
+Conclude: 2 sentences that reflect the question expressed at the beginning
+
+1. apparently we're expressing the same dynamics, there is an increase in synchrony of 10/20% 
+
+I provide an implementation of smoothing spline that was proposed by Pousac to compute the psth, and we extended it to compute the interaction delay
+
+My work will be part of a manuscript that I will sign as a co-author
+
+This was a chance to explore the use of julia that I chose because we can have very different architectures of data, but we have core analyses that we need to apply, and that made me think that a multiple dispatch language was particularly fit for this.
+
+Reproducible science: my work has focused on the accessibility of the analyses, and the code will be released along with the manuscript with 
+
+# Each graph has to be explained verbally (x axis, y axis etc)
+# Slides lighter than the figures of report
+# Enter each slide with a scientific question and exit with a conclusion (also written at the bottom of each slide)
+#
+# Sketch the slides with:
+# 1. entry point (a word in the title that you have to stress) (scientific quesiton)
+# 2. 3 or 4 things that you need to say absolutely
+# 3. Conclusion
+# 4. Junction with the next slide (learn to be smooth)
+#
+# When reharsing, if stuck, write the sentence where you get stuck
+# Summary every 3 or 4 slides (cumulative conclusions)
+# Take into account when you feel that there is something wrong in the logic

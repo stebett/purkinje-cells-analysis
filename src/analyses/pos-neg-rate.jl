@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate :ens
 
-struct PNRate 
+struct PNRate  <: Analysis
 	landmark::Symbol
 	around::Vector
 	over::Vector

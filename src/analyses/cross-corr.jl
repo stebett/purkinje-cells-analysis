@@ -47,7 +47,7 @@ end
 
 #%
 
-struct Raster
+struct Raster <: Analysis
 	index::Int
 	landmark::Symbol
 	around::Vector
@@ -71,7 +71,7 @@ function visualise!(A::Raster, fig::Figure, bins::Vector, plot_params)
 	ax
 end
 
-struct TimeCourse
+struct TimeCourse <: Analysis
 	index::Int
 	landmark::Symbol
 	around::Vector
@@ -94,7 +94,7 @@ function visualise!(A::TimeCourse, fig::Figure, x::Vector, p)
 	ax
 end
 
-struct ModCrossCorr
+struct ModCrossCorr <: Analysis
 end
 
 function compute(A::ModCrossCorr, data)
@@ -149,7 +149,7 @@ function visualise!(A::ModCrossCorr, fig, r, p)
 	ax
 end
 
-struct GroupCrossCorr
+struct GroupCrossCorr <: Analysis
 	pad::Int          
 	num_bins::Int     
 	b1::Int           
@@ -212,7 +212,7 @@ function visualise(A::GroupCrossCorr, fig::Figure, neighbors, distant, p)
 	ax1, ax2
 end
 
-struct FoldedCrossCorr
+struct FoldedCrossCorr <: Analysis
 	σ::Float64
 	binsize::Real
 end
@@ -252,7 +252,7 @@ function visualise(A::FoldedCrossCorr, fig, r, p)
 end
 
 
-struct FoldedCrossCorrNeigh
+struct FoldedCrossCorrNeigh <: Analysis
 	σ::Real
 end
 
